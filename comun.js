@@ -1,5 +1,5 @@
 // Código común a todas las páginas: avisos al lector de pantalla, SOS,
-// menú de accesibilidad y estado de la pastilla.
+// menú de accesibilidad, estado de la pastilla y temperatura.
 
 const anuncio = document.getElementById("anuncio");
 // Vacía y vuelve a escribir para que el lector repita mensajes iguales
@@ -8,7 +8,7 @@ function anunciar(texto) {
   setTimeout(() => { anuncio.textContent = texto; }, 50);
 }
 
-// Enlaces que aún no tienen página (luces, puertas, ventanas, contactos): no hacen nada
+// Enlaces que aún no tienen página (contactos): no hacen nada
 document.querySelectorAll('a[href="#"]').forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
 // ---------- Toma de la pastilla ----------
@@ -31,6 +31,32 @@ function configurarPastilla(boton, alCambiar) {
     try { localStorage.setItem("pastilla-tomada", tomada ? "1" : "0"); } catch (e) {}
     pintar();
     anunciar(tomada ? "Pastilla de la tensión marcada como tomada" : "Pastilla de la tensión pendiente");
+  });
+  pintar();
+}
+
+// ---------- Temperatura ----------
+// Se guarda en el navegador para que Inicio y Casa muestren la misma.
+// Fuera de 22–25 °C el valor lleva fondo rojo; dentro del rango solo se ve el número
+function configurarTemperatura(valor, clase) {
+  let temperatura = 30;
+  try { temperatura = Number(localStorage.getItem("temperatura")) || 30; } catch (e) {}
+
+  function pintar() {
+    const fuera = temperatura < 22 || temperatura > 25;
+    valor.className = clase + (fuera ? " alerta" : "");
+    valor.innerHTML = `${temperatura} °C` +
+      (fuera ? '<span class="sr-only"> (fuera del rango recomendado)</span>' : "");
+    return fuera;
+  }
+
+  document.querySelectorAll(".btn-temp").forEach(boton => {
+    boton.addEventListener("click", () => {
+      temperatura = Math.min(35, Math.max(10, temperatura + Number(boton.dataset.paso)));
+      try { localStorage.setItem("temperatura", temperatura); } catch (e) {}
+      const fuera = pintar();
+      anunciar(`Temperatura ${temperatura} grados${fuera ? ", fuera del rango recomendado" : ""}`);
+    });
   });
   pintar();
 }

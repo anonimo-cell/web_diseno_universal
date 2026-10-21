@@ -215,7 +215,8 @@ section:focus {
 }
 
 .avatar,
-.btn-a11y {
+.btn-a11y,
+.btn-anadir {
   --base: var(--azul);
   --base-hover: var(--azul-hover);
   --sombra: var(--azul-sombra);
@@ -223,7 +224,8 @@ section:focus {
   color: #ffffff;
 }
 
-.btn-pendiente.tomada {
+.btn-pendiente.tomada,
+.btn-confirmar {
   --base: var(--verde);
   --base-hover: var(--verde-hover);
   --sombra: var(--verde-sombra);
@@ -954,9 +956,289 @@ html.contraste .sos-circulo {
   font-size: 1.2rem;
 }
 
+/* ===== Página Mi casa =====
+   Luces a la izquierda (a toda la altura); temperatura arriba a la derecha
+   y puertas · ventanas debajo, como en el boceto. */
+.cabecera-izq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 32px;
+}
+
+.btn-anadir {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 10px 24px;
+  font-size: 1.25rem;
+}
+
+.btn-anadir svg {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  stroke-width: 2.5;
+}
+
+.casa-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "luces temp     temp"
+    "luces puertas  ventanas";
+  gap: 24px;
+}
+
+.casa-luces { grid-area: luces; }
+.casa-temp { grid-area: temp; }
+.casa-puertas { grid-area: puertas; }
+.casa-ventanas { grid-area: ventanas; }
+
+.casa-bloque {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+  padding: 1.8vh 20px 1.5vh;
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: 20px;
+}
+
+.bloque-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(1.4rem, calc(4.2vh * var(--escala)), 2rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.bloque-titulo svg {
+  width: 1.4em;
+  height: 1.4em;
+  flex: none;
+  color: var(--icono);
+}
+
+/* Si hay muchos dispositivos, la lista se desplaza dentro de su bloque.
+   El relleno deja sitio al anillo de foco y al relieve de los botones. */
+.disp-lista {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 12px 14px;
+}
+
+/* Cada dispositivo: icono de estado · estancia · estado escrito.
+   Si el bloque es estrecho, el estado baja a su propia línea. */
+.disp {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  min-height: 72px;
+  padding: 10px 14px;
+  text-align: left;
+}
+
+/* El icono cambia de forma según el estado: se entiende sin leer y sin depender del color */
+.disp-icono {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px solid transparent;
+}
+
+.disp-icono svg {
+  width: 70%;
+  height: 70%;
+  stroke-width: 3;
+}
+
+.disp-icono.ok {
+  background: var(--verde);
+  color: var(--sobre-verde);
+  border-color: var(--verde-sombra);
+}
+
+.disp-icono.alerta {
+  background: var(--rojo);
+  color: var(--sobre-rojo);
+  border-color: var(--rojo-sombra);
+}
+
+html.contraste .disp-icono {
+  border-color: #000000;
+}
+
+.disp-texto {
+  flex: 1 1 9.5em;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.disp-lugar {
+  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.7rem);
+  line-height: 1.2;
+}
+
+.disp-pista {
+  font-size: 1rem;
+}
+
+.disp .estado {
+  width: auto;
+  margin-left: auto;
+  padding: 0 14px;
+}
+
+.disp-vacio {
+  padding: 12px 4px;
+  font-size: 1.2rem;
+  font-style: italic;
+}
+
+/* Temperatura: − valor + centrados y más grandes que en Inicio */
+.casa-temp .temp-control {
+  width: min(100%, 560px);
+  margin: 0 auto;
+}
+
+.casa-temp .btn-temp {
+  height: 64px;
+  font-size: 2.4rem;
+}
+
+.casa-temp .temp-valor {
+  min-height: 64px;
+  font-size: clamp(1.8rem, calc(6vh * var(--escala)), 3rem);
+}
+
+/* Formulario de añadir dispositivo: fondo difuminado como en el SOS */
+.dialogo-nuevo::backdrop {
+  background: rgba(10, 31, 68, 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.dialogo-nuevo h2 {
+  padding: 0 52px; /* deja sitio a la X */
+}
+
+.form-nuevo {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* Desplegables grandes con flecha propia (sigue el color del tema) */
+.selector {
+  position: relative;
+}
+
+.selector select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 60px 10px 18px;
+  font: inherit;
+  font-size: 1.3rem;
+  color: var(--texto);
+  background: var(--boton);
+  border: 2px solid var(--borde);
+  border-radius: 12px;
+  box-shadow: 0 4px 0 var(--boton-sombra);
+  cursor: pointer;
+}
+
+.selector select:hover {
+  background: var(--boton-hover);
+}
+
+.selector option {
+  background: var(--blanco);
+  color: var(--texto);
+}
+
+.selector svg {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  width: 28px;
+  height: 28px;
+  transform: translateY(-50%);
+  color: var(--icono);
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+.form-nuevo .dialogo-botones {
+  margin-top: 8px;
+}
+
+/* Si no cabe todo, los bloques crecen con su contenido y la página se desplaza */
+html.scroll .casa-layout {
+  flex: none;
+  grid-template-rows: auto auto;
+}
+
+@media (max-width: 1199px), (max-height: 559px) {
+  .casa-layout {
+    flex: none;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "temp    temp"
+      "luces   luces"
+      "puertas ventanas";
+  }
+}
+
+@media (max-width: 760px) {
+  .casa-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas: "temp" "luces" "puertas" "ventanas";
+    gap: 18px;
+  }
+
+  .disp {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .disp-icono {
+    width: 48px;
+    height: 48px;
+  }
+}
+
 /* Modo de alto contraste de Windows: mantiene bordes y foco visibles */
 @media (forced-colors: active) {
   .boton,
+  .disp-icono,
   .estado {
     border: 2px solid ButtonText;
   }

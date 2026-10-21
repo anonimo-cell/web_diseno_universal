@@ -50,7 +50,7 @@
             </a>
           </li>
           <li>
-            <a href="#casa" class="nav-item">
+            <a href="casa.html" class="nav-item">
               <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <polyline points="6,24 24,8 42,24"/>
                 <rect x="13" y="22" width="22" height="18"/>
@@ -114,11 +114,11 @@
         <span id="aviso-texto">Medicación pendiente</span>
       </p>
 
-      <!-- Estado de la casa. Luces, puertas y ventanas serán enlaces a sus páginas (aún sin destino) -->
+      <!-- Estado de la casa. Luces, puertas y ventanas llevan a su bloque en la página Casa -->
       <section class="tarjetas" id="casa" aria-labelledby="titulo-casa" tabindex="-1">
         <h2 id="titulo-casa" class="sr-only">Estado de la casa</h2>
 
-        <a class="boton tarjeta" href="#">
+        <a class="boton tarjeta" href="casa.html#luces">
           <span class="tarjeta-titulo">Luces</span>
           <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <circle cx="24" cy="20" r="10"/>
@@ -141,7 +141,7 @@
           </div>
         </div>
 
-        <a class="boton tarjeta" href="#">
+        <a class="boton tarjeta" href="casa.html#puertas">
           <span class="tarjeta-titulo">Puertas</span>
           <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <rect x="12" y="4" width="24" height="40" rx="2"/>
@@ -150,7 +150,7 @@
           <span class="estado alerta">Abiertas</span>
         </a>
 
-        <a class="boton tarjeta" href="#">
+        <a class="boton tarjeta" href="casa.html#ventanas">
           <span class="tarjeta-titulo">Ventanas</span>
           <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <rect x="8" y="6" width="32" height="36"/>
@@ -269,25 +269,8 @@
 
   <script src="comun.js"></script>
   <script>
-    // ---------- Temperatura ----------
-    // Fuera de 22–25 °C el valor lleva fondo rojo; dentro del rango solo se ve el número
-    let temperatura = 30;
-    const tempEstado = document.getElementById("temp-estado");
-    function pintarTemperatura() {
-      const fuera = temperatura < 22 || temperatura > 25;
-      tempEstado.className = "estado temp-valor" + (fuera ? " alerta" : "");
-      tempEstado.innerHTML = `${temperatura} °C` +
-        (fuera ? '<span class="sr-only"> (fuera del rango recomendado)</span>' : "");
-    }
-    document.querySelectorAll(".btn-temp").forEach(boton => {
-      boton.addEventListener("click", () => {
-        temperatura = Math.min(35, Math.max(10, temperatura + Number(boton.dataset.paso)));
-        pintarTemperatura();
-        const fuera = temperatura < 22 || temperatura > 25;
-        anunciar(`Temperatura ${temperatura} grados${fuera ? ", fuera del rango recomendado" : ""}`);
-      });
-    });
-    pintarTemperatura();
+    // ---------- Temperatura (compartida con la página Casa) ----------
+    configurarTemperatura(document.getElementById("temp-estado"), "estado temp-valor");
 
     // ---------- Medicación: el aviso de arriba sigue al botón Pendiente ----------
     const aviso = document.getElementById("aviso");

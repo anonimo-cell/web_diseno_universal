@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi casa · VitalHogar</title>
+  <meta name="description" content="Domótica del hogar: luces, temperatura, puertas y ventanas.">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <!-- Enlace para saltar la navegación con el teclado (WCAG 2.4.1) -->
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <div class="app">
+
+    <!-- ===== Barra lateral (Casa activa) ===== -->
+    <aside class="sidebar" aria-label="Navegación y emergencias">
+      <nav aria-label="Menú principal">
+        <ul class="nav">
+          <li>
+            <a href="index.html" class="nav-item">
+              <!-- Isotipo de VitalHogar: casa con corazón y señal wifi -->
+              <svg class="logo" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
+                <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
+                <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
+                <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
+                <path d="M1.5 28.5 25.5 6.5l24 22"/>
+                <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
+              </svg>
+              <span class="nav-texto">Inicio</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#aviso" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <path d="M12 34h24l-4-6v-8a8 8 0 0 0-16 0v8z"/>
+                <path d="M20 38a4 4 0 0 0 8 0"/>
+              </svg>
+              <span class="nav-texto">Alertas</span>
+            </a>
+          </li>
+          <li>
+            <a href="medicacion.html" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/>
+                <line x1="24" y1="16" x2="24" y2="32" transform="rotate(-35 24 24)"/>
+              </svg>
+              <span class="nav-texto">Medicación</span>
+            </a>
+          </li>
+          <li>
+            <!-- aria-current marca la página activa: sombreada y en negrita -->
+            <a href="casa.html" class="nav-item" aria-current="page">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <polyline points="6,24 24,8 42,24"/>
+                <rect x="13" y="22" width="22" height="18"/>
+              </svg>
+              <span class="nav-texto">Casa</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="11" y="5" width="28" height="38" rx="3"/>
+                <path d="M7 14h7M7 24h7M7 34h7"/>
+                <circle cx="25" cy="19" r="5"/>
+                <path d="M17 34c1-5 4-8 8-8s7 3 8 8"/>
+              </svg>
+              <span class="nav-texto">Contactos</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <button class="boton btn-sos" type="button" id="abrir-sos" aria-haspopup="dialog">
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <polygon points="24,5 45,41 3,41"/>
+          <line x1="24" y1="18" x2="24" y2="29"/>
+          <circle cx="24" cy="35" r="1.5"/>
+        </svg>
+        <span class="sos-texto">SOS</span>
+        <span class="sr-only">: pedir ayuda</span>
+      </button>
+    </aside>
+
+    <!-- ===== Contenido principal ===== -->
+    <main class="contenido" id="contenido" tabindex="-1">
+      <header class="cabecera">
+        <div class="cabecera-izq">
+          <h1>Mi casa</h1>
+          <button class="boton btn-anadir" type="button" id="abrir-nuevo" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 7v10M7 12h10"/>
+            </svg>
+            Añadir dispositivo
+          </button>
+        </div>
+        <div class="perfiles">
+          <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
+          <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
+                  aria-label="Menú de accesibilidad" title="Menú de accesibilidad">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+              <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+            </svg>
+          </button>
+          <button class="boton avatar" type="button" aria-label="Mi perfil" title="Mi perfil">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <circle cx="24" cy="17" r="8"/>
+              <path d="M8 42c2-10 9-14 16-14s14 4 16 14"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Luces a la izquierda; temperatura arriba y puertas · ventanas debajo.
+           Cada dispositivo es un botón: al pulsarlo cambia de estado. -->
+      <div class="casa-layout" id="casa">
+        <section class="casa-bloque casa-luces" id="luces" aria-labelledby="titulo-luces" tabindex="-1">
+          <h2 class="bloque-titulo" id="titulo-luces">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <circle cx="24" cy="20" r="10"/>
+              <path d="M19 30v6h10v-6M24 3v4M8 8l3 3M40 8l-3 3M3 20h4M41 20h4"/>
+            </svg>
+            Luces
+          </h2>
+          <ul class="disp-lista" id="lista-luz"></ul>
+        </section>
+
+        <section class="casa-bloque casa-temp" id="temperatura" aria-labelledby="titulo-temp" tabindex="-1">
+          <h2 class="bloque-titulo" id="titulo-temp">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M20 8a4 4 0 0 1 8 0v20a8 8 0 1 1-8 0z"/>
+              <line x1="24" y1="16" x2="24" y2="32"/>
+            </svg>
+            Temperatura
+          </h2>
+          <!-- Bajar · temperatura · subir, en una misma línea (igual que en Inicio) -->
+          <div class="temp-control">
+            <button class="boton btn-temp" type="button" data-paso="-1" aria-label="Bajar temperatura" title="Bajar temperatura">−</button>
+            <span class="estado temp-valor" id="temp-estado">30 °C</span>
+            <button class="boton btn-temp" type="button" data-paso="1" aria-label="Subir temperatura" title="Subir temperatura">+</button>
+          </div>
+        </section>
+
+        <section class="casa-bloque casa-puertas" id="puertas" aria-labelledby="titulo-puertas" tabindex="-1">
+          <h2 class="bloque-titulo" id="titulo-puertas">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <rect x="12" y="4" width="24" height="40" rx="2"/>
+              <circle cx="30" cy="25" r="1.8"/>
+            </svg>
+            Puertas
+          </h2>
+          <ul class="disp-lista" id="lista-puerta"></ul>
+        </section>
+
+        <section class="casa-bloque casa-ventanas" id="ventanas" aria-labelledby="titulo-ventanas" tabindex="-1">
+          <h2 class="bloque-titulo" id="titulo-ventanas">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <rect x="8" y="6" width="32" height="36"/>
+              <line x1="24" y1="6" x2="24" y2="42"/>
+              <line x1="8" y1="24" x2="40" y2="24"/>
+            </svg>
+            Ventanas
+          </h2>
+          <ul class="disp-lista" id="lista-ventana"></ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
+  <p class="sr-only" id="anuncio" aria-live="polite"></p>
+
+  <!-- ===== Añadir dispositivo: fondo difuminado y formulario con desplegables ===== -->
+  <dialog class="dialogo dialogo-nuevo" id="dialogo-nuevo" aria-labelledby="nuevo-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-nuevo" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="nuevo-titulo">Añadir dispositivo</h2>
+
+    <form class="form-nuevo" id="form-nuevo">
+      <div class="campo">
+        <label for="nuevo-tipo">Tipo</label>
+        <div class="selector">
+          <select id="nuevo-tipo">
+            <option value="luz">Luz</option>
+            <option value="puerta">Puerta</option>
+            <option value="ventana">Ventana</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="nuevo-lugar">Ubicación</label>
+        <div class="selector">
+          <select id="nuevo-lugar">
+            <option>Cocina</option>
+            <option>Salón</option>
+            <option>Dormitorio</option>
+            <option>Baño</option>
+            <option>Entrada</option>
+            <option>Pasillo</option>
+            <option>Terraza</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="nuevo-estado">Estado inicial</label>
+        <div class="selector">
+          <!-- Las opciones dependen del tipo (encendida/apagada o abierta/cerrada) -->
+          <select id="nuevo-estado"></select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="dialogo-botones">
+        <button class="boton" type="button" id="cancelar-nuevo">Cancelar</button>
+        <button class="boton btn-confirmar" type="submit">Añadir</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
+       (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
+  <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
+    <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
+
+    <!-- Solo aparece cuando ya se está avisando -->
+    <button class="boton btn-cerrar" type="button" id="sos-cerrar" aria-label="Cerrar" title="Cerrar" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <div class="sos-circulo" aria-hidden="true">
+      <svg viewBox="0 0 48 48" focusable="false">
+        <polygon points="24,5 45,41 3,41"/>
+        <line x1="24" y1="18" x2="24" y2="29"/>
+        <circle cx="24" cy="35" r="1.5"/>
+      </svg>
+      <span>SOS</span>
+    </div>
+
+    <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
+      Cancelar (<span id="sos-cuenta">5</span>)
+    </button>
+
+    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al acabar la cuenta atrás -->
+    <p class="sos-estado" id="sos-estado" role="status"></p>
+    <p class="sr-only" id="sos-aviso" aria-live="assertive"></p>
+  </dialog>
+
+  <!-- ===== Menú de accesibilidad ===== -->
+  <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="a11y-titulo" class="a11y-titulo">
+      Menú de accesibilidad
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+        <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+      </svg>
+    </h2>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-texto">
+      <h3 id="grupo-texto">
+        Tamaño de letra
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="4" y="4" width="24" height="24" rx="2"/>
+          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
+      <h3 id="grupo-vibracion">
+        Vibración
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="5" width="10" height="22" rx="2"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-tema">
+      <h3 id="grupo-tema">
+        Tema
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="5"/>
+          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
+        </svg>
+      </h3>
+      <div class="a11y-temas">
+        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
+      </div>
+    </section>
+
+    <div class="dialogo-botones">
+      <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
+    </div>
+  </dialog>
+
+  <script src="comun.js"></script>
+  <script>
+    // ---------- Temperatura (compartida con Inicio) ----------
+    configurarTemperatura(document.getElementById("temp-estado"), "estado temp-valor");
+
+    // ---------- Dispositivos ----------
+    // El estado no depende solo del color ni de la palabra: el icono cambia de forma
+    // (bombilla con rayos / sin rayos, puerta y ventana abiertas / cerradas).
+    // Verde = situación normal, rojo = conviene revisarlo (igual que en Inicio).
+    const TIPOS = {
+      luz: {
+        nombre: "Luz", plural: "luces", si: "Encendida", no: "Apagada", accionSi: "encender", accionNo: "apagar",
+        bienSi: true,
+        iconoSi: '<circle cx="24" cy="20" r="10" fill="currentColor"/><path d="M19 30v6h10v-6M24 3v4M8 8l3 3M40 8l-3 3M3 20h4M41 20h4"/>',
+        iconoNo: '<circle cx="24" cy="20" r="10"/><path d="M19 30v6h10v-6"/>'
+      },
+      puerta: {
+        nombre: "Puerta", plural: "puertas", si: "Abierta", no: "Cerrada", accionSi: "abrir", accionNo: "cerrar",
+        bienSi: false,
+        iconoSi: '<path d="M12 44V4h24v40"/><path d="M12 4l14 5v37l-14-2z" fill="currentColor"/>',
+        iconoNo: '<rect x="12" y="4" width="24" height="40" rx="2"/><circle cx="30" cy="25" r="1.8"/>'
+      },
+      ventana: {
+        nombre: "Ventana", plural: "ventanas", si: "Abierta", no: "Cerrada", accionSi: "abrir", accionNo: "cerrar",
+        bienSi: false,
+        iconoSi: '<rect x="12" y="6" width="24" height="36"/><path d="M12 6 3 10v28l9 4M36 6l9 4v28l-9 4"/>',
+        iconoNo: '<rect x="8" y="6" width="32" height="36"/><line x1="24" y1="6" x2="24" y2="42"/><line x1="8" y1="24" x2="40" y2="24"/>'
+      }
+    };
+
+    const DISPOSITIVOS_INICIALES = [
+      { tipo: "luz", lugar: "Cocina", activo: false },
+      { tipo: "luz", lugar: "Salón", activo: true },
+      { tipo: "puerta", lugar: "Entrada", activo: true },
+      { tipo: "ventana", lugar: "Cocina", activo: false }
+    ];
+
+    // Se guardan en el navegador para que no se pierdan al cambiar de página
+    let dispositivos = DISPOSITIVOS_INICIALES;
+    try {
+      const guardados = JSON.parse(localStorage.getItem("dispositivos"));
+      if (Array.isArray(guardados)) dispositivos = guardados.filter(d => TIPOS[d.tipo]);
+    } catch (e) {}
+
+    function guardarDispositivos() {
+      try { localStorage.setItem("dispositivos", JSON.stringify(dispositivos)); } catch (e) {}
+    }
+
+    function pintarBoton(boton, d) {
+      const t = TIPOS[d.tipo];
+      const bien = d.activo === t.bienSi;
+      boton.innerHTML = `
+        <span class="disp-icono ${bien ? "ok" : "alerta"}">
+          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">${d.activo ? t.iconoSi : t.iconoNo}</svg>
+        </span>
+        <span class="disp-texto">
+          <span class="sr-only">${t.nombre}: </span>
+          <span class="disp-lugar"></span>
+          <span class="disp-pista">Pulsa para ${d.activo ? t.accionNo : t.accionSi}</span>
+        </span>
+        <span class="estado ${bien ? "ok" : "alerta"}"><span class="sr-only">, </span>${d.activo ? t.si : t.no}</span>`;
+      boton.querySelector(".disp-lugar").textContent = d.lugar;
+    }
+
+    function pintarDispositivos() {
+      Object.keys(TIPOS).forEach(tipo => {
+        const lista = document.getElementById("lista-" + tipo);
+        lista.innerHTML = "";
+        dispositivos.forEach((d, i) => {
+          if (d.tipo !== tipo) return;
+          const li = document.createElement("li");
+          const boton = document.createElement("button");
+          boton.className = "boton disp";
+          boton.type = "button";
+          boton.dataset.i = i;
+          pintarBoton(boton, d);
+          li.append(boton);
+          lista.append(li);
+        });
+        if (!lista.children.length) {
+          lista.innerHTML = `<li class="disp-vacio">No hay ${TIPOS[tipo].plural}</li>`;
+        }
+      });
+    }
+
+    // Pulsar un dispositivo lo enciende/apaga o lo abre/cierra.
+    // Se repinta solo ese botón para que el foco no se mueva.
+    document.getElementById("casa").addEventListener("click", e => {
+      const boton = e.target.closest(".disp");
+      if (!boton) return;
+      const d = dispositivos[boton.dataset.i];
+      d.activo = !d.activo;
+      guardarDispositivos();
+      pintarBoton(boton, d);
+      const t = TIPOS[d.tipo];
+      anunciar(`${t.nombre} de ${d.lugar}: ${(d.activo ? t.si : t.no).toLowerCase()}`);
+    });
+
+    pintarDispositivos();
+
+    // ---------- Añadir dispositivo ----------
+    const dialogoNuevo = document.getElementById("dialogo-nuevo");
+    const formNuevo = document.getElementById("form-nuevo");
+    const nuevoTipo = document.getElementById("nuevo-tipo");
+    const nuevoLugar = document.getElementById("nuevo-lugar");
+    const nuevoEstado = document.getElementById("nuevo-estado");
+
+    // El estado inicial se ofrece con las palabras del tipo elegido
+    function opcionesEstado() {
+      const t = TIPOS[nuevoTipo.value];
+      nuevoEstado.innerHTML = `<option value="0">${t.no}</option><option value="1">${t.si}</option>`;
+    }
+    nuevoTipo.addEventListener("change", opcionesEstado);
+
+    document.getElementById("abrir-nuevo").addEventListener("click", () => {
+      formNuevo.reset();
+      opcionesEstado();
+      dialogoNuevo.showModal();
+      nuevoTipo.focus();
+    });
+    document.getElementById("cerrar-nuevo").addEventListener("click", () => dialogoNuevo.close());
+    document.getElementById("cancelar-nuevo").addEventListener("click", () => dialogoNuevo.close());
+
+    formNuevo.addEventListener("submit", e => {
+      e.preventDefault();
+      const d = { tipo: nuevoTipo.value, lugar: nuevoLugar.value, activo: nuevoEstado.value === "1" };
+      dispositivos.push(d);
+      guardarDispositivos();
+      pintarDispositivos();
+      dialogoNuevo.close();
+
+      // El foco va al dispositivo recién añadido para que se vea dónde ha quedado
+      const nuevo = document.querySelector(`.disp[data-i="${dispositivos.length - 1}"]`);
+      nuevo.focus();
+      nuevo.scrollIntoView({ block: "nearest" });
+      anunciar(`${TIPOS[d.tipo].nombre} añadida en ${d.lugar}`);
+    });
+  </script>
+</body>
+</html>
