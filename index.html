@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio · Mi Hogar</title>
+  <title>Inicio · VitalHogar</title>
   <meta name="description" content="Panel de control del hogar: estado de la casa, medicación y botón de emergencia.">
   <link rel="stylesheet" href="estilos.css">
 </head>
@@ -20,10 +20,24 @@
           <!-- aria-current marca la página activa: sombreada y en negrita -->
           <li>
             <a href="#contenido" class="nav-item" aria-current="page">
-              <svg class="logo" viewBox="0 0 48 48" role="img" aria-label="Logo de Mi Hogar" focusable="false">
-                <path d="M6 24 24 8l18 16"/>
-                <path d="M12 20v20h24V20"/>
-                <path d="M24 34s-6-4-6-8a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6 8-6 8z"/>
+              <!-- Isotipo de VitalHogar: casa con corazón y señal wifi -->
+              <svg class="logo" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
+                <defs>
+                  <linearGradient id="degradado-logo" x1="8" y1="0" x2="44" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#2fa8a8"/>
+                    <stop offset="0.5" stop-color="#2fa8a8"/>
+                    <stop offset="0.5" stop-color="#2e86b0"/>
+                    <stop offset="1" stop-color="#2e86b0"/>
+                  </linearGradient>
+                </defs>
+                <g stroke="url(#degradado-logo)">
+                  <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
+                  <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
+                  <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
+                </g>
+                <path d="M1.5 28.5 25.5 6.5l24 22" stroke="#2fa8a8"/>
+                <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5" stroke="#2e86b0"/>
+                <path d="M37.5 1.5A14.5 14.5 0 0 1 52 16" stroke="#2fa8a8"/>
               </svg>
               <span class="nav-texto">Inicio</span>
             </a>
