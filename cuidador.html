@@ -171,7 +171,7 @@
   <script src="comun.js"></script>
   <script>
     let nombreCuidador = "";
-    try { nombreCuidador = (localStorage.getItem("nombre-usuario") || "").split(" ")[0]; } catch (e) {}
+    try { nombreCuidador = (sessionStorage.getItem("nombre-usuario") || "").split(" ")[0]; } catch (e) {}
     if (nombreCuidador) document.getElementById("saludo-cuidador").textContent = `Hola, ${nombreCuidador}`;
   </script>
 </body>

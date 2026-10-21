@@ -3,55 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio · VitalHogar</title>
-  <meta name="description" content="Panel de control del hogar: estado de la casa, medicación y botón de emergencia.">
+  <title>Iniciar sesión · VitalHogar</title>
+  <meta name="description" content="Entrada a VitalHogar para pacientes y cuidadores.">
   <link rel="stylesheet" href="estilos.css">
 </head>
-<body>
+<!-- data-pagina="login": comun.js no redirige aquí aunque la sesión esté cerrada -->
+<body data-pagina="login">
   <!-- Enlace para saltar la navegación con el teclado (WCAG 2.4.1) -->
   <a class="saltar" href="#contenido">Saltar al contenido principal</a>
 
   <div class="app">
 
-    <!-- ===== Barra lateral ===== -->
-    <aside class="sidebar" aria-label="Navegación y emergencias">
-      <nav aria-label="Menú principal">
-        <ul class="nav">
-          <!-- aria-current marca la página activa: sombreada y en negrita -->
-          <li>
-            <a href="#contenido" class="nav-item" aria-current="page">
-              <!-- Isotipo de VitalHogar: casa con corazón y señal wifi -->
-              <svg class="logo" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
-                <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
-                <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
-                <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
-                <path d="M1.5 28.5 25.5 6.5l24 22"/>
-                <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
-              </svg>
-              <span class="nav-texto">Inicio</span>
-            </a>
-          </li>
-          <li>
-            <a href="medicacion.html" class="nav-item">
-              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-                <rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/>
-                <line x1="24" y1="16" x2="24" y2="32" transform="rotate(-35 24 24)"/>
-              </svg>
-              <span class="nav-texto">Medicación</span>
-            </a>
-          </li>
-          <li>
-            <a href="casa.html" class="nav-item">
-              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-                <polyline points="6,24 24,8 42,24"/>
-                <rect x="13" y="22" width="22" height="18"/>
-              </svg>
-              <span class="nav-texto">Casa</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-
+    <!-- ===== Barra lateral: sin apartados (no hay sesión), pero el SOS sigue disponible ===== -->
+    <aside class="sidebar" aria-label="Emergencias">
       <button class="boton btn-sos" type="button" id="abrir-sos" aria-haspopup="dialog">
         <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
           <polygon points="24,5 45,41 3,41"/>
@@ -66,7 +30,7 @@
     <!-- ===== Contenido principal ===== -->
     <main class="contenido" id="contenido" tabindex="-1">
       <header class="cabecera">
-        <h1>Buenos días, X</h1>
+        <h1>Iniciar sesión</h1>
         <div class="perfiles">
           <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
           <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
@@ -76,88 +40,271 @@
               <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
             </svg>
           </button>
-          <a class="boton avatar" href="perfil.html" aria-label="Mi perfil" title="Mi perfil">
-            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-              <circle cx="24" cy="17" r="8"/>
-              <path d="M8 42c2-10 9-14 16-14s14 4 16 14"/>
-            </svg>
-          </a>
         </div>
       </header>
 
-      <p class="aviso" id="aviso">
-        <svg class="aviso-icono" viewBox="0 0 48 48" role="img" aria-label="Atención:" focusable="false">
-          <polygon points="24,5 45,41 3,41"/>
-          <line x1="24" y1="18" x2="24" y2="29"/>
-          <circle cx="24" cy="35" r="1.5"/>
-        </svg>
-        <span id="aviso-texto">Medicación pendiente</span>
-      </p>
-
-      <!-- Estado de la casa. Luces, puertas y ventanas llevan a su bloque en la página Casa -->
-      <section class="tarjetas" id="casa" aria-labelledby="titulo-casa" tabindex="-1">
-        <h2 id="titulo-casa" class="sr-only">Estado de la casa</h2>
-
-        <a class="boton tarjeta" href="casa.html#luces">
-          <span class="tarjeta-titulo">Luces</span>
-          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-            <circle cx="24" cy="20" r="10"/>
-            <path d="M19 30v6h10v-6M24 3v4M8 8l3 3M40 8l-3 3M3 20h4M41 20h4"/>
+      <div class="login-layout">
+        <!-- Logo de VitalHogar con su degradado verde azulado → azul -->
+        <div class="login-marca">
+          <svg class="logo-grande" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
+            <defs>
+              <linearGradient id="degradado-logo" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0" class="logo-color-1"/>
+                <stop offset="1" class="logo-color-2"/>
+              </linearGradient>
+            </defs>
+            <g stroke="url(#degradado-logo)">
+              <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
+              <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
+              <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
+              <path d="M1.5 28.5 25.5 6.5l24 22"/>
+              <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
+            </g>
           </svg>
-          <span class="estado ok">Encendidas</span>
-        </a>
-
-        <div class="tarjeta panel" role="group" aria-labelledby="titulo-temp">
-          <span class="tarjeta-titulo" id="titulo-temp">Temperatura</span>
-          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-            <path d="M20 8a4 4 0 0 1 8 0v20a8 8 0 1 1-8 0z"/>
-            <line x1="24" y1="16" x2="24" y2="32"/>
-          </svg>
-          <!-- Bajar · temperatura · subir, en una misma línea (proporción 3 · 4 · 3) -->
-          <div class="temp-control">
-            <button class="boton btn-temp" type="button" data-paso="-1" aria-label="Bajar temperatura" title="Bajar temperatura">−</button>
-            <span class="estado temp-valor" id="temp-estado">30 °C</span>
-            <button class="boton btn-temp" type="button" data-paso="1" aria-label="Subir temperatura" title="Subir temperatura">+</button>
-          </div>
+          <p class="login-nombre">VitalHogar</p>
+          <p class="login-lema">Para pacientes y cuidadores</p>
         </div>
 
-        <a class="boton tarjeta" href="casa.html#puertas">
-          <span class="tarjeta-titulo">Puertas</span>
-          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-            <rect x="12" y="4" width="24" height="40" rx="2"/>
-            <circle cx="30" cy="25" r="1.8"/>
-          </svg>
-          <span class="estado alerta">Abiertas</span>
-        </a>
+        <form class="login" id="form-login" novalidate>
+          <div class="campo">
+            <label for="login-usuario">Nombre de usuario</label>
+            <input id="login-usuario" type="text" autocomplete="username" autocapitalize="none"
+                   aria-required="true" aria-describedby="error-login-usuario">
+            <p class="campo-error" id="error-login-usuario"></p>
+          </div>
 
-        <a class="boton tarjeta" href="casa.html#ventanas">
-          <span class="tarjeta-titulo">Ventanas</span>
-          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-            <rect x="8" y="6" width="32" height="36"/>
-            <line x1="24" y1="6" x2="24" y2="42"/>
-            <line x1="8" y1="24" x2="40" y2="24"/>
-          </svg>
-          <span class="estado ok">Cerradas</span>
-        </a>
-      </section>
+          <div class="campo">
+            <label for="login-clave">Contraseña</label>
+            <div class="campo-clave">
+              <input id="login-clave" type="password" autocomplete="current-password"
+                     aria-required="true" aria-describedby="error-login-clave">
+              <button class="boton btn-editar" type="button" id="ver-clave" aria-pressed="false">Mostrar</button>
+            </div>
+            <p class="campo-error" id="error-login-clave"></p>
+          </div>
 
-      <!-- Próxima medicación: toda la tarjeta lleva a Mi medicación; el botón Pendiente va aparte -->
-      <section class="medicacion" id="medicacion" aria-labelledby="titulo-med" tabindex="-1">
-        <h2 id="titulo-med" class="sr-only">Próxima medicación</h2>
-        <p class="hora"><time datetime="21:00">21:00</time></p>
-        <p class="pastilla">
-          <a class="med-enlace" href="medicacion.html">Pastilla tensión<span class="sr-only">: ver mi medicación</span></a>
-        </p>
-        <button class="boton btn-pendiente" type="button" id="btn-pastilla">
-          <span class="btn-principal">Pendiente</span>
-          <span class="btn-secundario">Pulsa al tomarla</span>
-        </button>
-      </section>
+          <!-- Usuario o contraseña incorrectos: no se dice cuál de los dos, por seguridad -->
+          <div class="campo">
+            <p class="campo-error" id="error-login" role="alert"></p>
+          </div>
+
+          <button class="boton btn-confirmar btn-entrar" type="submit">Entrar</button>
+
+          <button class="btn-enlace" type="button" id="abrir-olvido" aria-haspopup="dialog">¿Has olvidado tu contraseña?</button>
+
+          <div class="login-nuevo">
+            <p>¿Todavía no tienes cuenta?</p>
+            <button class="boton btn-anadir" type="button" id="abrir-registro" aria-haspopup="dialog">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 7v10M7 12h10"/>
+              </svg>
+              Crear cuenta nueva
+            </button>
+          </div>
+        </form>
+      </div>
     </main>
   </div>
 
   <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
   <p class="sr-only" id="anuncio" aria-live="polite"></p>
+
+  <!-- ===== Crear cuenta: datos → verificar el teléfono por SMS → cuenta creada ===== -->
+  <dialog class="dialogo dialogo-editar dialogo-form dialogo-registro" id="dialogo-registro" aria-labelledby="registro-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-registro" aria-label="Cerrar sin crear la cuenta" title="Cerrar sin crear la cuenta">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="registro-titulo">Crear cuenta nueva</h2>
+    <p class="pasos-indicador" id="registro-indicador">Paso 1 de 2</p>
+
+    <!-- Paso 1: datos de la cuenta -->
+    <form class="form-nuevo" id="form-registro" data-paso="datos" novalidate>
+      <fieldset class="opciones-perfil">
+        <legend>¿Quién va a usar la cuenta?</legend>
+        <label class="opcion-perfil">
+          <input type="radio" name="tipo" value="paciente" checked>
+          <span>
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <circle cx="24" cy="17" r="8"/>
+              <path d="M8 42c2-10 9-14 16-14s14 4 16 14"/>
+            </svg>
+            <span class="opcion-texto">Paciente</span>
+          </span>
+        </label>
+        <label class="opcion-perfil">
+          <input type="radio" name="tipo" value="cuidador">
+          <span>
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <circle cx="24" cy="19" r="7"/>
+              <path d="M15 13c3-5 15-5 18 0l-2 3H17z"/>
+              <path d="M8 43c2-10 9-14 16-14s14 4 16 14"/>
+              <path d="M24 33v6M21 36h6"/>
+            </svg>
+            <span class="opcion-texto">Cuidador</span>
+          </span>
+        </label>
+      </fieldset>
+
+      <div class="campos-2">
+        <div class="campo">
+          <label for="reg-nombre">Nombre y apellidos</label>
+          <input id="reg-nombre" type="text" autocomplete="name" aria-required="true" aria-describedby="error-reg-nombre">
+          <p class="campo-error" id="error-reg-nombre"></p>
+        </div>
+
+        <div class="campo">
+          <label for="reg-usuario">Nombre de usuario</label>
+          <p class="campo-pista" id="pista-reg-usuario">Sin espacios. Lo usarás para entrar.</p>
+          <input id="reg-usuario" type="text" autocomplete="username" autocapitalize="none" aria-required="true"
+                 aria-describedby="pista-reg-usuario error-reg-usuario">
+          <p class="campo-error" id="error-reg-usuario"></p>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="reg-telefono">Teléfono móvil</label>
+        <p class="campo-pista" id="pista-reg-telefono">9 cifras, sin el +34. Te enviaremos un SMS para comprobarlo.</p>
+        <div class="campo-tel">
+          <span class="prefijo" aria-hidden="true">+34</span>
+          <input id="reg-telefono" type="tel" inputmode="tel" autocomplete="tel-national" aria-required="true"
+                 aria-describedby="pista-reg-telefono error-reg-telefono">
+        </div>
+        <p class="campo-error" id="error-reg-telefono"></p>
+      </div>
+
+      <div class="campos-2">
+        <div class="campo">
+          <label for="reg-clave">Contraseña</label>
+          <p class="campo-pista" id="pista-reg-clave">Al menos 6 caracteres.</p>
+          <input id="reg-clave" type="password" autocomplete="new-password" aria-required="true"
+                 aria-describedby="pista-reg-clave error-reg-clave">
+          <p class="campo-error" id="error-reg-clave"></p>
+        </div>
+
+        <div class="campo">
+          <label for="reg-clave2">Repite la contraseña</label>
+          <p class="campo-pista" aria-hidden="true">&nbsp;</p>
+          <input id="reg-clave2" type="password" autocomplete="new-password" aria-required="true"
+                 aria-describedby="error-reg-clave2">
+          <p class="campo-error" id="error-reg-clave2"></p>
+        </div>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" data-mostrar="reg-clave reg-clave2">
+        Mostrar contraseñas
+      </label>
+
+      <div class="dialogo-botones">
+        <button class="boton" type="button" data-cerrar>Cancelar</button>
+        <button class="boton btn-confirmar" type="submit">Continuar</button>
+      </div>
+    </form>
+
+    <!-- Paso 2: código recibido por SMS -->
+    <form class="form-nuevo" id="form-verificar" data-paso="sms" novalidate hidden>
+      <p class="form-texto" id="verificar-texto"></p>
+      <p class="demo-sms" id="verificar-demo"></p>
+
+      <div class="campo">
+        <label for="ver-codigo">Código del SMS</label>
+        <input id="ver-codigo" class="input-codigo" type="text" inputmode="numeric" autocomplete="one-time-code"
+               maxlength="7" aria-required="true" aria-describedby="verificar-texto error-ver-codigo">
+        <p class="campo-error" id="error-ver-codigo"></p>
+      </div>
+
+      <div class="dialogo-botones">
+        <button class="boton" type="button" id="registro-atras">Cambiar mis datos</button>
+        <button class="boton" type="button" id="registro-reenviar">Reenviar SMS</button>
+        <button class="boton btn-confirmar" type="submit">Verificar</button>
+      </div>
+    </form>
+
+    <!-- Fin: cuenta creada -->
+    <div class="paso-fin" data-paso="fin" hidden>
+      <span class="icono-ok" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="m5 12 5 5 9-10"/></svg>
+      </span>
+      <p id="registro-fin-texto"></p>
+      <button class="boton btn-confirmar btn-entrar" type="button" id="registro-entrar"
+              aria-describedby="registro-fin-texto">Entrar</button>
+    </div>
+  </dialog>
+
+  <!-- ===== Restablecer la contraseña: usuario → código SMS y nueva contraseña → hecho ===== -->
+  <dialog class="dialogo dialogo-editar dialogo-form" id="dialogo-olvido" aria-labelledby="olvido-titulo">
+    <button class="boton btn-cerrar" type="button" data-cerrar aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="olvido-titulo">Restablecer contraseña</h2>
+    <p class="pasos-indicador" id="olvido-indicador">Paso 1 de 2</p>
+
+    <!-- Paso 1: ¿de quién es la cuenta? -->
+    <form class="form-nuevo" id="form-olvido" data-paso="usuario" novalidate>
+      <p class="form-texto" id="olvido-explicacion">Te enviaremos un SMS con un código al teléfono de tu cuenta.</p>
+      <div class="campo">
+        <label for="olvido-usuario">Nombre de usuario</label>
+        <input id="olvido-usuario" type="text" autocomplete="username" autocapitalize="none" aria-required="true"
+               aria-describedby="olvido-explicacion error-olvido-usuario">
+        <p class="campo-error" id="error-olvido-usuario"></p>
+      </div>
+      <div class="dialogo-botones">
+        <button class="boton" type="button" data-cerrar>Cancelar</button>
+        <button class="boton btn-confirmar" type="submit">Enviar SMS</button>
+      </div>
+    </form>
+
+    <!-- Paso 2: código y nueva contraseña -->
+    <form class="form-nuevo" id="form-nueva-clave" data-paso="sms" novalidate hidden>
+      <p class="form-texto" id="olvido-texto"></p>
+      <p class="demo-sms" id="olvido-demo"></p>
+
+      <div class="campo">
+        <label for="olvido-codigo">Código del SMS</label>
+        <input id="olvido-codigo" class="input-codigo" type="text" inputmode="numeric" autocomplete="one-time-code"
+               maxlength="7" aria-required="true" aria-describedby="olvido-texto error-olvido-codigo">
+        <p class="campo-error" id="error-olvido-codigo"></p>
+      </div>
+
+      <div class="campos-2">
+        <div class="campo">
+          <label for="olvido-clave">Nueva contraseña</label>
+          <p class="campo-pista" id="pista-olvido-clave">Al menos 6 caracteres.</p>
+          <input id="olvido-clave" type="password" autocomplete="new-password" aria-required="true"
+                 aria-describedby="pista-olvido-clave error-olvido-clave">
+          <p class="campo-error" id="error-olvido-clave"></p>
+        </div>
+        <div class="campo">
+          <label for="olvido-clave2">Repite la contraseña</label>
+          <p class="campo-pista" aria-hidden="true">&nbsp;</p>
+          <input id="olvido-clave2" type="password" autocomplete="new-password" aria-required="true"
+                 aria-describedby="error-olvido-clave2">
+          <p class="campo-error" id="error-olvido-clave2"></p>
+        </div>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" data-mostrar="olvido-clave olvido-clave2">
+        Mostrar contraseñas
+      </label>
+
+      <div class="dialogo-botones">
+        <button class="boton" type="button" id="olvido-reenviar">Reenviar SMS</button>
+        <button class="boton btn-confirmar" type="submit">Guardar contraseña</button>
+      </div>
+    </form>
+
+    <!-- Fin: contraseña cambiada -->
+    <div class="paso-fin" data-paso="fin" hidden>
+      <span class="icono-ok" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="m5 12 5 5 9-10"/></svg>
+      </span>
+      <p id="olvido-fin-texto">Contraseña cambiada. Ya puedes entrar con la nueva.</p>
+      <button class="boton btn-confirmar btn-entrar" type="button" id="olvido-volver"
+              aria-describedby="olvido-fin-texto">Volver a iniciar sesión</button>
+    </div>
+  </dialog>
 
   <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
        (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
@@ -251,15 +398,275 @@
 
   <script src="comun.js"></script>
   <script>
-    // ---------- Temperatura (compartida con la página Casa) ----------
-    configurarTemperatura(document.getElementById("temp-estado"), "estado temp-valor");
+    // ---------- Cuentas ----------
+    // Prototipo sin servidor: las cuentas se guardan en el navegador (la contraseña en claro,
+    // solo para la demo). Cuentas de prueba:
+    //   pacientes: mario / 1234, carmen / carmen123 · cuidadores: dar / 1234, paula / paula123
+    const USUARIOS_INICIALES = {
+      mario: { nombre: "Mario", telefono: "655123456", clave: "1234", tipo: "paciente" },
+      dar: { nombre: "Dar", telefono: "677123456", clave: "1234", tipo: "cuidador" },
+      carmen: { nombre: "Carmen García", telefono: "612345678", clave: "carmen123", tipo: "paciente" },
+      paula: { nombre: "Paula Martín", telefono: "634567890", clave: "paula123", tipo: "cuidador" }
+    };
+    // Cada tipo de perfil entra en su propia aplicación
+    const DESTINOS = { paciente: "inicio.html", cuidador: "cuidador.html" };
 
-    // ---------- Medicación: el aviso de arriba sigue al botón Pendiente ----------
-    const aviso = document.getElementById("aviso");
-    const avisoTexto = document.getElementById("aviso-texto");
-    configurarPastilla(document.getElementById("btn-pastilla"), tomada => {
-      aviso.classList.toggle("al-dia", tomada);
-      avisoTexto.textContent = tomada ? "Medicación al día" : "Medicación pendiente";
+    let usuarios = { ...USUARIOS_INICIALES };
+    try { usuarios = { ...USUARIOS_INICIALES, ...JSON.parse(localStorage.getItem("usuarios")) }; } catch (e) {}
+
+    function guardarUsuarios() {
+      try { localStorage.setItem("usuarios", JSON.stringify(usuarios)); } catch (e) {}
+    }
+
+    function entrar(usuario) {
+      const u = usuarios[usuario];
+      // La sesión se guarda solo mientras el navegador esté abierto (ver comun.js)
+      try {
+        sessionStorage.setItem("sesion", "abierta");
+        sessionStorage.setItem("tipo-perfil", u.tipo);
+        sessionStorage.setItem("nombre-usuario", u.nombre);
+      } catch (e) {}
+      location.href = DESTINOS[u.tipo];
+    }
+
+    // Usuarios sin mayúsculas ni espacios alrededor: "Carmen " y "carmen" son el mismo
+    const normalizar = texto => texto.trim().toLowerCase();
+    // "612 345 678", "+34612345678"… → "612345678"
+    const soloCifras = texto => texto.replace(/[\s.-]/g, "").replace(/^\+?34(?=\d{9}$)/, "");
+    const formatoTelefono = t => "+34 " + t.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
+
+    // ---------- Errores en los campos ----------
+    // Cada campo tiene su <p id="error-ID">. El foco va al primer campo con error
+    // y el lector lee el mensaje porque está en su aria-describedby (WCAG 3.3.1).
+    function comprobar(reglas) {
+      let primero = null;
+      reglas.forEach(([id, mensaje]) => {
+        document.getElementById(id).setAttribute("aria-invalid", String(Boolean(mensaje)));
+        document.getElementById("error-" + id).textContent = mensaje || "";
+        if (mensaje && !primero) primero = id;
+      });
+      if (primero) document.getElementById(primero).focus();
+      return !primero;
+    }
+
+    function limpiarErrores(contenedor) {
+      contenedor.querySelectorAll(".campo-error").forEach(p => { p.textContent = ""; });
+      contenedor.querySelectorAll("[aria-invalid]").forEach(el => el.removeAttribute("aria-invalid"));
+    }
+
+    const errorClave = valor => valor.length < 6 ? "La contraseña debe tener al menos 6 caracteres" : "";
+    const errorRepetir = (valor, original) => valor !== original ? "Las contraseñas no coinciden" : "";
+
+    // ---------- SMS (simulado) ----------
+    // Sin servidor no se puede mandar el SMS: el código se muestra en un recuadro de prueba
+    function enviarSms(demo) {
+      const codigo = String(crypto.getRandomValues(new Uint32Array(1))[0] % 1000000).padStart(6, "0");
+      demo.textContent = `Prototipo: el SMS llegaría al móvil. Tu código es ${codigo}`;
+      return codigo;
+    }
+
+    // ---------- Ventanas por pasos ----------
+    // Solo se ve el paso activo; el foco va a su primer campo o botón
+    function mostrarPaso(dialogo, paso, indicador) {
+      dialogo.querySelectorAll("[data-paso]").forEach(p => { p.hidden = p.dataset.paso !== paso; });
+      dialogo.querySelector(".pasos-indicador").textContent = indicador;
+      dialogo.querySelector(`[data-paso="${paso}"]`).querySelector("input, button:not([data-cerrar])").focus();
+    }
+
+    function abrirDialogo(dialogo, primerPaso) {
+      dialogo.querySelectorAll("form").forEach(f => f.reset());
+      dialogo.querySelectorAll("[data-mostrar]").forEach(mostrarClaves);
+      limpiarErrores(dialogo);
+      dialogo.showModal();
+      mostrarPaso(dialogo, primerPaso, "Paso 1 de 2");
+    }
+
+    document.querySelectorAll("[data-cerrar]").forEach(b =>
+      b.addEventListener("click", () => b.closest("dialog").close()));
+
+    // "Mostrar contraseñas": cambia el tipo de los campos que indica data-mostrar
+    function mostrarClaves(check) {
+      check.dataset.mostrar.split(" ").forEach(id => {
+        document.getElementById(id).type = check.checked ? "text" : "password";
+      });
+    }
+    document.querySelectorAll("[data-mostrar]").forEach(c => c.addEventListener("change", () => mostrarClaves(c)));
+
+    // ---------- Iniciar sesión ----------
+    const loginUsuario = document.getElementById("login-usuario");
+    const loginClave = document.getElementById("login-clave");
+    const errorLogin = document.getElementById("error-login");
+
+    const verClave = document.getElementById("ver-clave");
+    verClave.addEventListener("click", () => {
+      const visible = loginClave.type === "password";
+      loginClave.type = visible ? "text" : "password";
+      verClave.setAttribute("aria-pressed", String(visible));
+      verClave.textContent = visible ? "Ocultar" : "Mostrar";
+    });
+
+    document.getElementById("form-login").addEventListener("submit", e => {
+      e.preventDefault();
+      errorLogin.textContent = "";
+      const usuario = normalizar(loginUsuario.value);
+      const ok = comprobar([
+        ["login-usuario", usuario ? "" : "Escribe tu nombre de usuario"],
+        ["login-clave", loginClave.value ? "" : "Escribe tu contraseña"]
+      ]);
+      if (!ok) return;
+
+      if (!usuarios[usuario] || usuarios[usuario].clave !== loginClave.value) {
+        errorLogin.textContent = "El usuario o la contraseña no son correctos";
+        loginClave.focus();
+        return;
+      }
+      entrar(usuario);
+    });
+
+    // ---------- Crear cuenta ----------
+    const dialogoRegistro = document.getElementById("dialogo-registro");
+    const regTelefono = document.getElementById("reg-telefono");
+    let nuevaCuenta = null;   // datos del paso 1, a la espera de verificar el teléfono
+    let codigoRegistro = null;
+
+    document.getElementById("abrir-registro").addEventListener("click", () => abrirDialogo(dialogoRegistro, "datos"));
+    document.getElementById("cerrar-registro").addEventListener("click", () => dialogoRegistro.close());
+
+    function pedirCodigoRegistro() {
+      codigoRegistro = enviarSms(document.getElementById("verificar-demo"));
+      document.getElementById("verificar-texto").innerHTML =
+        `Hemos enviado un SMS con un código de 6 cifras al <strong>${formatoTelefono(nuevaCuenta.telefono)}</strong>. Escríbelo aquí.`;
+    }
+
+    document.getElementById("form-registro").addEventListener("submit", e => {
+      e.preventDefault();
+      const nombre = document.getElementById("reg-nombre").value.trim();
+      const usuario = normalizar(document.getElementById("reg-usuario").value);
+      const telefono = soloCifras(regTelefono.value);
+      const clave = document.getElementById("reg-clave").value;
+      const clave2 = document.getElementById("reg-clave2").value;
+
+      const ok = comprobar([
+        ["reg-nombre", nombre ? "" : "Escribe tu nombre y apellidos"],
+        ["reg-usuario", !usuario ? "Escribe un nombre de usuario"
+          : !/^[a-z0-9._ñ-]{3,}$/.test(usuario) ? "Usa al menos 3 letras o números, sin espacios"
+          : usuarios[usuario] ? "Ese nombre de usuario ya existe. Prueba con otro" : ""],
+        ["reg-telefono", !telefono ? "Escribe tu teléfono móvil"
+          : !/^[67]\d{8}$/.test(telefono) ? "Escribe un móvil de 9 cifras que empiece por 6 o 7" : ""],
+        ["reg-clave", errorClave(clave)],
+        ["reg-clave2", errorRepetir(clave2, clave)]
+      ]);
+      if (!ok) return;
+
+      const tipo = new FormData(e.target).get("tipo");
+      nuevaCuenta = { usuario, nombre, telefono, clave, tipo };
+      pedirCodigoRegistro();
+      document.getElementById("form-verificar").reset();
+      limpiarErrores(document.getElementById("form-verificar"));
+      mostrarPaso(dialogoRegistro, "sms", "Paso 2 de 2: verificar el teléfono");
+    });
+
+    document.getElementById("registro-reenviar").addEventListener("click", () => {
+      pedirCodigoRegistro();
+      anunciar("Te hemos enviado un SMS nuevo");
+    });
+    document.getElementById("registro-atras").addEventListener("click", () => {
+      mostrarPaso(dialogoRegistro, "datos", "Paso 1 de 2");
+    });
+
+    document.getElementById("form-verificar").addEventListener("submit", e => {
+      e.preventDefault();
+      const codigo = document.getElementById("ver-codigo").value.replace(/\s/g, "");
+      const ok = comprobar([
+        ["ver-codigo", !codigo ? "Escribe el código que te ha llegado por SMS"
+          : codigo !== codigoRegistro ? "El código no es correcto. Revisa el SMS o pide uno nuevo" : ""]
+      ]);
+      if (!ok) return;
+
+      const { usuario, ...datos } = nuevaCuenta;
+      usuarios[usuario] = datos;
+      guardarUsuarios();
+      // El perfil del paciente empieza con su nombre y su teléfono
+      if (datos.tipo === "paciente") {
+        let perfil = {};
+        try { perfil = JSON.parse(localStorage.getItem("perfil")) || {}; } catch (e) {}
+        try { localStorage.setItem("perfil", JSON.stringify({ ...perfil, nombre: datos.nombre, telefono: datos.telefono })); } catch (e) {}
+      }
+      document.getElementById("registro-fin-texto").textContent =
+        `Teléfono comprobado. Tu cuenta de ${datos.tipo} está lista, ${datos.nombre.split(" ")[0]}.`;
+      document.getElementById("registro-titulo").textContent = "Cuenta creada";
+      mostrarPaso(dialogoRegistro, "fin", "");
+      anunciar("Cuenta creada");
+    });
+
+    document.getElementById("registro-entrar").addEventListener("click", () => entrar(nuevaCuenta.usuario));
+    dialogoRegistro.addEventListener("close", () => {
+      document.getElementById("registro-titulo").textContent = "Crear cuenta nueva";
+    });
+
+    // ---------- Restablecer contraseña por SMS ----------
+    const dialogoOlvido = document.getElementById("dialogo-olvido");
+    let usuarioOlvido = null;
+    let codigoOlvido = null;
+
+    document.getElementById("abrir-olvido").addEventListener("click", () => {
+      abrirDialogo(dialogoOlvido, "usuario");
+      // Si ya escribió su usuario en la pantalla de entrada, se aprovecha
+      document.getElementById("olvido-usuario").value = loginUsuario.value.trim();
+    });
+
+    function pedirCodigoOlvido() {
+      codigoOlvido = enviarSms(document.getElementById("olvido-demo"));
+      document.getElementById("olvido-texto").innerHTML =
+        // Solo se muestran las últimas cifras del teléfono de la cuenta
+        `Hemos enviado un SMS con un código de 6 cifras al móvil que termina en <strong>${usuarios[usuarioOlvido].telefono.slice(-3)}</strong>.`;
+    }
+
+    document.getElementById("form-olvido").addEventListener("submit", e => {
+      e.preventDefault();
+      const usuario = normalizar(document.getElementById("olvido-usuario").value);
+      const ok = comprobar([
+        ["olvido-usuario", !usuario ? "Escribe tu nombre de usuario"
+          : !usuarios[usuario] ? "No hay ninguna cuenta con ese nombre de usuario" : ""]
+      ]);
+      if (!ok) return;
+      usuarioOlvido = usuario;
+      pedirCodigoOlvido();
+      mostrarPaso(dialogoOlvido, "sms", "Paso 2 de 2: nueva contraseña");
+    });
+
+    document.getElementById("olvido-reenviar").addEventListener("click", () => {
+      pedirCodigoOlvido();
+      anunciar("Te hemos enviado un SMS nuevo");
+    });
+
+    document.getElementById("form-nueva-clave").addEventListener("submit", e => {
+      e.preventDefault();
+      const codigo = document.getElementById("olvido-codigo").value.replace(/\s/g, "");
+      const clave = document.getElementById("olvido-clave").value;
+      const clave2 = document.getElementById("olvido-clave2").value;
+      const ok = comprobar([
+        ["olvido-codigo", !codigo ? "Escribe el código que te ha llegado por SMS"
+          : codigo !== codigoOlvido ? "El código no es correcto. Revisa el SMS o pide uno nuevo" : ""],
+        ["olvido-clave", errorClave(clave)],
+        ["olvido-clave2", errorRepetir(clave2, clave)]
+      ]);
+      if (!ok) return;
+
+      usuarios[usuarioOlvido].clave = clave;
+      guardarUsuarios();
+      mostrarPaso(dialogoOlvido, "fin", "");
+      anunciar("Contraseña cambiada");
+    });
+
+    // Vuelve a la entrada con el usuario ya escrito y el foco en la contraseña
+    document.getElementById("olvido-volver").addEventListener("click", () => {
+      dialogoOlvido.close();
+      loginUsuario.value = usuarioOlvido;
+      loginClave.value = "";
+      limpiarErrores(document.getElementById("form-login"));
+      errorLogin.textContent = "";
+      loginClave.focus();
     });
   </script>
 </body>

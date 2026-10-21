@@ -1799,11 +1799,7 @@ html.contraste {
   width: min(100%, 360px);
 }
 
-/* Página provisional del cuidador: sin barra lateral */
-.contenido-solo {
-  min-height: 100vh;
-}
-
+/* Página provisional del cuidador */
 .login.cuidador-aviso {
   margin: 4vh auto 0;
 }

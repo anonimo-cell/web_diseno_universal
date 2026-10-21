@@ -9,13 +9,15 @@ function anunciar(texto) {
 }
 
 // ---------- Sesión ----------
-// Sin sesión, cualquier página lleva al inicio de sesión.
+// La sesión dura mientras el navegador esté abierto (sessionStorage): cada vez que se
+// entra en la web se empieza por el inicio de sesión (index.html), que decide qué
+// parte abrir según el tipo de usuario. Sin sesión, cualquier página lleva allí.
 // Un cuidador que abra una página del paciente va a su propia página.
 try {
   const pagina = document.body.dataset.pagina;
   if (pagina !== "login") {
-    if (localStorage.getItem("sesion") === "cerrada") location.replace("login.html");
-    else if (localStorage.getItem("tipo-perfil") === "cuidador" && pagina !== "cuidador") location.replace("cuidador.html");
+    if (sessionStorage.getItem("sesion") !== "abierta") location.replace("index.html");
+    else if (sessionStorage.getItem("tipo-perfil") === "cuidador" && pagina !== "cuidador") location.replace("cuidador.html");
   }
 } catch (e) {}
 
@@ -28,11 +30,8 @@ if (dialogoSalir) {
   });
   document.getElementById("salir-no").addEventListener("click", () => dialogoSalir.close());
   document.getElementById("salir-si").addEventListener("click", () => {
-    try {
-      localStorage.setItem("sesion", "cerrada");
-      localStorage.removeItem("tipo-perfil");
-    } catch (e) {}
-    location.href = "login.html";
+    try { sessionStorage.clear(); } catch (e) {}
+    location.href = "index.html";
   });
 }
 
