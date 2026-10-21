@@ -1,49 +1,45 @@
-/* ===== Paleta de alto contraste (AAA) =====
+/* ===== Paleta: blanco y azul como base, verde = positivo, rojo = negativo =====
    Contraste del texto (WCAG 1.4.6 AAA pide 7:1):
-   --texto sobre blanco ........ 21:1
-   --texto-suave sobre blanco .. 14.4:1
-   blanco sobre --rojo ......... 10:1
+   --texto sobre blanco ........ 16.3:1
+   --azul sobre blanco ......... 10.2:1   (blanco sobre --azul igual)
+   --texto sobre --azul-claro .. 13.6:1
    blanco sobre --verde ........ 10.4:1
-   blanco sobre --azul ......... 13.2:1
-   blanco sobre --gris ......... 12.6:1
-   --texto sobre --boton-hover . 15:1
-   Bordes (--borde) sobre blanco 12.6:1 (WCAG 1.4.11 pide 3:1). */
+   blanco sobre --rojo ......... 10:1
+   Bordes (--borde) sobre blanco 10.2:1 (WCAG 1.4.11 pide 3:1). */
 :root {
-  --fondo: #f2f2f2;
+  --fondo: #f5f8fd;
   --blanco: #ffffff;
-  --texto: #000000;
-  --texto-suave: #2b2b2b;
-  --borde: #333333;
+  --texto: #0a1f44;     /* azul muy oscuro para el texto */
+  --texto-suave: #123c8c;
+  --borde: #123c8c;
+
+  --azul: #123c8c;
+  --azul-hover: #0a2a66;
+  --azul-sombra: #061a40;
+  --azul-claro: #e3ecfa;
 
   --boton: #ffffff;
-  --boton-hover: #d6e0ff;
-  --boton-sombra: #555555;
-  --activo: #c4c4c4; /* apartado activo del menú: --texto encima 12:1 */
-
-  --rojo: #8b0000;
-  --rojo-hover: #5c0000;
-  --rojo-sombra: #3d0000;
+  --boton-hover: var(--azul-claro);
+  --boton-sombra: #9fb3d9;
 
   --verde: #0d4a14;
   --verde-hover: #08300d;
   --verde-sombra: #041d08;
 
-  --azul: #1a237e;
-  --azul-hover: #0d1250;
-  --azul-sombra: #070b33;
+  --rojo: #8b0000;
+  --rojo-hover: #5c0000;
+  --rojo-sombra: #3d0000;
 
-  --gris: #333333;
-  --icono-aviso: var(--rojo);
-
-  /* Foco de teclado: anillo azul claro pegado al botón + borde negro por fuera.
-     Azul claro sobre rojo 7.4:1 · sobre azul 9.8:1 · sobre verde 7.8:1 · sobre negro 15.7:1
-     Borde negro sobre blanco / fondo 21:1 → AAA en cualquier botón */
+  /* Foco de teclado: anillo azul claro pegado al control + borde azul oscuro por fuera.
+     Azul claro sobre --azul 7.6:1 · sobre rojo 7.4:1 · sobre verde 7.8:1
+     Borde --texto sobre blanco / fondo 16:1 → AAA en cualquier control */
   --foco: #b3e5ff;
-  --foco-borde: #000000;
+  --foco-borde: #0a1f44;
+
   --radio: 16px;
 }
 
-/* Modo "Alto contraste" del panel de accesibilidad: fondo negro, texto blanco, foco amarillo */
+/* Modo "Alto contraste" del panel de accesibilidad: fondo negro, texto blanco */
 html.contraste {
   --fondo: #000000;
   --blanco: #000000;
@@ -53,9 +49,6 @@ html.contraste {
   --boton: #000000;
   --boton-hover: #333333;
   --boton-sombra: #888888;
-  --activo: #505050;
-  --gris: #000000;
-  --icono-aviso: #ffffff;
   --foco-borde: #ffffff;
 }
 
@@ -71,7 +64,7 @@ body {
 }
 
 body {
-  font-family: "Segoe UI", Verdana, Arial, sans-serif;
+  font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
   background: var(--fondo);
   color: var(--texto);
   font-size: 1.125rem; /* 18px, en rem para respetar el tamaño del navegador */
@@ -139,14 +132,14 @@ section:focus {
   --sombra: var(--boton-sombra);
   background: var(--base);
   color: var(--texto);
-  border: 2px solid var(--texto);
+  border: 2px solid var(--borde);
   border-radius: var(--radio);
   font: inherit;
   text-decoration: none;
   cursor: pointer;
   box-shadow:
     inset 0 3px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+    inset 0 -4px 0 rgba(10, 31, 68, 0.15),
     0 5px 0 var(--sombra);
 }
 
@@ -157,7 +150,7 @@ section:focus {
 /* Al pulsar: relieve hacia dentro, sin movimiento */
 .boton:active {
   box-shadow:
-    inset 0 4px 6px rgba(0, 0, 0, 0.45),
+    inset 0 4px 6px rgba(10, 31, 68, 0.45),
     0 1px 0 var(--sombra);
 }
 
@@ -170,13 +163,14 @@ section:focus {
   background: var(--base);
 }
 
-/* Variantes de color */
+/* Variantes de color: azul (acciones), rojo (emergencia / pendiente), verde (hecho) */
 .btn-sos,
 .btn-pendiente,
 .btn-confirmar {
   --base: var(--rojo);
   --base-hover: var(--rojo-hover);
   --sombra: var(--rojo-sombra);
+  border-color: var(--rojo-sombra);
   color: #ffffff;
 }
 
@@ -185,6 +179,7 @@ section:focus {
   --base: var(--azul);
   --base-hover: var(--azul-hover);
   --sombra: var(--azul-sombra);
+  border-color: var(--azul-sombra);
   color: #ffffff;
 }
 
@@ -192,6 +187,7 @@ section:focus {
   --base: var(--verde);
   --base-hover: var(--verde-hover);
   --sombra: var(--verde-sombra);
+  border-color: var(--verde-sombra);
 }
 
 html.contraste .btn-sos,
@@ -240,7 +236,7 @@ html.contraste .btn-a11y {
   border-left: 8px solid transparent;
   box-shadow:
     inset 0 3px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -4px 0 rgba(0, 0, 0, 0.12);
+    inset 0 -4px 0 rgba(10, 31, 68, 0.1);
 }
 
 .nav-item:hover {
@@ -260,6 +256,7 @@ html.contraste .btn-a11y {
   flex: none;
   width: clamp(28px, 5vh, 44px);
   height: clamp(28px, 5vh, 44px);
+  color: var(--azul);
 }
 
 .nav-texto {
@@ -267,22 +264,38 @@ html.contraste .btn-a11y {
   font-weight: 400;
 }
 
-/* Apartado activo: sombreado (hundido), barra a la izquierda y texto e icono en negrita */
-.nav-item[aria-current="page"] {
-  background: var(--activo);
+/* Apartado activo: fondo azul fuerte, texto e icono blancos y en negrita (10.2:1) */
+.nav-item[aria-current="page"],
+.nav-item[aria-current="page"]:hover {
+  background: var(--azul);
+  color: #ffffff;
   border-left-color: var(--texto);
   box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.35);
 }
 
-.nav-item[aria-current="page"] .nav-texto {
-  font-weight: 800;
-}
-
 .nav-item[aria-current="page"] svg {
+  color: #ffffff;
   stroke-width: 4;
 }
 
-/* El isotipo es algo más grande que los iconos y conserva sus colores */
+.nav-item[aria-current="page"] .nav-texto {
+  font-weight: 700;
+}
+
+html.contraste .nav-item svg {
+  color: #ffffff;
+}
+
+html.contraste .nav-item[aria-current="page"] {
+  background: #ffffff;
+  color: #000000;
+}
+
+html.contraste .nav-item[aria-current="page"] svg {
+  color: #000000;
+}
+
+/* Isotipo: algo más grande que los iconos */
 .nav-item svg.logo {
   width: clamp(34px, 6.5vh, 54px);
   height: clamp(34px, 6.5vh, 54px);
@@ -393,11 +406,11 @@ html.contraste .btn-a11y {
 .aviso {
   background: var(--rojo);
   color: #ffffff;
-  border: 3px solid var(--texto);
+  border: 3px solid var(--rojo-sombra);
   border-radius: var(--radio);
   padding: 1.6vh 28px;
   font-size: clamp(1.6rem, 5.5vh, 2.6rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.2;
   display: flex;
   align-items: center;
@@ -415,15 +428,12 @@ html.contraste .btn-a11y {
 
 .aviso.al-dia {
   background: var(--verde);
+  border-color: var(--verde-sombra);
   box-shadow: 0 5px 0 var(--verde-sombra);
 }
 
 html.contraste .aviso {
   border-color: #ffffff;
-}
-
-.aviso.al-dia .aviso-icono {
-  display: none;
 }
 
 /* ===== Tarjetas de la casa ===== */
@@ -435,50 +445,59 @@ html.contraste .aviso {
   gap: 24px;
   padding: 2.5vh 24px 3.5vh;
   border: 2px solid var(--borde);
+  border-radius: 20px;
   background: var(--blanco);
 }
 
+/* Las cuatro tarjetas tienen las mismas tres filas (título · icono · estado),
+   así quedan todas al mismo nivel */
 .tarjeta {
   min-height: 0;
-  padding: 1.5vh 14px;
-  display: flex;
-  flex-direction: column;
+  padding: 1.5vh 10px 1.8vh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  justify-items: center;
   align-items: center;
-  justify-content: space-between;
   gap: 1vh;
+  border-radius: 20px;
 }
 
-/* Tarjeta que no es botón (temperatura): sin relieve */
+/* Tarjeta que no es botón (temperatura): mismo borde, sin relieve */
 .tarjeta.panel {
   background: var(--blanco);
   border: 2px solid var(--borde);
-  border-radius: var(--radio);
 }
 
 .tarjeta-titulo {
-  font-size: clamp(1rem, 2.8vh, 1.3rem);
+  font-size: clamp(1.05rem, 3vh, 1.4rem);
   font-weight: 700;
-  color: var(--texto-suave);
+  color: var(--texto);
 }
 
-/* El icono ocupa el espacio que sobra, así la tarjeta nunca desborda */
-.tarjeta svg {
-  flex: 1;
-  min-height: 0;
+/* Iconos grandes: ocupan todo el hueco libre de la tarjeta */
+.tarjeta > svg {
   width: 100%;
-  max-height: 90px;
-  color: var(--texto-suave);
+  height: 100%;
+  max-height: 150px;
+  min-height: 0;
+  color: var(--azul);
+  stroke-width: 2.2;
 }
 
 .estado {
   width: 100%;
-  text-align: center;
-  padding: 0.8vh 10px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
   font-size: clamp(1rem, 3vh, 1.35rem);
   font-weight: 700;
+  white-space: nowrap;
   color: #ffffff;
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 .estado.ok {
@@ -490,21 +509,31 @@ html.contraste .aviso {
 }
 
 .estado.neutro {
-  background: var(--gris);
+  background: var(--azul);
 }
 
 html.contraste .estado {
   border-color: #ffffff;
 }
 
-.temp-botones {
+/* Temperatura: bajar · valor · subir en una misma línea */
+.temp-control {
+  width: 100%;
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 6px;
 }
 
-/* Mínimo 48x48 px (WCAG 2.5.5 AAA pide 44) */
+.temp-control .estado {
+  flex: 1;
+  min-width: 0;
+  padding: 0 4px;
+}
+
+/* Mínimo 44x48 px (WCAG 2.5.5 AAA pide 44) */
 .btn-temp {
-  width: 52px;
+  flex: none;
+  width: 44px;
   height: 48px;
   border-radius: 12px;
   font-size: 1.6rem;
@@ -520,6 +549,7 @@ html.contraste .estado {
   gap: 40px;
   padding: 2vh 40px 2.8vh;
   border: 2px solid var(--borde);
+  border-radius: 20px;
   background: var(--blanco);
 }
 
@@ -539,7 +569,7 @@ html.contraste .estado {
   flex-direction: column;
   align-items: center;
   padding: 1.2vh 44px;
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .btn-principal {
@@ -557,7 +587,7 @@ html.contraste .estado {
   width: min(560px, calc(100% - 32px));
   margin: auto;
   padding: 32px;
-  border: 3px solid var(--texto);
+  border: 3px solid var(--borde);
   border-radius: 20px;
   background: var(--blanco);
   color: var(--texto);
@@ -565,7 +595,7 @@ html.contraste .estado {
 }
 
 .dialogo::backdrop {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(10, 31, 68, 0.75);
 }
 
 .dialogo h2 {
@@ -620,11 +650,17 @@ html.contraste .estado {
   line-height: 36px;
 }
 
-/* Opción activada: colores invertidos */
+/* Opción activada: fondo azul y texto blanco */
 .a11y-opcion[aria-pressed="true"] {
-  --base: var(--texto);
-  --base-hover: var(--texto);
-  color: var(--blanco);
+  --base: var(--azul);
+  --base-hover: var(--azul-hover);
+  color: #ffffff;
+}
+
+html.contraste .a11y-opcion[aria-pressed="true"] {
+  --base: #ffffff;
+  --base-hover: #ffffff;
+  color: #000000;
 }
 
 /* Modo de alto contraste de Windows: mantiene bordes y foco visibles */
@@ -655,12 +691,11 @@ html.scroll .tarjetas {
   flex: none;
 }
 
-html.scroll .tarjeta svg {
-  flex: none;
-  height: 64px;
+html.scroll .tarjeta > svg {
+  height: 90px;
 }
 
-@media (max-width: 899px), (max-height: 559px) {
+@media (max-width: 1199px), (max-height: 559px) {
   body {
     overflow: auto;
   }
@@ -681,9 +716,8 @@ html.scroll .tarjeta svg {
     gap: 10px;
   }
 
-  .tarjeta svg {
-    flex: none;
-    height: 64px;
+  .tarjeta > svg {
+    height: 90px;
   }
 
   .btn-sos {
@@ -757,12 +791,24 @@ html.scroll .tarjeta svg {
     gap: 18px;
   }
 
+  .tarjetas {
+    padding: 16px;
+    gap: 14px;
+  }
+
   .medicacion {
     grid-template-columns: 1fr;
     text-align: center;
   }
 
   .a11y-opciones {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Móvil estrecho: una tarjeta por fila para que quepa − 30 °C + */
+@media (max-width: 480px) {
+  .tarjetas {
     grid-template-columns: 1fr;
   }
 }
