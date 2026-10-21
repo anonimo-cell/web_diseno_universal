@@ -1174,7 +1174,9 @@ html.contraste .disp-icono {
 /* Formularios y confirmaciones: fondo difuminado como en el SOS */
 .dialogo-nuevo::backdrop,
 .dialogo-editar::backdrop,
-.dialogo-salir::backdrop {
+.dialogo-salir::backdrop,
+.dialogo-detalle::backdrop,
+.dialogo-perfil::backdrop {
   background: rgba(10, 31, 68, 0.45);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -1640,7 +1642,8 @@ html.contraste {
 }
 
 /* Crear cuenta y restablecer contraseña: ventanas por pasos */
-.dialogo-registro {
+.dialogo-registro,
+.dialogo-pautas {
   width: min(760px, calc(100% - 32px));
 }
 
@@ -1799,13 +1802,470 @@ html.contraste {
   width: min(100%, 360px);
 }
 
-/* Página provisional del cuidador */
-.login.cuidador-aviso {
-  margin: 4vh auto 0;
+/* ===== Inicio del cuidador: tabla resumen de sus pacientes ===== */
+.panel-pacientes {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2vh;
 }
 
-.cuidador-aviso p {
+/* Filtro "Alertas": pulsado → azul con ✓ (no depende solo del color) */
+.btn-filtro[aria-pressed="true"] {
+  --base: var(--azul);
+  --base-hover: var(--azul-hover);
+  color: #ffffff;
+}
+
+.btn-filtro[aria-pressed="true"]::after {
+  content: " ✓" / "";
+}
+
+/* Si hay muchos pacientes, la tabla se desplaza dentro de su marco */
+.tabla-marco {
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: 20px;
+}
+
+/* Columnas fijas: no cambian de ancho al filtrar */
+.tabla-pacientes {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.tabla-pacientes thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 1.8vh 22px;
+  background: var(--blanco);
+  border-bottom: 2px solid var(--borde);
+  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.6rem);
+  font-weight: 400;
+  text-align: left;
+}
+
+.th-contenido {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.th-contenido svg {
+  width: 1.4em;
+  height: 1.4em;
+  flex: none;
+  color: var(--icono);
+}
+
+.tabla-pacientes tbody tr + tr {
+  border-top: 2px solid var(--borde);
+}
+
+.tabla-pacientes tbody th,
+.tabla-pacientes td {
+  padding: 12px 10px 16px;
+  vertical-align: middle;
+  font-weight: 400;
+  text-align: left;
+}
+
+/* Cada casilla es un botón con relieve: se ve que se puede pulsar */
+.celda {
+  width: 100%;
+  min-height: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 16px;
+  text-align: left;
+}
+
+.celda-nombre {
+  font-size: clamp(1.4rem, calc(4.5vh * var(--escala)), 2.2rem);
+  line-height: 1.2;
+}
+
+.celda-principal {
+  font-size: clamp(1.2rem, calc(3.8vh * var(--escala)), 1.8rem);
+  line-height: 1.2;
+}
+
+.celda-secundaria {
+  font-size: 1.05rem;
+}
+
+.celda .estado,
+.dialogo-detalle .estado {
+  width: auto;
+  padding: 0 16px;
+}
+
+.celda .estado {
+  font-size: clamp(1.2rem, calc(3.8vh * var(--escala)), 1.7rem);
+}
+
+/* Ventanas de detalle y perfil del cuidador */
+.dialogo-detalle h2,
+.dialogo-perfil h2 {
+  padding: 0 52px; /* deja sitio a la X */
+}
+
+.dialogo .detalle-resumen {
+  margin-bottom: 14px;
   font-size: 1.25rem;
+}
+
+.detalle-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.detalle-lista li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 14px;
+  border: 2px solid var(--borde);
+  border-radius: 12px;
+  font-size: 1.2rem;
+}
+
+.dialogo-detalle .datos {
+  text-align: left;
+}
+
+.detalle-botones {
+  margin-top: 20px;
+}
+
+/* ===== Medicación del cuidador =====
+   Arriba: Hoy · Cumplimiento semanal. Debajo: aviso por tomas sin confirmar. */
+
+/* "Más tarde": aún no toca. Contorno sin relleno, más discreto que tomada/pendiente */
+.estado.espera {
+  background: transparent;
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.disp-icono.espera {
+  background: transparent;
+  color: var(--icono);
+  border-color: var(--borde);
+}
+
+/* Barras del gráfico: azul normal; los días bajos, rojo rayado (claro en tema oscuro) */
+:root {
+  --barra-baja: #8b0000;
+}
+
+html.oscuro {
+  --barra-baja: #ff8f8f;
+}
+
+html.contraste {
+  --barra-baja: #000000;
+}
+
+/* Paciente: etiqueta y desplegable en la misma línea */
+.campo-en-linea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.campo-en-linea label {
+  margin: 0;
+}
+
+.campo-en-linea .selector {
+  min-width: 11em;
+}
+
+.medc-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "hoy   semana"
+    "aviso aviso";
+  gap: 24px;
+}
+
+.medc-hoy { grid-area: hoy; }
+.medc-semana { grid-area: semana; }
+.medc-aviso { grid-area: aviso; }
+
+/* Botón al pie de un bloque (Editar pautas, Historial), centrado como en el boceto */
+.btn-pie-bloque {
+  align-self: center;
+  margin-top: auto;
+  min-height: 56px;
+  padding: 10px 26px;
+  font-size: 1.25rem;
+}
+
+.tomas-hoy {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px;
+}
+
+.toma {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 10px 14px;
+  border: 2px solid var(--borde);
+  border-radius: 14px;
+}
+
+.toma .disp-icono {
+  width: 48px;
+  height: 48px;
+}
+
+.toma-texto {
+  flex: 1 1 10em;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.toma-nombre {
+  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.6rem);
+  line-height: 1.2;
+}
+
+.toma-dosis {
+  font-size: 1.05rem;
+}
+
+.toma .estado {
+  width: auto;
+  margin-left: auto;
+  padding: 0 14px;
+}
+
+.cumplimiento {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  font-size: 1.15rem;
+}
+
+.cumplimiento-pct {
+  font-size: clamp(2.4rem, calc(8vh * var(--escala)), 4rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Gráfico de barras: valor encima, barra fina con la punta redondeada y el día debajo */
+.grafico-barras {
+  flex: 1;
+  min-height: 150px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 8px;
+}
+
+.barra-dia {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* En pantallas estrechas el valor puede partirse en dos líneas en vez de desbordar */
+.barra-valor {
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.barra-valor.bajo {
+  font-weight: 700;
+}
+
+.barra-zona {
+  flex: 1;
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom: 2px solid var(--texto);
+}
+
+.barra {
+  width: min(100%, 40px);
+  background: var(--borde);
+  border-radius: 4px 4px 0 0;
+}
+
+.barra.bajo {
+  background-color: var(--barra-baja);
+  background-image: repeating-linear-gradient(45deg, transparent 0 5px, rgba(255, 255, 255, 0.5) 5px 8px);
+}
+
+.barra-nombre {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* Aviso: frase y desplegable en una línea, como en el boceto */
+.aviso-toma {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.aviso-toma label {
+  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.7rem);
+}
+
+.aviso-toma .selector {
+  width: 12em;
+}
+
+.aviso-pista {
+  font-size: 1.05rem;
+}
+
+/* Editar pautas: hora · medicamento · dosis · quitar en cada fila */
+.pautas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pauta-fila {
+  display: grid;
+  grid-template-columns: 9em 1fr 1fr auto;
+  align-items: end;
+  gap: 8px 12px;
+  padding: 12px;
+  border: 2px solid var(--borde);
+  border-radius: 14px;
+}
+
+.pauta-fila .campo-error {
+  grid-column: 1 / -1;
+}
+
+.pauta-fila .btn-quitar {
+  margin-bottom: 4px;
+}
+
+.btn-anadir-toma {
+  align-self: flex-start;
+}
+
+html.scroll .medc-layout {
+  flex: none;
+  grid-template-rows: auto auto;
+}
+
+@media (max-width: 1199px), (max-height: 559px) {
+  .medc-layout {
+    flex: none;
+    grid-template-rows: auto;
+  }
+
+  .grafico-barras {
+    flex: none;
+    height: 240px;
+  }
+}
+
+@media (max-width: 899px) {
+  .medc-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas: "hoy" "semana" "aviso";
+    gap: 18px;
+  }
+
+  .campo-en-linea .selector {
+    min-width: 0;
+    width: 10em;
+  }
+}
+
+@media (max-width: 640px) {
+  .pauta-fila {
+    grid-template-columns: 1fr auto;
+  }
+
+  .pauta-fila .campo:nth-child(2),
+  .pauta-fila .campo:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .pauta-fila .btn-quitar {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+/* Móvil: cada paciente es una tarjeta con sus casillas una debajo de otra */
+@media (max-width: 760px) {
+  .tabla-pacientes thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .tabla-pacientes,
+  .tabla-pacientes tbody,
+  .tabla-pacientes tr,
+  .tabla-pacientes tbody th,
+  .tabla-pacientes td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-pacientes tbody tr {
+    padding: 8px 4px;
+  }
+
+  .tabla-pacientes tbody th,
+  .tabla-pacientes td {
+    padding: 6px 10px;
+  }
+
+  .tabla-pacientes [data-etiqueta]::before {
+    content: attr(data-etiqueta);
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
 }
 
 .login {

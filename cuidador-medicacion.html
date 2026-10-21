@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medicación · Cuidador · VitalHogar</title>
+  <meta name="description" content="Seguimiento de la medicación de un paciente: tomas de hoy, cumplimiento semanal y avisos.">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<!-- data-pagina="cuidador": comun.js deja entrar aquí a los cuidadores -->
+<body data-pagina="cuidador">
+  <!-- Enlace para saltar la navegación con el teclado (WCAG 2.4.1) -->
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <div class="app">
+
+    <!-- ===== Barra lateral del cuidador (Medicación activa).
+         Casa y Contactos aún no tienen página: los enlaces "#" no hacen nada (ver comun.js) ===== -->
+    <aside class="sidebar" aria-label="Navegación y emergencias">
+      <nav aria-label="Menú principal">
+        <ul class="nav">
+          <li>
+            <a href="cuidador.html" class="nav-item">
+              <!-- Isotipo de VitalHogar: casa con corazón y señal wifi -->
+              <svg class="logo" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
+                <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
+                <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
+                <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
+                <path d="M1.5 28.5 25.5 6.5l24 22"/>
+                <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
+              </svg>
+              <span class="nav-texto">Inicio</span>
+            </a>
+          </li>
+          <li>
+            <!-- aria-current marca la página activa: sombreada y en negrita -->
+            <a href="cuidador-medicacion.html" class="nav-item" aria-current="page">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/>
+                <line x1="24" y1="16" x2="24" y2="32" transform="rotate(-35 24 24)"/>
+              </svg>
+              <span class="nav-texto">Medicación</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <polyline points="6,24 24,8 42,24"/>
+                <rect x="13" y="22" width="22" height="18"/>
+              </svg>
+              <span class="nav-texto">Casa</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="11" y="5" width="28" height="38" rx="3"/>
+                <path d="M7 14h7M7 24h7M7 34h7"/>
+                <circle cx="25" cy="19" r="5"/>
+                <path d="M17 34c1-5 4-8 8-8s7 3 8 8"/>
+              </svg>
+              <span class="nav-texto">Contactos</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <button class="boton btn-sos" type="button" id="abrir-sos" aria-haspopup="dialog">
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <polygon points="24,5 45,41 3,41"/>
+          <line x1="24" y1="18" x2="24" y2="29"/>
+          <circle cx="24" cy="35" r="1.5"/>
+        </svg>
+        <span class="sos-texto">SOS</span>
+        <span class="sr-only">: pedir ayuda</span>
+      </button>
+    </aside>
+
+    <!-- ===== Contenido principal ===== -->
+    <main class="contenido" id="contenido" tabindex="-1">
+      <header class="cabecera">
+        <div class="cabecera-izq">
+          <h1>Medicación</h1>
+          <!-- Desplegable: de qué paciente se ve la medicación -->
+          <div class="campo campo-en-linea">
+            <label for="elegir-paciente">Paciente</label>
+            <div class="selector">
+              <select id="elegir-paciente"></select>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="perfiles">
+          <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
+          <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
+                  aria-label="Menú de accesibilidad" title="Menú de accesibilidad">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+              <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+            </svg>
+          </button>
+          <button class="boton avatar" type="button" id="abrir-perfil" aria-haspopup="dialog"
+                  aria-label="Mi perfil" title="Mi perfil">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <circle cx="24" cy="17" r="8"/>
+              <path d="M8 42c2-10 9-14 16-14s14 4 16 14"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Hoy y cumplimiento semanal arriba; el aviso por tomas sin confirmar debajo, como en el boceto -->
+      <div class="medc-layout">
+        <!-- 1. Tomas de hoy -->
+        <section class="perfil-bloque medc-hoy" aria-labelledby="titulo-hoy">
+          <h2 class="bloque-titulo" id="titulo-hoy">Hoy</h2>
+          <ul class="tomas-hoy" id="tomas-hoy"></ul>
+          <button class="boton btn-editar btn-pie-bloque" type="button" id="abrir-pautas" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>
+            Editar pautas y dosis
+          </button>
+        </section>
+
+        <!-- 2. Cumplimiento semanal: porcentaje y gráfico de barras por día -->
+        <section class="perfil-bloque medc-semana" aria-labelledby="titulo-semana">
+          <h2 class="bloque-titulo" id="titulo-semana">Cumplimiento semanal</h2>
+          <p class="cumplimiento">
+            <span class="cumplimiento-pct" id="cumplimiento-pct"></span>
+            <span>de las tomas confirmadas esta semana</span>
+          </p>
+          <!-- Cada barra lleva su valor escrito; los días bajos (menos del 80 %) van en rojo,
+               rayados y con ⚠, para que no dependa solo del color -->
+          <ul class="grafico-barras" id="grafico-semana" aria-label="Tomas confirmadas cada día de esta semana"></ul>
+          <button class="boton btn-editar btn-pie-bloque" type="button" id="abrir-historial" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg>
+            Historial
+          </button>
+        </section>
+
+        <!-- 3. Aviso si no se confirma una toma -->
+        <section class="perfil-bloque medc-aviso" aria-labelledby="titulo-aviso">
+          <h2 class="sr-only" id="titulo-aviso">Avisos de medicación</h2>
+          <div class="aviso-toma">
+            <label for="aviso-minutos">Avisar si no se confirma una toma tras</label>
+            <div class="selector">
+              <select id="aviso-minutos" aria-describedby="aviso-pista">
+                <option value="15">15 min</option>
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">1 hora</option>
+                <option value="90">1 h 30 min</option>
+              </select>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+          <p class="aviso-pista" id="aviso-pista"></p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
+  <p class="sr-only" id="anuncio" aria-live="polite"></p>
+
+  <!-- ===== Editar pautas y dosis: una fila por toma (hora · medicamento · dosis) ===== -->
+  <dialog class="dialogo dialogo-editar dialogo-form dialogo-pautas" id="dialogo-pautas" aria-labelledby="pautas-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-pautas" aria-label="Cerrar sin guardar" title="Cerrar sin guardar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="pautas-titulo">Editar pautas y dosis</h2>
+    <p class="pasos-indicador" id="pautas-paciente"></p>
+
+    <form class="form-nuevo" id="form-pautas" novalidate>
+      <ul class="pautas-lista" id="pautas-lista"></ul>
+      <button class="boton btn-editar btn-anadir-toma" type="button" id="pautas-anadir">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M7 12h10"/></svg>
+        Añadir toma
+      </button>
+      <div class="dialogo-botones">
+        <button class="boton" type="button" id="cancelar-pautas">Cancelar</button>
+        <button class="boton btn-confirmar" type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Historial de cumplimiento por semanas ===== -->
+  <dialog class="dialogo dialogo-detalle" id="dialogo-historial" aria-labelledby="historial-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-historial" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="historial-titulo">Historial</h2>
+    <ul class="detalle-lista" id="historial-lista"></ul>
+  </dialog>
+
+  <!-- ===== Mi perfil (cuidador) ===== -->
+  <dialog class="dialogo dialogo-perfil" id="dialogo-perfil" aria-labelledby="perfil-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-perfil" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="perfil-titulo">Mi perfil</h2>
+    <p id="perfil-nombre">Cuidador</p>
+    <div class="dialogo-botones">
+      <button class="boton btn-salir" type="button" id="abrir-salir" aria-haspopup="dialog">
+        Cerrar sesión
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/></svg>
+      </button>
+    </div>
+  </dialog>
+
+  <!-- ===== Confirmar cierre de sesión (evita cerrarla por un toque accidental) ===== -->
+  <dialog class="dialogo dialogo-salir" id="dialogo-salir" aria-labelledby="salir-titulo" aria-describedby="salir-texto">
+    <h2 id="salir-titulo">¿Cerrar sesión?</h2>
+    <p id="salir-texto">Para volver a usar la aplicación tendrás que entrar otra vez con tu usuario y contraseña.</p>
+    <div class="dialogo-botones">
+      <button class="boton" type="button" id="salir-no">No, seguir aquí</button>
+      <button class="boton btn-salir" type="button" id="salir-si">Sí, cerrar sesión</button>
+    </div>
+  </dialog>
+
+  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
+       (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
+  <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
+    <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
+
+    <!-- Solo aparece cuando ya se está avisando -->
+    <button class="boton btn-cerrar" type="button" id="sos-cerrar" aria-label="Cerrar" title="Cerrar" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <div class="sos-circulo" aria-hidden="true">
+      <svg viewBox="0 0 48 48" focusable="false">
+        <polygon points="24,5 45,41 3,41"/>
+        <line x1="24" y1="18" x2="24" y2="29"/>
+        <circle cx="24" cy="35" r="1.5"/>
+      </svg>
+      <span>SOS</span>
+    </div>
+
+    <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
+      Cancelar (<span id="sos-cuenta">5</span>)
+    </button>
+
+    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al acabar la cuenta atrás -->
+    <p class="sos-estado" id="sos-estado" role="status"></p>
+    <p class="sr-only" id="sos-aviso" aria-live="assertive"></p>
+  </dialog>
+
+  <!-- ===== Menú de accesibilidad ===== -->
+  <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="a11y-titulo" class="a11y-titulo">
+      Menú de accesibilidad
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+        <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+      </svg>
+    </h2>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-texto">
+      <h3 id="grupo-texto">
+        Tamaño de letra
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="4" y="4" width="24" height="24" rx="2"/>
+          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
+      <h3 id="grupo-vibracion">
+        Vibración
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="5" width="10" height="22" rx="2"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-tema">
+      <h3 id="grupo-tema">
+        Tema
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="5"/>
+          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
+        </svg>
+      </h3>
+      <div class="a11y-temas">
+        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
+      </div>
+    </section>
+
+    <div class="dialogo-botones">
+      <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
+    </div>
+  </dialog>
+
+  <script src="comun.js"></script>
+  <script src="cuidador-datos.js"></script>
+  <script>
+    // ---------- Perfil ----------
+    let nombreCuidador = "";
+    try { nombreCuidador = sessionStorage.getItem("nombre-usuario") || ""; } catch (e) {}
+    if (nombreCuidador) document.getElementById("perfil-nombre").textContent = `${nombreCuidador} · Cuidador`;
+    const dialogoPerfil = document.getElementById("dialogo-perfil");
+    document.getElementById("abrir-perfil").addEventListener("click", () => dialogoPerfil.showModal());
+    document.getElementById("cerrar-perfil").addEventListener("click", () => dialogoPerfil.close());
+
+    // ---------- Paciente elegido ----------
+    // Llega por la dirección (?p=0) desde el Inicio; si no, el primero
+    const elegir = document.getElementById("elegir-paciente");
+    let actual = Number(new URLSearchParams(location.search).get("p")) || 0;
+    if (!pacientes[actual]) actual = 0;
+    elegir.innerHTML = pacientes.map((p, i) => `<option value="${i}">${p.nombre}</option>`).join("");
+    elegir.value = actual;
+    elegir.addEventListener("change", () => {
+      actual = Number(elegir.value);
+      history.replaceState(null, "", `?p=${actual}`);
+      pintarTodo();
+      anunciar(`Mostrando la medicación de ${pacientes[actual].nombre}`);
+    });
+
+    // ---------- 1. Hoy ----------
+    function pintarHoy() {
+      const p = pacientes[actual];
+      const lista = document.getElementById("tomas-hoy");
+      lista.innerHTML = p.tomas.length ? "" : '<li class="disp-vacio">No tiene tomas programadas</li>';
+      p.tomas.forEach(t => {
+        const e = ESTADOS_TOMA[estadoToma(t)];
+        const li = document.createElement("li");
+        li.className = "toma";
+        li.innerHTML = `
+          <span class="disp-icono ${e.clase}" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">${e.icono}</svg>
+          </span>
+          <span class="toma-texto">
+            <span class="toma-nombre"><strong>${t.hora}</strong> <span></span></span>
+            <span class="toma-dosis"></span>
+          </span>
+          <span class="estado ${e.clase}"><span class="sr-only">: </span>${e.texto}</span>`;
+        li.querySelector(".toma-nombre span").textContent = t.nombre;
+        li.querySelector(".toma-dosis").textContent = t.dosis;
+        lista.append(li);
+      });
+    }
+
+    // ---------- 2. Cumplimiento semanal ----------
+    const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+    const BAJO = 80; // por debajo de este %, el día se marca en rojo
+
+    const media = valores => Math.round(valores.reduce((a, b) => a + b, 0) / valores.length);
+
+    function pintarSemana() {
+      const p = pacientes[actual];
+      document.getElementById("cumplimiento-pct").textContent = `${media(p.semana)} %`;
+      document.getElementById("grafico-semana").innerHTML = p.semana.map((v, i) => {
+        const bajo = v < BAJO;
+        return `
+          <li class="barra-dia">
+            <span class="barra-valor${bajo ? " bajo" : ""}"><span class="sr-only">${DIAS[i]}: </span>${bajo ? '<span aria-hidden="true">⚠ </span>' : ""}${v} %${bajo ? '<span class="sr-only"> (bajo)</span>' : ""}</span>
+            <span class="barra-zona" aria-hidden="true"><span class="barra${bajo ? " bajo" : ""}" style="height: ${v}%"></span></span>
+            <span class="barra-nombre" aria-hidden="true">${DIAS[i][0]}</span>
+          </li>`;
+      }).join("");
+    }
+
+    // Historial: esta semana y las anteriores
+    const dialogoHistorial = document.getElementById("dialogo-historial");
+    document.getElementById("abrir-historial").addEventListener("click", () => {
+      const p = pacientes[actual];
+      document.getElementById("historial-titulo").textContent = `Historial de ${p.nombre}`;
+      const semanas = [{ semana: "Esta semana", porcentaje: media(p.semana) }, ...p.historial];
+      document.getElementById("historial-lista").innerHTML = semanas.map(s => {
+        const bajo = s.porcentaje < BAJO;
+        return `<li><span><strong>${s.semana}</strong></span>
+          <span class="estado ${bajo ? "alerta" : "ok"}"><span aria-hidden="true">${bajo ? "⚠" : "✓"}</span> ${s.porcentaje} %${bajo ? " · bajo" : ""}</span></li>`;
+      }).join("");
+      dialogoHistorial.showModal();
+    });
+    document.getElementById("cerrar-historial").addEventListener("click", () => dialogoHistorial.close());
+
+    // ---------- 3. Aviso por tomas sin confirmar ----------
+    const avisoMinutos = document.getElementById("aviso-minutos");
+    function pintarAviso() {
+      const p = pacientes[actual];
+      avisoMinutos.value = p.avisoMinutos;
+      document.getElementById("aviso-pista").textContent =
+        `Te llegará una notificación si ${p.nombre} no marca una toma como tomada en ese tiempo.`;
+    }
+    avisoMinutos.addEventListener("change", () => {
+      const p = pacientes[actual];
+      p.avisoMinutos = Number(avisoMinutos.value);
+      guardarPacientes();
+      anunciar(`Aviso guardado: ${avisoMinutos.selectedOptions[0].textContent} sin confirmar`);
+    });
+
+    function pintarTodo() {
+      pintarHoy();
+      pintarSemana();
+      pintarAviso();
+    }
+    pintarTodo();
+
+    // ---------- Editar pautas y dosis ----------
+    const dialogoPautas = document.getElementById("dialogo-pautas");
+    const listaPautas = document.getElementById("pautas-lista");
+    let siguienteId = 0; // ids únicos para enlazar etiquetas y campos
+
+    function crearFilaPauta(t) {
+      const n = siguienteId++;
+      const li = document.createElement("li");
+      li.className = "pauta-fila campo";
+      // Si la hora no cambia, se conserva si ya estaba tomada hoy
+      li.dataset.horaOriginal = t.hora || "";
+      li.dataset.tomada = String(Boolean(t.tomada));
+      li.innerHTML = `
+        <div class="campo">
+          <label for="ph-${n}">Hora</label>
+          <input id="ph-${n}" class="pauta-hora" type="time" aria-describedby="pe-${n}">
+        </div>
+        <div class="campo">
+          <label for="pn-${n}">Medicamento</label>
+          <input id="pn-${n}" class="pauta-nombre" type="text" autocomplete="off" aria-describedby="pe-${n}">
+        </div>
+        <div class="campo">
+          <label for="pd-${n}">Dosis</label>
+          <input id="pd-${n}" class="pauta-dosis" type="text" autocomplete="off" placeholder="Ej.: 1 comprimido">
+        </div>
+        <button class="boton btn-editar solo-icono btn-quitar" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>
+        </button>
+        <p class="campo-error" id="pe-${n}"></p>`;
+      li.querySelector(".pauta-hora").value = t.hora || "";
+      li.querySelector(".pauta-nombre").value = t.nombre || "";
+      li.querySelector(".pauta-dosis").value = t.dosis || "";
+      return li;
+    }
+
+    // Etiqueta de cada botón Quitar con su número de toma (cambia al quitar o añadir)
+    function numerarPautas() {
+      listaPautas.querySelectorAll(".pauta-fila").forEach((li, i) => {
+        const b = li.querySelector(".btn-quitar");
+        b.setAttribute("aria-label", `Quitar toma ${i + 1}`);
+        b.title = `Quitar toma ${i + 1}`;
+      });
+    }
+
+    document.getElementById("abrir-pautas").addEventListener("click", () => {
+      const p = pacientes[actual];
+      document.getElementById("pautas-paciente").textContent = `Paciente: ${p.nombre}`;
+      listaPautas.replaceChildren(...p.tomas.map(crearFilaPauta));
+      numerarPautas();
+      dialogoPautas.showModal();
+      const primero = listaPautas.querySelector("input");
+      (primero || document.getElementById("pautas-anadir")).focus();
+    });
+
+    document.getElementById("pautas-anadir").addEventListener("click", () => {
+      const li = crearFilaPauta({});
+      listaPautas.append(li);
+      numerarPautas();
+      li.querySelector(".pauta-hora").focus();
+      li.scrollIntoView({ block: "nearest" });
+    });
+
+    // Quitar una fila: el foco va a la siguiente (o a "Añadir toma" si no quedan)
+    listaPautas.addEventListener("click", e => {
+      const boton = e.target.closest(".btn-quitar");
+      if (!boton) return;
+      const li = boton.closest(".pauta-fila");
+      const destino = li.nextElementSibling || li.previousElementSibling;
+      li.remove();
+      numerarPautas();
+      (destino ? destino.querySelector("input") : document.getElementById("pautas-anadir")).focus();
+      anunciar("Toma quitada. Pulsa Guardar para confirmar los cambios");
+    });
+
+    document.getElementById("form-pautas").addEventListener("submit", e => {
+      e.preventDefault();
+      let primerError = null;
+      const tomas = [];
+      listaPautas.querySelectorAll(".pauta-fila").forEach(li => {
+        const hora = li.querySelector(".pauta-hora");
+        const nombre = li.querySelector(".pauta-nombre");
+        const faltan = [];
+        if (!hora.value) faltan.push("la hora");
+        if (!nombre.value.trim()) faltan.push("el medicamento");
+        hora.setAttribute("aria-invalid", String(!hora.value));
+        nombre.setAttribute("aria-invalid", String(!nombre.value.trim()));
+        li.querySelector(".campo-error").textContent = faltan.length ? `Falta ${faltan.join(" y ")}` : "";
+        if (faltan.length && !primerError) primerError = !hora.value ? hora : nombre;
+        tomas.push({
+          hora: hora.value,
+          nombre: nombre.value.trim(),
+          dosis: li.querySelector(".pauta-dosis").value.trim(),
+          tomada: li.dataset.tomada === "true" && li.dataset.horaOriginal === hora.value
+        });
+      });
+      // El foco va a la primera fila con error y el lector lee el mensaje (WCAG 3.3.1)
+      if (primerError) {
+        primerError.focus();
+        return;
+      }
+      const p = pacientes[actual];
+      p.tomas = tomas.sort((a, b) => a.hora.localeCompare(b.hora));
+      guardarPacientes();
+      pintarHoy();
+      dialogoPautas.close();
+      anunciar(`Pautas de ${p.nombre} guardadas`);
+    });
+
+    document.getElementById("cerrar-pautas").addEventListener("click", () => dialogoPautas.close());
+    document.getElementById("cancelar-pautas").addEventListener("click", () => dialogoPautas.close());
+
+    // Las tomas cambian de "Más tarde" a "Pendiente" según pasa la hora
+    setInterval(pintarHoy, 60000);
+  </script>
+</body>
+</html>
