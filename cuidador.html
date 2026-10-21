@@ -14,8 +14,7 @@
 
   <div class="app">
 
-    <!-- ===== Barra lateral del cuidador (Inicio activo).
-         Casa y Contactos aún no tienen página: los enlaces "#" no hacen nada (ver comun.js) ===== -->
+    <!-- ===== Barra lateral del cuidador (Inicio activo) ===== -->
     <aside class="sidebar" aria-label="Navegación y emergencias">
       <nav aria-label="Menú principal">
         <ul class="nav">
@@ -43,7 +42,7 @@
             </a>
           </li>
           <li>
-            <a href="#" class="nav-item">
+            <a href="cuidador-casa.html" class="nav-item">
               <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <polyline points="6,24 24,8 42,24"/>
                 <rect x="13" y="22" width="22" height="18"/>
@@ -52,7 +51,7 @@
             </a>
           </li>
           <li>
-            <a href="#" class="nav-item">
+            <a href="cuidador-contactos.html" class="nav-item">
               <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <rect x="11" y="5" width="28" height="38" rx="3"/>
                 <path d="M7 14h7M7 24h7M7 34h7"/>
@@ -321,12 +320,13 @@
       const completa = hechas === p.tomas.length;
       // Rojo solo si alguna toma ya debería estar tomada; si las que faltan son para más tarde, neutro
       const atrasadas = p.tomas.filter(t => estadoToma(t) === "pendiente").length;
-      const claseMed = completa ? "ok" : atrasadas ? "alerta" : "espera";
-      const textoMed = completa ? "Todas tomadas"
+      const sinPautas = !p.tomas.length; // paciente recién añadido, aún sin medicación
+      const claseMed = sinPautas ? "espera" : completa ? "ok" : atrasadas ? "alerta" : "espera";
+      const textoMed = sinPautas ? "Sin pautas" : completa ? "Todas tomadas"
         : atrasadas ? `${atrasadas} pendiente${atrasadas > 1 ? "s" : ""}`
         : "El resto, más tarde";
       const activa = p.alertas.length > 0;
-      const ultimo = p.movimientos[0];
+      const ultimo = p.movimientos[0] || { lugar: "Sin datos", hace: null };
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <th scope="row" data-etiqueta="Paciente">
@@ -337,7 +337,7 @@
         </th>
         <td data-etiqueta="Medicación">
           <button class="boton celda" type="button" data-p="${i}" data-detalle="medicacion">
-            <span class="estado ${claseMed}">${hechas}/${p.tomas.length}${completa ? ' <span aria-hidden="true">✓</span>' : ""}</span>
+            <span class="estado ${claseMed}">${hechas}/${p.tomas.length}${completa && !sinPautas ? ' <span aria-hidden="true">✓</span>' : ""}</span>
             <span class="celda-secundaria">${textoMed}</span>
             <span class="sr-only">. Ver la medicación de ${p.nombre}</span>
           </button>
@@ -345,7 +345,7 @@
         <td data-etiqueta="Casa">
           <button class="boton celda" type="button" data-p="${i}" data-detalle="casa">
             <span class="celda-principal">${ultimo.lugar}</span>
-            <span class="celda-secundaria tiempo" data-hace="${ultimo.hace}">${haceCuanto(ultimo.hace)}</span>
+            ${ultimo.hace === null ? "" : `<span class="celda-secundaria tiempo" data-hace="${ultimo.hace}">${haceCuanto(ultimo.hace)}</span>`}
             <span class="sr-only">. Ver la casa de ${p.nombre}</span>
           </button>
         </td>

@@ -35,7 +35,7 @@ if (dialogoSalir) {
   });
 }
 
-// Enlaces que aún no tienen página (medicación, casa y contactos del cuidador): no hacen nada
+// Enlaces que aún no tienen página (href="#"): no hacen nada
 document.querySelectorAll('a[href="#"]').forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
 // ---------- Toma de la pastilla ----------
@@ -130,6 +130,7 @@ document.getElementById("abrir-sos")?.addEventListener("click", () => {
     sosCerrar.hidden = false;
     sosCerrar.focus();
     sosEstado.textContent = "Comunicando con los contactos y servicios de emergencia";
+    avisarCuidadores();
   }, 1000);
 });
 
@@ -138,6 +139,91 @@ sosCerrar?.addEventListener("click", () => dialogo.close());
 // Escape durante la cuenta atrás también cancela
 dialogo?.addEventListener("cancel", () => { if (cuentaAtras) cancelarSos(); });
 dialogo?.addEventListener("close", pararCuenta);
+
+// ---------- Aviso del SOS del paciente al cuidador ----------
+// Sin servidor, el aviso se deja en el navegador (localStorage). Las páginas del cuidador
+// abiertas en otra pestaña lo reciben al momento con el evento "storage"; si el cuidador
+// entra más tarde, lo ve igualmente mientras no lo haya atendido (durante 1 hora).
+// Solo se avisa al acabar la cuenta atrás: si el paciente cancela, no llega nada.
+const SOS_VIGENTE_MS = 60 * 60 * 1000;
+
+function avisarCuidadores() {
+  let nombre = "", telefono = "", tipo = "";
+  try {
+    nombre = sessionStorage.getItem("nombre-usuario") || "";
+    telefono = sessionStorage.getItem("telefono-usuario") || "";
+    tipo = sessionStorage.getItem("tipo-perfil") || "";
+  } catch (e) {}
+  if (tipo === "cuidador") return; // el SOS del propio cuidador no se avisa a sí mismo
+  const avisoSos = { id: Date.now(), nombre: nombre.split(" ")[0] || "Tu paciente", telefono };
+  try { localStorage.setItem("sos-aviso", JSON.stringify(avisoSos)); } catch (e) {}
+}
+
+// En las páginas del cuidador: ventana roja de emergencia, encima de lo que esté haciendo
+if (document.body.dataset.pagina === "cuidador") {
+  const ICONO_LLAMAR = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M13 6h7l3 9-5 3a24 24 0 0 0 12 12l3-5 9 3v7a4 4 0 0 1-4 4C21 39 9 27 9 10a4 4 0 0 1 4-4z"/></svg>';
+  const dialogoAlerta = document.createElement("dialog");
+  dialogoAlerta.className = "dialogo-alerta";
+  dialogoAlerta.setAttribute("role", "alertdialog");
+  dialogoAlerta.setAttribute("aria-labelledby", "alerta-titulo");
+  dialogoAlerta.setAttribute("aria-describedby", "alerta-texto");
+  dialogoAlerta.innerHTML = `
+    <div class="alerta-cabecera">
+      <h2 id="alerta-titulo">Alerta <span id="alerta-nombre"></span></h2>
+      <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+        <path d="M12 34h24l-4-6v-8a8 8 0 0 0-16 0v8z"/>
+        <path d="M20 38a4 4 0 0 0 8 0"/>
+      </svg>
+    </div>
+    <p class="alerta-texto" id="alerta-texto"></p>
+    <div class="alerta-acciones">
+      <a class="boton btn-alerta" id="alerta-llamar" href="#">${ICONO_LLAMAR}<span id="alerta-llamar-texto"></span></a>
+      <a class="boton btn-alerta" href="tel:112" aria-label="Llamar al 112">${ICONO_LLAMAR}112</a>
+    </div>
+    <button class="boton btn-atendido" type="button" id="alerta-atendido">Ya lo estoy atendiendo</button>`;
+  document.body.append(dialogoAlerta);
+
+  const tituloOriginal = document.title;
+  let avisoMostrado = null;
+
+  function mostrarAlertaSos(avisoSos) {
+    avisoMostrado = avisoSos;
+    const hora = new Date(avisoSos.id).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("alerta-nombre").textContent = avisoSos.nombre;
+    document.getElementById("alerta-texto").textContent = `${avisoSos.nombre} ha pulsado el botón SOS a las ${hora}.`;
+    document.getElementById("alerta-llamar-texto").textContent = `Llamar a ${avisoSos.nombre}`;
+    const llamar = document.getElementById("alerta-llamar");
+    llamar.hidden = !avisoSos.telefono;
+    llamar.href = `tel:+34${avisoSos.telefono}`;
+    document.title = `⚠ Alerta ${avisoSos.nombre} · ${tituloOriginal}`;
+    if (!dialogoAlerta.open) dialogoAlerta.showModal();
+    (avisoSos.telefono ? llamar : dialogoAlerta.querySelector('[href="tel:112"]')).focus();
+    if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 400]);
+  }
+
+  function revisarAvisoSos() {
+    let avisoSos = null, atendido = "";
+    try {
+      avisoSos = JSON.parse(localStorage.getItem("sos-aviso"));
+      atendido = localStorage.getItem("sos-atendido");
+    } catch (e) {}
+    if (avisoSos && String(avisoSos.id) !== atendido && Date.now() - avisoSos.id < SOS_VIGENTE_MS) {
+      mostrarAlertaSos(avisoSos);
+    }
+  }
+
+  // Se cierra solo a propósito: ni Escape ni un toque fuera la quitan
+  dialogoAlerta.addEventListener("cancel", e => e.preventDefault());
+  document.getElementById("alerta-atendido").addEventListener("click", () => {
+    try { localStorage.setItem("sos-atendido", String(avisoMostrado.id)); } catch (e) {}
+    dialogoAlerta.close();
+    document.title = tituloOriginal;
+    anunciar(`Alerta de ${avisoMostrado.nombre} marcada como atendida`);
+  });
+
+  window.addEventListener("storage", e => { if (e.key === "sos-aviso") revisarAvisoSos(); });
+  revisarAvisoSos();
+}
 
 // ---------- Menú de accesibilidad ----------
 // Los ajustes se guardan en el navegador y se aplican en todas las páginas

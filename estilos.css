@@ -207,7 +207,8 @@ section:focus {
 .btn-sos,
 .btn-pendiente,
 .btn-cerrar,
-.btn-salir {
+.btn-salir,
+.btn-alerta {
   --base: var(--rojo);
   --base-hover: var(--rojo-hover);
   --sombra: var(--rojo-sombra);
@@ -2092,6 +2093,12 @@ html.contraste {
   gap: 8px;
 }
 
+/* Sin datos: el mensaje ocupa todo el ancho del gráfico */
+.grafico-barras .disp-vacio {
+  grid-column: 1 / -1;
+  align-self: start;
+}
+
 .barra-dia {
   min-height: 0;
   display: flex;
@@ -2341,6 +2348,195 @@ html.scroll .perfil-layout {
 
   .campos-2,
   .opciones-perfil {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Contactos del cuidador =====
+   Un paciente por fila: nombre grande · Llamar · Ver + info · editar */
+.titulo-con-icono {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.titulo-con-icono svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+  color: var(--icono);
+}
+
+.contactos-cuidador {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 8px 12px; /* sitio para el anillo de foco y el relieve */
+}
+
+.lista-contactos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fila-contacto {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+  padding: 16px 24px;
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: 20px;
+}
+
+.fila-contacto-nombre {
+  flex: 1 1 8em;
+  min-width: 0;
+  font-size: clamp(1.6rem, calc(5vh * var(--escala)), 2.4rem);
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+/* Botones de la fila: mismo alto para que queden alineados */
+.btn-fila {
+  min-height: 60px;
+  padding: 10px 24px;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+
+.btn-fila svg {
+  width: 26px;
+  height: 26px;
+}
+
+.btn-fila.solo-icono {
+  width: 60px;
+  padding: 0;
+}
+
+.codigo-dato {
+  font-family: Consolas, "Courier New", monospace;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.info-resumen {
+  margin-top: 18px;
+}
+
+.dialogo-detalle .detalle-botones {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dialogo-detalle .detalle-botones .boton {
+  min-width: 0;
+}
+
+/* ===== Alerta SOS en la pantalla del cuidador =====
+   Ventana roja encima de cualquier página, con fondo ligeramente difuminado.
+   Dos acciones grandes: llamar al paciente y llamar al 112. */
+.dialogo-alerta {
+  width: min(760px, calc(100% - 32px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  margin: auto;
+  padding: 28px;
+  background: var(--blanco);
+  color: var(--texto);
+  border: 4px solid var(--rojo-sombra);
+  border-radius: 24px;
+  box-shadow:
+    0 10px 0 var(--rojo-sombra),
+    0 24px 48px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.dialogo-alerta[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.dialogo-alerta::backdrop {
+  background: rgba(92, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.alerta-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  background: var(--rojo);
+  color: var(--sobre-rojo);
+  border: 3px solid var(--rojo-sombra);
+  border-radius: 18px;
+}
+
+.alerta-cabecera h2 {
+  font-size: clamp(2.2rem, calc(8vh * var(--escala)), 4rem);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.alerta-cabecera svg {
+  width: clamp(56px, 10vh, 96px);
+  height: auto;
+  aspect-ratio: 1;
+  flex: none;
+  stroke-width: 3;
+}
+
+.alerta-texto {
+  font-size: 1.4rem;
+}
+
+/* Llamar al paciente (más ancho) · 112 */
+.alerta-acciones {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+}
+
+.btn-alerta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 96px;
+  padding: 16px 24px;
+  border-width: 3px;
+  font-size: clamp(1.6rem, calc(5vh * var(--escala)), 2.4rem);
+  font-weight: 700;
+}
+
+.btn-alerta svg {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+  stroke-width: 3;
+}
+
+.btn-atendido {
+  align-self: center;
+  min-height: 56px;
+  padding: 10px 28px;
+  font-size: 1.25rem;
+}
+
+html.contraste .alerta-cabecera,
+html.contraste .dialogo-alerta {
+  border-color: #000000;
+}
+
+@media (max-width: 640px) {
+  .alerta-acciones {
     grid-template-columns: 1fr;
   }
 }

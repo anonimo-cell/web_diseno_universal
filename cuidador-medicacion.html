@@ -14,8 +14,7 @@
 
   <div class="app">
 
-    <!-- ===== Barra lateral del cuidador (Medicación activa).
-         Casa y Contactos aún no tienen página: los enlaces "#" no hacen nada (ver comun.js) ===== -->
+    <!-- ===== Barra lateral del cuidador (Medicación activa) ===== -->
     <aside class="sidebar" aria-label="Navegación y emergencias">
       <nav aria-label="Menú principal">
         <ul class="nav">
@@ -43,7 +42,7 @@
             </a>
           </li>
           <li>
-            <a href="#" class="nav-item">
+            <a href="cuidador-casa.html" class="nav-item">
               <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <polyline points="6,24 24,8 42,24"/>
                 <rect x="13" y="22" width="22" height="18"/>
@@ -52,7 +51,7 @@
             </a>
           </li>
           <li>
-            <a href="#" class="nav-item">
+            <a href="cuidador-contactos.html" class="nav-item">
               <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <rect x="11" y="5" width="28" height="38" rx="3"/>
                 <path d="M7 14h7M7 24h7M7 34h7"/>
@@ -364,6 +363,12 @@
 
     function pintarSemana() {
       const p = pacientes[actual];
+      // Paciente recién añadido: aún no hay datos de la semana
+      if (!p.semana.length) {
+        document.getElementById("cumplimiento-pct").textContent = "—";
+        document.getElementById("grafico-semana").innerHTML = '<li class="disp-vacio">Todavía no hay datos de esta semana</li>';
+        return;
+      }
       document.getElementById("cumplimiento-pct").textContent = `${media(p.semana)} %`;
       document.getElementById("grafico-semana").innerHTML = p.semana.map((v, i) => {
         const bajo = v < BAJO;
@@ -381,8 +386,10 @@
     document.getElementById("abrir-historial").addEventListener("click", () => {
       const p = pacientes[actual];
       document.getElementById("historial-titulo").textContent = `Historial de ${p.nombre}`;
-      const semanas = [{ semana: "Esta semana", porcentaje: media(p.semana) }, ...p.historial];
-      document.getElementById("historial-lista").innerHTML = semanas.map(s => {
+      const semanas = [...(p.semana.length ? [{ semana: "Esta semana", porcentaje: media(p.semana) }] : []), ...p.historial];
+      document.getElementById("historial-lista").innerHTML = !semanas.length
+        ? '<li class="disp-vacio">Todavía no hay historial</li>'
+        : semanas.map(s => {
         const bajo = s.porcentaje < BAJO;
         return `<li><span><strong>${s.semana}</strong></span>
           <span class="estado ${bajo ? "alerta" : "ok"}"><span aria-hidden="true">${bajo ? "⚠" : "✓"}</span> ${s.porcentaje} %${bajo ? " · bajo" : ""}</span></li>`;

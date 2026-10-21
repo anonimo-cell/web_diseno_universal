@@ -425,6 +425,7 @@
         sessionStorage.setItem("sesion", "abierta");
         sessionStorage.setItem("tipo-perfil", u.tipo);
         sessionStorage.setItem("nombre-usuario", u.nombre);
+        sessionStorage.setItem("telefono-usuario", u.telefono); // para que el cuidador pueda llamarle si pulsa SOS
       } catch (e) {}
       location.href = DESTINOS[u.tipo];
     }

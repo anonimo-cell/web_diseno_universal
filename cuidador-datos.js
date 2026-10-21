@@ -5,6 +5,8 @@
 const PACIENTES_INICIALES = [
   {
     nombre: "Rosa", edad: 82, telefono: "611223344",
+    // Código que el paciente ve en su perfil y que sirve para asociarlo al cuidador
+    codigo: "VH-4821-7395", alergias: "Penicilina", patologias: "Hipertensión",
     tomas: [
       { hora: "08:00", nombre: "Tensión", dosis: "1 comprimido", tomada: true },
       { hora: "14:00", nombre: "Vitamina D", dosis: "1 cápsula", tomada: false },
@@ -26,10 +28,21 @@ const PACIENTES_INICIALES = [
     ],
     alertas: [
       { texto: "Puerta de la entrada abierta", hace: 12 }
-    ]
+    ],
+    // Sensores de la casa: activo = encendida (luz) o abierta (puerta, ventana)
+    casa: {
+      temperatura: 30,
+      dispositivos: [
+        { tipo: "luz", lugar: "Cocina", activo: false },
+        { tipo: "luz", lugar: "Salón", activo: true },
+        { tipo: "puerta", lugar: "Entrada", activo: true },
+        { tipo: "ventana", lugar: "Cocina", activo: false }
+      ]
+    }
   },
   {
     nombre: "Paco", edad: 79, telefono: "622334455",
+    codigo: "VH-1962-3795", alergias: "", patologias: "Artrosis, fibrilación auricular",
     tomas: [
       { hora: "08:00", nombre: "Sintrom", dosis: "½ comprimido", tomada: true },
       { hora: "09:00", nombre: "Omeprazol", dosis: "1 cápsula", tomada: true },
@@ -49,15 +62,40 @@ const PACIENTES_INICIALES = [
       { lugar: "Cocina", hace: 24 },
       { lugar: "Baño", hace: 61 }
     ],
-    alertas: []
+    alertas: [],
+    casa: {
+      temperatura: 23,
+      dispositivos: [
+        { tipo: "luz", lugar: "Dormitorio", activo: false },
+        { tipo: "luz", lugar: "Cocina", activo: false },
+        { tipo: "puerta", lugar: "Entrada", activo: false },
+        { tipo: "puerta", lugar: "Terraza", activo: false },
+        { tipo: "ventana", lugar: "Salón", activo: true }
+      ]
+    }
   }
 ];
 
+// Lo guardado se completa con los datos iniciales, por si se guardó antes de que
+// existiera algún apartado (por ejemplo, la casa)
 let pacientes = PACIENTES_INICIALES;
 try {
   const guardados = JSON.parse(localStorage.getItem("pacientes-cuidador"));
-  if (Array.isArray(guardados) && guardados.length) pacientes = guardados;
+  if (Array.isArray(guardados) && guardados.length) {
+    pacientes = guardados.map((p, i) => ({ ...PACIENTES_INICIALES[i], ...p }));
+  }
 } catch (e) {}
+
+// Paciente recién asociado por su código: aún sin medicación, historial ni sensores
+function nuevoPaciente(datos) {
+  return {
+    alergias: "", patologias: "",
+    tomas: [], semana: [], historial: [], avisoMinutos: 30,
+    movimientos: [], alertas: [],
+    casa: { temperatura: 22, dispositivos: [] },
+    ...datos
+  };
+}
 
 function guardarPacientes() {
   try { localStorage.setItem("pacientes-cuidador", JSON.stringify(pacientes)); } catch (e) {}
