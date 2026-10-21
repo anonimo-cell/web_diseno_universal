@@ -7,11 +7,13 @@
    blanco sobre --rojo ......... 10:1
    Bordes (--borde) sobre blanco 10.2:1 (WCAG 1.4.11 pide 3:1). */
 :root {
+  --escala: 1;          /* tamaño de letra (lo cambia el menú de accesibilidad) */
+
   --fondo: #f5f8fd;
-  --blanco: #ffffff;
+  --blanco: #ffffff;    /* superficie de tarjetas, barra y ventanas */
   --texto: #0a1f44;     /* azul muy oscuro para el texto */
-  --texto-suave: #123c8c;
   --borde: #123c8c;
+  --icono: #123c8c;
 
   --azul: #123c8c;
   --azul-hover: #0a2a66;
@@ -29,6 +31,7 @@
   --rojo: #8b0000;
   --rojo-hover: #5c0000;
   --rojo-sombra: #3d0000;
+  --sobre-rojo: #ffffff; /* texto encima del rojo */
 
   /* Foco de teclado: anillo azul claro pegado al control + borde azul oscuro por fuera.
      Azul claro sobre --azul 7.6:1 · sobre rojo 7.4:1 · sobre verde 7.8:1
@@ -39,16 +42,53 @@
   --radio: 16px;
 }
 
-/* Modo "Alto contraste" del panel de accesibilidad: fondo negro, texto blanco */
+/* Tema oscuro: texto claro sobre azul noche
+   --texto sobre --blanco 14.5:1 · --borde sobre --blanco 7.4:1 · texto sobre hover 10.9:1 */
+html.oscuro {
+  --fondo: #0a1222;
+  --blanco: #14203a;
+  --texto: #eef3ff;
+  --borde: #8fb0ff;
+  --icono: #a9c6ff;
+  --boton: #14203a;
+  --boton-hover: #22345c;
+  --boton-sombra: #000000;
+  --foco-borde: #ffffff;
+}
+
+/* Daltonismo: azul para lo positivo y naranja oscuro para lo negativo
+   (se distinguen con protanopia y deuteranopia). Blanco encima: 7.9:1 y 7.7:1 */
+html.daltonismo {
+  --verde: #00509e;
+  --verde-hover: #003b75;
+  --verde-sombra: #00264d;
+  --rojo: #8a3b00;
+  --rojo-hover: #662b00;
+  --rojo-sombra: #3d1a00;
+}
+
+/* Alto contraste: solo blanco y negro (21:1).
+   Lo negativo y las emergencias van en blanco (invertido) para destacar sobre el negro. */
 html.contraste {
   --fondo: #000000;
   --blanco: #000000;
   --texto: #ffffff;
-  --texto-suave: #ffffff;
   --borde: #ffffff;
+  --icono: #ffffff;
+  --azul: #000000;
+  --azul-hover: #333333;
+  --azul-sombra: #888888;
   --boton: #000000;
   --boton-hover: #333333;
   --boton-sombra: #888888;
+  --verde: #000000;
+  --verde-hover: #333333;
+  --verde-sombra: #888888;
+  --rojo: #ffffff;
+  --rojo-hover: #d9d9d9;
+  --rojo-sombra: #888888;
+  --sobre-rojo: #000000;
+  --foco: #000000;
   --foco-borde: #ffffff;
 }
 
@@ -56,6 +96,11 @@ html.contraste {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Todo el texto está en rem: al cambiar --escala crece solo el texto */
+html {
+  font-size: calc(100% * var(--escala));
 }
 
 html,
@@ -67,7 +112,7 @@ body {
   font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
   background: var(--fondo);
   color: var(--texto);
-  font-size: 1.125rem; /* 18px, en rem para respetar el tamaño del navegador */
+  font-size: 1.125rem;
   line-height: 1.5;
   overflow: hidden; /* sin scroll en la pantalla principal */
 }
@@ -97,7 +142,7 @@ svg {
 /* Enlace "Saltar al contenido": fuera de la pantalla hasta que recibe el foco */
 .saltar {
   position: absolute;
-  top: -100px;
+  top: -200px;
   left: 8px;
   z-index: 100;
   padding: 12px 20px;
@@ -138,7 +183,7 @@ section:focus {
   text-decoration: none;
   cursor: pointer;
   box-shadow:
-    inset 0 3px 0 rgba(255, 255, 255, 0.45),
+    inset 0 3px 0 rgba(255, 255, 255, 0.35),
     inset 0 -4px 0 rgba(10, 31, 68, 0.15),
     0 5px 0 var(--sombra);
 }
@@ -171,7 +216,7 @@ section:focus {
   --base-hover: var(--rojo-hover);
   --sombra: var(--rojo-sombra);
   border-color: var(--rojo-sombra);
-  color: #ffffff;
+  color: var(--sobre-rojo);
 }
 
 .avatar,
@@ -188,13 +233,10 @@ section:focus {
   --base-hover: var(--verde-hover);
   --sombra: var(--verde-sombra);
   border-color: var(--verde-sombra);
+  color: #ffffff;
 }
 
-html.contraste .btn-sos,
-html.contraste .btn-pendiente,
-html.contraste .btn-confirmar,
-html.contraste .avatar,
-html.contraste .btn-a11y {
+html.contraste .boton {
   border-color: #ffffff;
 }
 
@@ -227,15 +269,15 @@ html.contraste .btn-a11y {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: clamp(56px, 10.5vh, 96px);
-  padding: 0 14px;
+  min-height: clamp(56px, 10.5vh, 96px);
+  padding: 6px 14px;
   background: var(--boton);
   color: var(--texto);
   text-decoration: none;
   border-bottom: 2px solid var(--borde);
   border-left: 8px solid transparent;
   box-shadow:
-    inset 0 3px 0 rgba(255, 255, 255, 0.45),
+    inset 0 3px 0 rgba(255, 255, 255, 0.35),
     inset 0 -4px 0 rgba(10, 31, 68, 0.1);
 }
 
@@ -256,7 +298,7 @@ html.contraste .btn-a11y {
   flex: none;
   width: clamp(28px, 5vh, 44px);
   height: clamp(28px, 5vh, 44px);
-  color: var(--azul);
+  color: var(--icono);
 }
 
 .nav-texto {
@@ -274,7 +316,7 @@ html.contraste .btn-a11y {
 }
 
 .nav-item[aria-current="page"] svg {
-  color: #ffffff;
+  color: inherit;
   stroke-width: 4;
 }
 
@@ -282,17 +324,10 @@ html.contraste .btn-a11y {
   font-weight: 700;
 }
 
-html.contraste .nav-item svg {
-  color: #ffffff;
-}
-
 html.contraste .nav-item[aria-current="page"] {
   background: #ffffff;
   color: #000000;
-}
-
-html.contraste .nav-item[aria-current="page"] svg {
-  color: #000000;
+  border-left-color: #ffffff;
 }
 
 /* Isotipo: algo más grande que los iconos */
@@ -328,7 +363,7 @@ html.contraste .nav-item[aria-current="page"] svg {
 }
 
 .sos-texto {
-  font-size: clamp(2rem, 7vh, 3.2rem);
+  font-size: clamp(2rem, calc(7vh * var(--escala)), 3.2rem);
   font-weight: 800;
   letter-spacing: 3px;
   line-height: 1;
@@ -358,7 +393,7 @@ html.contraste .nav-item[aria-current="page"] svg {
 }
 
 .cabecera h1 {
-  font-size: clamp(1.6rem, 5vh, 2.6rem);
+  font-size: clamp(1.6rem, calc(5vh * var(--escala)), 2.6rem);
   font-weight: 400;
   line-height: 1.2;
 }
@@ -405,11 +440,11 @@ html.contraste .nav-item[aria-current="page"] svg {
 /* ===== Aviso: la notificación más importante, a todo el ancho ===== */
 .aviso {
   background: var(--rojo);
-  color: #ffffff;
+  color: var(--sobre-rojo);
   border: 3px solid var(--rojo-sombra);
   border-radius: var(--radio);
   padding: 1.6vh 28px;
-  font-size: clamp(1.6rem, 5.5vh, 2.6rem);
+  font-size: clamp(1.6rem, calc(5.5vh * var(--escala)), 2.6rem);
   font-weight: 700;
   line-height: 1.2;
   display: flex;
@@ -421,13 +456,13 @@ html.contraste .nav-item[aria-current="page"] svg {
 .aviso-icono {
   width: 1.3em;
   height: 1.3em;
-  color: #ffffff;
   flex: none;
   stroke-width: 3.5;
 }
 
 .aviso.al-dia {
   background: var(--verde);
+  color: #ffffff;
   border-color: var(--verde-sombra);
   box-shadow: 0 5px 0 var(--verde-sombra);
 }
@@ -436,42 +471,39 @@ html.contraste .aviso {
   border-color: #ffffff;
 }
 
-/* ===== Tarjetas de la casa ===== */
+/* ===== Tarjetas de la casa (sin recuadro exterior) ===== */
 .tarjetas {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  padding: 2.5vh 24px 3.5vh;
-  border: 2px solid var(--borde);
-  border-radius: 20px;
-  background: var(--blanco);
+  padding-bottom: 6px; /* hueco para la sombra del relieve */
 }
 
 /* Las cuatro tarjetas tienen las mismas tres filas (título · icono · estado),
    así quedan todas al mismo nivel */
 .tarjeta {
   min-height: 0;
-  padding: 1.5vh 10px 1.8vh;
+  padding: 1.5vh 12px 1.8vh;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   justify-items: center;
   align-items: center;
   gap: 1vh;
   border-radius: 20px;
+  color: var(--texto);
 }
 
-/* Tarjeta que no es botón (temperatura): mismo borde, sin relieve */
+/* Tarjeta que no es enlace (temperatura): mismo borde, sin relieve */
 .tarjeta.panel {
   background: var(--blanco);
   border: 2px solid var(--borde);
 }
 
 .tarjeta-titulo {
-  font-size: clamp(1.05rem, 3vh, 1.4rem);
+  font-size: clamp(1.05rem, calc(3vh * var(--escala)), 1.4rem);
   font-weight: 700;
-  color: var(--texto);
 }
 
 /* Iconos grandes: ocupan todo el hueco libre de la tarjeta */
@@ -480,7 +512,7 @@ html.contraste .aviso {
   height: 100%;
   max-height: 150px;
   min-height: 0;
-  color: var(--azul);
+  color: var(--icono);
   stroke-width: 2.2;
 }
 
@@ -492,51 +524,56 @@ html.contraste .aviso {
   justify-content: center;
   gap: 6px;
   padding: 0 8px;
-  font-size: clamp(1rem, 3vh, 1.35rem);
+  font-size: clamp(1rem, calc(3vh * var(--escala)), 1.35rem);
   font-weight: 700;
   white-space: nowrap;
-  color: #ffffff;
+  color: var(--texto);
   border: 2px solid transparent;
   border-radius: 12px;
 }
 
 .estado.ok {
   background: var(--verde);
+  color: #ffffff;
 }
 
 .estado.alerta {
   background: var(--rojo);
+  color: var(--sobre-rojo);
 }
 
 .estado.neutro {
   background: var(--azul);
+  color: #ffffff;
 }
 
-html.contraste .estado {
+html.contraste .estado.ok,
+html.contraste .estado.alerta {
   border-color: #ffffff;
 }
 
-/* Temperatura: bajar · valor · subir en una misma línea */
+/* Temperatura: bajar · valor · subir en una misma línea, proporción 3 · 4 · 3.
+   Dentro de 22–25 °C solo se ve el número; fuera, fondo rojo (lo pone el JS). */
 .temp-control {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: 3fr 4fr 3fr;
   align-items: center;
   gap: 6px;
 }
 
-.temp-control .estado {
-  flex: 1;
-  min-width: 0;
+.temp-valor {
   padding: 0 4px;
+  font-size: clamp(1.1rem, calc(3.4vh * var(--escala)), 1.6rem);
 }
 
-/* Mínimo 44x48 px (WCAG 2.5.5 AAA pide 44) */
+/* Al menos 44 px de ancho y 48 de alto (WCAG 2.5.5 AAA pide 44) */
 .btn-temp {
-  flex: none;
-  width: 44px;
+  width: 100%;
+  min-width: 44px;
   height: 48px;
   border-radius: 12px;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 700;
   line-height: 1;
 }
@@ -554,13 +591,13 @@ html.contraste .estado {
 }
 
 .hora {
-  font-size: clamp(2.2rem, 9vh, 4.5rem);
+  font-size: clamp(2.2rem, calc(9vh * var(--escala)), 4.5rem);
   font-weight: 400;
   line-height: 1.1;
 }
 
 .pastilla {
-  font-size: clamp(1.3rem, 4.5vh, 2.2rem);
+  font-size: clamp(1.3rem, calc(4.5vh * var(--escala)), 2.2rem);
   line-height: 1.2;
 }
 
@@ -573,7 +610,7 @@ html.contraste .estado {
 }
 
 .btn-principal {
-  font-size: clamp(1.3rem, 4.5vh, 2.2rem);
+  font-size: clamp(1.3rem, calc(4.5vh * var(--escala)), 2.2rem);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -585,6 +622,8 @@ html.contraste .estado {
 /* ===== Ventanas (SOS y accesibilidad) ===== */
 .dialogo {
   width: min(560px, calc(100% - 32px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto; /* si el texto es muy grande, la ventana se desplaza en vez de cortarse */
   margin: auto;
   padding: 32px;
   border: 3px solid var(--borde);
@@ -623,44 +662,119 @@ html.contraste .estado {
   min-width: 180px;
 }
 
-.a11y-opciones {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-bottom: 28px;
+/* ===== Menú de accesibilidad (compacto para que quepa sin desplazarse) ===== */
+.dialogo-a11y {
+  width: min(500px, calc(100% - 32px));
+  padding: 20px 28px 24px;
 }
 
-.a11y-opcion {
-  min-height: 110px;
-  padding: 14px;
+.a11y-titulo {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.dialogo .a11y-titulo {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.a11y-titulo svg {
+  width: 1.3em;
+  height: 1.3em;
+  color: var(--icono);
+}
+
+.a11y-grupo {
+  border-top: 2px solid var(--borde);
+  padding: 12px 0 16px;
+}
+
+.a11y-grupo h3 {
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.a11y-grupo h3 svg {
+  width: 1.5em;
+  height: 1.5em;
+  color: var(--icono);
+}
+
+/* + · valor · − */
+.a11y-fila {
+  display: grid;
+  grid-template-columns: 72px 1fr 72px;
+  align-items: center;
+  gap: 16px;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.a11y-paso {
+  height: 56px;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.a11y-valor {
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
-.a11y-ico {
-  width: 36px;
-  height: 36px;
-  font-size: 1.8rem;
-  font-weight: 800;
-  line-height: 36px;
+/* Oscuro y Alto contraste arriba, Daltonismo centrado debajo */
+.a11y-temas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
-/* Opción activada: fondo azul y texto blanco */
-.a11y-opcion[aria-pressed="true"] {
+.a11y-tema {
+  min-height: 52px;
+  padding: 8px 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.a11y-tema:last-child {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc(50% - 7px);
+}
+
+/* Opción activada: fondo azul, texto blanco y marca ✓ (no depende solo del color) */
+.a11y-tema[aria-pressed="true"] {
   --base: var(--azul);
   --base-hover: var(--azul-hover);
   color: #ffffff;
 }
 
-html.contraste .a11y-opcion[aria-pressed="true"] {
+.a11y-tema[aria-pressed="true"]::before {
+  content: "✓ " / "";
+}
+
+html.contraste .a11y-tema[aria-pressed="true"] {
   --base: #ffffff;
-  --base-hover: #ffffff;
+  --base-hover: #d9d9d9;
   color: #000000;
+}
+
+.dialogo-a11y .dialogo-botones {
+  border-top: 2px solid var(--borde);
+  padding-top: 18px;
+  gap: 14px;
+}
+
+.dialogo-a11y .dialogo-botones .boton {
+  padding: 12px 20px;
+  min-width: 150px;
+  font-size: 1.15rem;
 }
 
 /* Modo de alto contraste de Windows: mantiene bordes y foco visibles */
@@ -677,7 +791,7 @@ html.contraste .a11y-opcion[aria-pressed="true"] {
 
 /* ===== Pantallas pequeñas, zoom alto o texto aumentado =====
    Si no cabe todo se vuelve a permitir el scroll para no cortar contenido
-   (WCAG 1.4.4 / 1.4.10). La clase .scroll la pone el panel de accesibilidad. */
+   (WCAG 1.4.4 / 1.4.10). La clase .scroll la pone el menú de accesibilidad. */
 html.scroll body {
   overflow: auto;
 }
@@ -759,7 +873,6 @@ html.scroll .tarjeta > svg {
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    height: auto;
     min-height: 64px;
     padding: 8px 2px;
     border-left: 0;
@@ -792,17 +905,12 @@ html.scroll .tarjeta > svg {
   }
 
   .tarjetas {
-    padding: 16px;
     gap: 14px;
   }
 
   .medicacion {
     grid-template-columns: 1fr;
     text-align: center;
-  }
-
-  .a11y-opciones {
-    grid-template-columns: 1fr;
   }
 }
 

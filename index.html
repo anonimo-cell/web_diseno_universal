@@ -90,7 +90,7 @@
         <div class="perfiles">
           <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
           <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
-                  aria-label="Accesibilidad" title="Accesibilidad">
+                  aria-label="Menú de accesibilidad" title="Menú de accesibilidad">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
               <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
@@ -114,20 +114,18 @@
         <span id="aviso-texto">Medicación pendiente</span>
       </p>
 
-      <!-- Estado de la casa: cada tarjeta es un control -->
+      <!-- Estado de la casa. Luces, puertas y ventanas serán enlaces a sus páginas (aún sin destino) -->
       <section class="tarjetas" id="casa" aria-labelledby="titulo-casa" tabindex="-1">
         <h2 id="titulo-casa" class="sr-only">Estado de la casa</h2>
-        <p id="ayuda-cambiar" class="sr-only">Pulsa para cambiar el estado.</p>
 
-        <button class="boton tarjeta interruptor" type="button" aria-describedby="ayuda-cambiar"
-                data-nombre="Luces" data-estados="Encendidas|Apagadas" data-clases="ok|neutro">
+        <a class="boton tarjeta" href="#">
           <span class="tarjeta-titulo">Luces</span>
           <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <circle cx="24" cy="20" r="10"/>
             <path d="M19 30v6h10v-6M24 3v4M8 8l3 3M40 8l-3 3M3 20h4M41 20h4"/>
           </svg>
           <span class="estado ok"><span aria-hidden="true">✓</span> Encendidas</span>
-        </button>
+        </a>
 
         <div class="tarjeta panel" role="group" aria-labelledby="titulo-temp">
           <span class="tarjeta-titulo" id="titulo-temp">Temperatura</span>
@@ -135,26 +133,24 @@
             <path d="M20 8a4 4 0 0 1 8 0v20a8 8 0 1 1-8 0z"/>
             <line x1="24" y1="16" x2="24" y2="32"/>
           </svg>
-          <!-- Bajar · temperatura · subir, en una misma línea -->
+          <!-- Bajar · temperatura · subir, en una misma línea (proporción 3 · 4 · 3) -->
           <div class="temp-control">
             <button class="boton btn-temp" type="button" data-paso="-1" aria-label="Bajar temperatura" title="Bajar temperatura">−</button>
-            <span class="estado alerta" id="temp-estado"><span aria-hidden="true">⚠</span> 30 °C</span>
+            <span class="estado temp-valor" id="temp-estado">30 °C</span>
             <button class="boton btn-temp" type="button" data-paso="1" aria-label="Subir temperatura" title="Subir temperatura">+</button>
           </div>
         </div>
 
-        <button class="boton tarjeta interruptor" type="button" aria-describedby="ayuda-cambiar"
-                data-nombre="Puertas" data-estados="Abiertas|Cerradas" data-clases="alerta|ok">
+        <a class="boton tarjeta" href="#">
           <span class="tarjeta-titulo">Puertas</span>
           <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <rect x="12" y="4" width="24" height="40" rx="2"/>
             <circle cx="30" cy="25" r="1.8"/>
           </svg>
           <span class="estado alerta"><span aria-hidden="true">⚠</span> Abiertas</span>
-        </button>
+        </a>
 
-        <button class="boton tarjeta interruptor" type="button" aria-describedby="ayuda-cambiar"
-                data-nombre="Ventanas" data-estados="Cerradas|Abiertas" data-clases="ok|alerta">
+        <a class="boton tarjeta" href="#">
           <span class="tarjeta-titulo">Ventanas</span>
           <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <rect x="8" y="6" width="32" height="36"/>
@@ -162,16 +158,16 @@
             <line x1="8" y1="24" x2="40" y2="24"/>
           </svg>
           <span class="estado ok"><span aria-hidden="true">✓</span> Cerradas</span>
-        </button>
+        </a>
       </section>
 
       <!-- Próxima medicación -->
       <section class="medicacion" id="medicacion" aria-labelledby="titulo-med" tabindex="-1">
         <h2 id="titulo-med" class="sr-only">Próxima medicación</h2>
         <p class="hora"><time datetime="21:00">21:00</time></p>
-        <p class="pastilla">Pastilla<br>tensión</p>
+        <p class="pastilla">Pastilla tensión</p>
         <button class="boton btn-pendiente" type="button" id="btn-pastilla">
-          <span class="btn-principal">Pendiente <span aria-hidden="true">⚠</span></span>
+          <span class="btn-principal">Pendiente</span>
           <span class="btn-secundario">Pulsa al tomarla</span>
         </button>
       </section>
@@ -200,33 +196,64 @@
     </div>
   </dialog>
 
-  <!-- ===== Ventana de accesibilidad ===== -->
-  <dialog class="dialogo" id="dialogo-a11y" aria-labelledby="a11y-titulo">
-    <h2 id="a11y-titulo">Accesibilidad</h2>
-    <p id="a11y-estado" aria-live="polite">Tamaño del texto: 100 %</p>
-    <div class="a11y-opciones">
-      <button class="boton a11y-opcion" type="button" id="texto-mas">
-        <span class="a11y-ico" aria-hidden="true">A+</span> Aumentar texto
-      </button>
-      <button class="boton a11y-opcion" type="button" id="texto-menos">
-        <span class="a11y-ico" aria-hidden="true">A−</span> Disminuir texto
-      </button>
-      <button class="boton a11y-opcion" type="button" id="btn-contraste" aria-pressed="false">
-        <svg class="a11y-ico" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <circle cx="16" cy="16" r="12"/>
-          <path d="M16 4a12 12 0 0 1 0 24z" fill="currentColor"/>
+  <!-- ===== Menú de accesibilidad ===== -->
+  <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
+    <h2 id="a11y-titulo" class="a11y-titulo">
+      Menú de accesibilidad
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+        <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+      </svg>
+    </h2>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-texto">
+      <h3 id="grupo-texto">
+        Tamaño de letra
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="4" y="4" width="24" height="24" rx="2"/>
+          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
         </svg>
-        Alto contraste
-      </button>
-      <button class="boton a11y-opcion" type="button" id="a11y-reset">
-        <svg class="a11y-ico" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <path d="M26 16a10 10 0 1 1-3-7.1"/>
-          <path d="M24 4v6h-6"/>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
+        <output class="a11y-valor" id="texto-valor" aria-live="polite">100 %</output>
+        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
+      <h3 id="grupo-vibracion">
+        Vibración
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="5" width="10" height="22" rx="2"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
         </svg>
-        Restablecer
-      </button>
-    </div>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
+        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-tema">
+      <h3 id="grupo-tema">
+        Tema
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="5"/>
+          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
+        </svg>
+      </h3>
+      <div class="a11y-temas">
+        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
+        <button class="boton a11y-tema" type="button" id="tema-daltonismo" aria-pressed="false">Daltonismo</button>
+      </div>
+    </section>
+
     <div class="dialogo-botones">
+      <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
       <button class="boton btn-cancelar" type="button" id="cerrar-a11y">Cerrar</button>
     </div>
   </dialog>
@@ -239,36 +266,28 @@
       setTimeout(() => { anuncio.textContent = texto; }, 50);
     }
 
-    // El estado nunca depende solo del color: lleva siempre icono y texto (WCAG 1.4.1)
-    const ICONO = { ok: "✓", alerta: "⚠", neutro: "○" };
-    function pintarEstado(el, clase, texto) {
-      el.className = `estado ${clase}`;
-      el.innerHTML = `<span aria-hidden="true">${ICONO[clase]}</span> ${texto}`;
-    }
-
-    // ---------- Luces, puertas y ventanas ----------
-    document.querySelectorAll(".interruptor").forEach(boton => {
-      const estados = boton.dataset.estados.split("|");
-      const clases = boton.dataset.clases.split("|");
-      let i = 0;
-      boton.addEventListener("click", () => {
-        i = 1 - i;
-        pintarEstado(boton.querySelector(".estado"), clases[i], estados[i]);
-        anunciar(`${boton.dataset.nombre}: ${estados[i]}`);
-      });
-    });
+    // Enlaces que aún no tienen página (luces, puertas, ventanas, contactos): no hacen nada
+    document.querySelectorAll('a[href="#"]').forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
     // ---------- Temperatura ----------
+    // Fuera de 22–25 °C el valor lleva fondo rojo; dentro del rango solo se ve el número
     let temperatura = 30;
     const tempEstado = document.getElementById("temp-estado");
+    function pintarTemperatura() {
+      const fuera = temperatura < 22 || temperatura > 25;
+      tempEstado.className = "estado temp-valor" + (fuera ? " alerta" : "");
+      tempEstado.innerHTML = `${temperatura} °C` +
+        (fuera ? '<span class="sr-only"> (fuera del rango recomendado)</span>' : "");
+    }
     document.querySelectorAll(".btn-temp").forEach(boton => {
       boton.addEventListener("click", () => {
         temperatura = Math.min(35, Math.max(10, temperatura + Number(boton.dataset.paso)));
-        const clase = temperatura >= 27 || temperatura <= 17 ? "alerta" : "ok";
-        pintarEstado(tempEstado, clase, `${temperatura} °C`);
-        anunciar(`Temperatura ${temperatura} grados`);
+        pintarTemperatura();
+        const fuera = temperatura < 22 || temperatura > 25;
+        anunciar(`Temperatura ${temperatura} grados${fuera ? ", fuera del rango recomendado" : ""}`);
       });
     });
+    pintarTemperatura();
 
     // ---------- Medicación ----------
     const btnPastilla = document.getElementById("btn-pastilla");
@@ -280,7 +299,7 @@
       btnPastilla.classList.toggle("tomada", tomada);
       btnPastilla.querySelector(".btn-principal").innerHTML = tomada
         ? 'Tomada <span aria-hidden="true">✓</span>'
-        : 'Pendiente <span aria-hidden="true">⚠</span>';
+        : "Pendiente";
       btnPastilla.querySelector(".btn-secundario").textContent = tomada ? "Pulsa para deshacer" : "Pulsa al tomarla";
       aviso.classList.toggle("al-dia", tomada);
       avisoTexto.textContent = tomada ? "Medicación al día" : "Medicación pendiente";
@@ -307,41 +326,68 @@
       anunciar("Ayuda solicitada. Te contactarán enseguida.");
     });
 
-    // ---------- Accesibilidad ----------
+    // ---------- Menú de accesibilidad ----------
     // Los ajustes se guardan en el navegador para la próxima visita
     const raiz = document.documentElement;
     const dialogoA11y = document.getElementById("dialogo-a11y");
     const TAMANOS = [100, 115, 130, 150];
-    let ajustes = { texto: 0, contraste: false };
-    try { ajustes = { ...ajustes, ...JSON.parse(localStorage.getItem("a11y") || "{}") }; } catch (e) {}
+    const VIBRACION = ["Apagada", "Baja", "Media", "Alta"];
+    const INICIALES = { texto: 0, vibracion: 0, tema: "claro", daltonismo: false };
+    let ajustes = { ...INICIALES };
+    try { ajustes = { ...INICIALES, ...JSON.parse(localStorage.getItem("a11y") || "{}") }; } catch (e) {}
     if (!TAMANOS[ajustes.texto]) ajustes.texto = 0;
+    if (!VIBRACION[ajustes.vibracion]) ajustes.vibracion = 0;
 
     function aplicarAjustes() {
       const tamano = TAMANOS[ajustes.texto];
-      document.body.style.zoom = tamano === 100 ? "" : tamano / 100;
+      // Solo crece el texto (no los iconos ni el diseño): todo el texto está en rem
+      raiz.style.setProperty("--escala", tamano / 100);
       raiz.classList.toggle("scroll", tamano > 100); // con texto grande se permite el scroll
-      raiz.classList.toggle("contraste", ajustes.contraste);
-      document.getElementById("a11y-estado").textContent = `Tamaño del texto: ${tamano} %`;
+      raiz.classList.toggle("oscuro", ajustes.tema === "oscuro");
+      raiz.classList.toggle("contraste", ajustes.tema === "contraste");
+      raiz.classList.toggle("daltonismo", ajustes.daltonismo);
+
+      document.getElementById("texto-valor").textContent = `${tamano} %`;
       document.getElementById("texto-mas").disabled = ajustes.texto === TAMANOS.length - 1;
       document.getElementById("texto-menos").disabled = ajustes.texto === 0;
-      document.getElementById("btn-contraste").setAttribute("aria-pressed", String(ajustes.contraste));
+      document.getElementById("vibra-valor").textContent = VIBRACION[ajustes.vibracion];
+      document.getElementById("vibra-mas").disabled = ajustes.vibracion === VIBRACION.length - 1;
+      document.getElementById("vibra-menos").disabled = ajustes.vibracion === 0;
+      document.getElementById("tema-oscuro").setAttribute("aria-pressed", String(ajustes.tema === "oscuro"));
+      document.getElementById("tema-contraste").setAttribute("aria-pressed", String(ajustes.tema === "contraste"));
+      document.getElementById("tema-daltonismo").setAttribute("aria-pressed", String(ajustes.daltonismo));
       try { localStorage.setItem("a11y", JSON.stringify(ajustes)); } catch (e) {}
+    }
+
+    // Vibración al pulsar cualquier botón (solo en dispositivos que lo permiten)
+    function vibrar() {
+      if (ajustes.vibracion && navigator.vibrate) navigator.vibrate(ajustes.vibracion * 60);
+    }
+    document.addEventListener("click", e => { if (e.target.closest(".boton")) vibrar(); });
+
+    function cambiarTema(tema) {
+      ajustes.tema = ajustes.tema === tema ? "claro" : tema;
+      aplicarAjustes();
     }
 
     document.getElementById("abrir-a11y").addEventListener("click", () => dialogoA11y.showModal());
     document.getElementById("cerrar-a11y").addEventListener("click", () => dialogoA11y.close());
     document.getElementById("texto-mas").addEventListener("click", () => { ajustes.texto++; aplicarAjustes(); });
     document.getElementById("texto-menos").addEventListener("click", () => { ajustes.texto--; aplicarAjustes(); });
-    document.getElementById("btn-contraste").addEventListener("click", () => {
-      ajustes.contraste = !ajustes.contraste;
+    document.getElementById("vibra-mas").addEventListener("click", () => { ajustes.vibracion++; aplicarAjustes(); });
+    document.getElementById("vibra-menos").addEventListener("click", () => { ajustes.vibracion--; aplicarAjustes(); });
+    document.getElementById("tema-oscuro").addEventListener("click", () => cambiarTema("oscuro"));
+    document.getElementById("tema-contraste").addEventListener("click", () => cambiarTema("contraste"));
+    document.getElementById("tema-daltonismo").addEventListener("click", () => {
+      ajustes.daltonismo = !ajustes.daltonismo;
       aplicarAjustes();
-      anunciar(ajustes.contraste ? "Alto contraste activado" : "Alto contraste desactivado");
     });
     document.getElementById("a11y-reset").addEventListener("click", () => {
-      ajustes = { texto: 0, contraste: false };
+      ajustes = { ...INICIALES };
       aplicarAjustes();
-      anunciar("Ajustes restablecidos");
+      anunciar("Ajustes de accesibilidad restablecidos");
     });
+
     // Cerrar al pulsar fuera de las ventanas
     [dialogoA11y, dialogo].forEach(d => d.addEventListener("click", e => {
       const r = d.getBoundingClientRect();
