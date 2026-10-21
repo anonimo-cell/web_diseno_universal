@@ -79,7 +79,7 @@
           <circle cx="24" cy="35" r="1.5"/>
         </svg>
         <span class="sos-texto">SOS</span>
-        <span class="sos-ayuda">Pedir ayuda</span>
+        <span class="sr-only">: pedir ayuda</span>
       </button>
     </aside>
 
@@ -124,7 +124,7 @@
             <circle cx="24" cy="20" r="10"/>
             <path d="M19 30v6h10v-6M24 3v4M8 8l3 3M40 8l-3 3M3 20h4M41 20h4"/>
           </svg>
-          <span class="estado ok"><span aria-hidden="true">✓</span> Encendidas</span>
+          <span class="estado ok">Encendidas</span>
         </a>
 
         <div class="tarjeta panel" role="group" aria-labelledby="titulo-temp">
@@ -147,7 +147,7 @@
             <rect x="12" y="4" width="24" height="40" rx="2"/>
             <circle cx="30" cy="25" r="1.8"/>
           </svg>
-          <span class="estado alerta"><span aria-hidden="true">⚠</span> Abiertas</span>
+          <span class="estado alerta">Abiertas</span>
         </a>
 
         <a class="boton tarjeta" href="#">
@@ -157,7 +157,7 @@
             <line x1="24" y1="6" x2="24" y2="42"/>
             <line x1="8" y1="24" x2="40" y2="24"/>
           </svg>
-          <span class="estado ok"><span aria-hidden="true">✓</span> Cerradas</span>
+          <span class="estado ok">Cerradas</span>
         </a>
       </section>
 
@@ -177,27 +177,39 @@
   <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
   <p class="sr-only" id="anuncio" aria-live="polite"></p>
 
-  <!-- ===== Ventana de confirmación SOS (WCAG 3.3.4: evitar activaciones por error) ===== -->
-  <dialog class="dialogo" id="dialogo-sos" aria-labelledby="sos-titulo" aria-describedby="sos-texto">
-    <div id="sos-preguntar">
-      <h2 id="sos-titulo">¿Pedir ayuda de emergencia?</h2>
-      <p id="sos-texto">Avisaremos a tus contactos de emergencia y al 112.</p>
-      <div class="dialogo-botones">
-        <button class="boton btn-confirmar" type="button" id="sos-confirmar">Sí, pedir ayuda</button>
-        <button class="boton btn-cancelar" type="button" id="sos-cancelar" autofocus>Cancelar</button>
-      </div>
+  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
+       (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
+  <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
+    <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
+
+    <!-- Solo aparece cuando ya se está avisando -->
+    <button class="boton btn-cerrar" type="button" id="sos-cerrar" aria-label="Cerrar" title="Cerrar" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <div class="sos-circulo" aria-hidden="true">
+      <svg viewBox="0 0 48 48" focusable="false">
+        <polygon points="24,5 45,41 3,41"/>
+        <line x1="24" y1="18" x2="24" y2="29"/>
+        <circle cx="24" cy="35" r="1.5"/>
+      </svg>
+      <span>SOS</span>
     </div>
-    <div id="sos-hecho" hidden>
-      <h2>Ayuda solicitada</h2>
-      <p>Ya hemos avisado. Mantén la calma, te contactarán enseguida.</p>
-      <div class="dialogo-botones">
-        <button class="boton btn-cancelar" type="button" id="sos-cerrar">Cerrar</button>
-      </div>
-    </div>
+
+    <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
+      Cancelar (<span id="sos-cuenta">5</span>)
+    </button>
+
+    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al acabar la cuenta atrás -->
+    <p class="sos-estado" id="sos-estado" role="status"></p>
+    <p class="sr-only" id="sos-aviso" aria-live="assertive"></p>
   </dialog>
 
   <!-- ===== Menú de accesibilidad ===== -->
   <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
     <h2 id="a11y-titulo" class="a11y-titulo">
       Menú de accesibilidad
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -215,9 +227,8 @@
         </svg>
       </h3>
       <div class="a11y-fila">
-        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
-        <output class="a11y-valor" id="texto-valor" aria-live="polite">100 %</output>
         <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
       </div>
     </section>
 
@@ -231,9 +242,9 @@
         </svg>
       </h3>
       <div class="a11y-fila">
-        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
-        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
         <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
       </div>
     </section>
 
@@ -247,14 +258,11 @@
       </h3>
       <div class="a11y-temas">
         <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
-        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
-        <button class="boton a11y-tema" type="button" id="tema-daltonismo" aria-pressed="false">Daltonismo</button>
-      </div>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>      </div>
     </section>
 
     <div class="dialogo-botones">
       <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
-      <button class="boton btn-cancelar" type="button" id="cerrar-a11y">Cerrar</button>
     </div>
   </dialog>
 
@@ -307,24 +315,54 @@
     });
 
     // ---------- SOS ----------
-    // <dialog> con showModal atrapa el foco, se cierra con Escape y devuelve el foco al botón SOS
+    // Al pulsar SOS empieza una cuenta atrás de 5 s. Si no se cancela, se avisa a emergencias.
+    // <dialog> con showModal atrapa el foco y devuelve el foco al botón SOS al cerrarse.
     const dialogo = document.getElementById("dialogo-sos");
-    const preguntar = document.getElementById("sos-preguntar");
-    const hecho = document.getElementById("sos-hecho");
+    const sosCancelar = document.getElementById("sos-cancelar");
+    const sosCerrar = document.getElementById("sos-cerrar");
+    const sosCuenta = document.getElementById("sos-cuenta");
+    const sosEstado = document.getElementById("sos-estado");
+    const sosAviso = document.getElementById("sos-aviso");
+    let cuentaAtras = null;
+
+    function pararCuenta() {
+      clearInterval(cuentaAtras);
+      cuentaAtras = null;
+    }
+
+    function cancelarSos() {
+      pararCuenta();
+      dialogo.close();
+      anunciar("Llamada de emergencia cancelada");
+    }
+
     document.getElementById("abrir-sos").addEventListener("click", () => {
-      preguntar.hidden = false;
-      hecho.hidden = true;
+      let segundos = 5;
+      sosCuenta.textContent = segundos;
+      sosCancelar.hidden = false;
+      sosCerrar.hidden = true;
+      sosEstado.textContent = "";
       dialogo.showModal();
-      document.getElementById("sos-cancelar").focus();
+      sosCancelar.focus();
+      sosAviso.textContent = "Se avisará a emergencias en 5 segundos. Pulsa Cancelar para detenerlo.";
+
+      cuentaAtras = setInterval(() => {
+        segundos--;
+        sosCuenta.textContent = segundos;
+        if (segundos > 0) return;
+        pararCuenta();
+        sosCancelar.hidden = true;
+        sosCerrar.hidden = false;
+        sosCerrar.focus();
+        sosEstado.textContent = "Comunicando con los contactos y servicios de emergencia";
+      }, 1000);
     });
-    document.getElementById("sos-cancelar").addEventListener("click", () => dialogo.close());
-    document.getElementById("sos-cerrar").addEventListener("click", () => dialogo.close());
-    document.getElementById("sos-confirmar").addEventListener("click", () => {
-      preguntar.hidden = true;
-      hecho.hidden = false;
-      document.getElementById("sos-cerrar").focus();
-      anunciar("Ayuda solicitada. Te contactarán enseguida.");
-    });
+
+    sosCancelar.addEventListener("click", cancelarSos);
+    sosCerrar.addEventListener("click", () => dialogo.close());
+    // Escape durante la cuenta atrás también cancela
+    dialogo.addEventListener("cancel", () => { if (cuentaAtras) cancelarSos(); });
+    dialogo.addEventListener("close", pararCuenta);
 
     // ---------- Menú de accesibilidad ----------
     // Los ajustes se guardan en el navegador para la próxima visita
@@ -332,7 +370,7 @@
     const dialogoA11y = document.getElementById("dialogo-a11y");
     const TAMANOS = [100, 115, 130, 150];
     const VIBRACION = ["Apagada", "Baja", "Media", "Alta"];
-    const INICIALES = { texto: 0, vibracion: 0, tema: "claro", daltonismo: false };
+    const INICIALES = { texto: 0, vibracion: 0, tema: "claro" };
     let ajustes = { ...INICIALES };
     try { ajustes = { ...INICIALES, ...JSON.parse(localStorage.getItem("a11y") || "{}") }; } catch (e) {}
     if (!TAMANOS[ajustes.texto]) ajustes.texto = 0;
@@ -345,18 +383,14 @@
       raiz.classList.toggle("scroll", tamano > 100); // con texto grande se permite el scroll
       raiz.classList.toggle("oscuro", ajustes.tema === "oscuro");
       raiz.classList.toggle("contraste", ajustes.tema === "contraste");
-      raiz.classList.toggle("daltonismo", ajustes.daltonismo);
 
-      document.getElementById("texto-valor").textContent = `${tamano} %`;
       document.getElementById("texto-mas").disabled = ajustes.texto === TAMANOS.length - 1;
       document.getElementById("texto-menos").disabled = ajustes.texto === 0;
       document.getElementById("vibra-valor").textContent = VIBRACION[ajustes.vibracion];
       document.getElementById("vibra-mas").disabled = ajustes.vibracion === VIBRACION.length - 1;
       document.getElementById("vibra-menos").disabled = ajustes.vibracion === 0;
       document.getElementById("tema-oscuro").setAttribute("aria-pressed", String(ajustes.tema === "oscuro"));
-      document.getElementById("tema-contraste").setAttribute("aria-pressed", String(ajustes.tema === "contraste"));
-      document.getElementById("tema-daltonismo").setAttribute("aria-pressed", String(ajustes.daltonismo));
-      try { localStorage.setItem("a11y", JSON.stringify(ajustes)); } catch (e) {}
+      document.getElementById("tema-contraste").setAttribute("aria-pressed", String(ajustes.tema === "contraste"));      try { localStorage.setItem("a11y", JSON.stringify(ajustes)); } catch (e) {}
     }
 
     // Vibración al pulsar cualquier botón (solo en dispositivos que lo permiten)
@@ -372,28 +406,30 @@
 
     document.getElementById("abrir-a11y").addEventListener("click", () => dialogoA11y.showModal());
     document.getElementById("cerrar-a11y").addEventListener("click", () => dialogoA11y.close());
-    document.getElementById("texto-mas").addEventListener("click", () => { ajustes.texto++; aplicarAjustes(); });
-    document.getElementById("texto-menos").addEventListener("click", () => { ajustes.texto--; aplicarAjustes(); });
+    // El porcentaje no se muestra, pero el lector de pantalla lo anuncia
+    function cambiarTexto(paso) {
+      ajustes.texto += paso;
+      aplicarAjustes();
+      anunciar(`Tamaño de letra ${TAMANOS[ajustes.texto]} %`);
+    }
+    document.getElementById("texto-mas").addEventListener("click", () => cambiarTexto(1));
+    document.getElementById("texto-menos").addEventListener("click", () => cambiarTexto(-1));
     document.getElementById("vibra-mas").addEventListener("click", () => { ajustes.vibracion++; aplicarAjustes(); });
     document.getElementById("vibra-menos").addEventListener("click", () => { ajustes.vibracion--; aplicarAjustes(); });
     document.getElementById("tema-oscuro").addEventListener("click", () => cambiarTema("oscuro"));
-    document.getElementById("tema-contraste").addEventListener("click", () => cambiarTema("contraste"));
-    document.getElementById("tema-daltonismo").addEventListener("click", () => {
-      ajustes.daltonismo = !ajustes.daltonismo;
-      aplicarAjustes();
-    });
-    document.getElementById("a11y-reset").addEventListener("click", () => {
+    document.getElementById("tema-contraste").addEventListener("click", () => cambiarTema("contraste"));    document.getElementById("a11y-reset").addEventListener("click", () => {
       ajustes = { ...INICIALES };
       aplicarAjustes();
       anunciar("Ajustes de accesibilidad restablecidos");
     });
 
-    // Cerrar al pulsar fuera de las ventanas
-    [dialogoA11y, dialogo].forEach(d => d.addEventListener("click", e => {
-      const r = d.getBoundingClientRect();
+    // Cerrar el menú de accesibilidad al pulsar fuera
+    // (la ventana SOS no: un toque accidental no debe cancelar una emergencia)
+    dialogoA11y.addEventListener("click", e => {
+      const r = dialogoA11y.getBoundingClientRect();
       const fuera = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
-      if (e.target === d && fuera) d.close();
-    }));
+      if (e.target === dialogoA11y && fuera) dialogoA11y.close();
+    });
     aplicarAjustes();
   </script>
 </body>

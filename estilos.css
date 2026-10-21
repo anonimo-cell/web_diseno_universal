@@ -32,6 +32,7 @@
   --rojo-hover: #5c0000;
   --rojo-sombra: #3d0000;
   --sobre-rojo: #ffffff; /* texto encima del rojo */
+  --sobre-verde: #ffffff; /* texto encima del verde */
 
   /* Foco de teclado: anillo azul claro pegado al control + borde azul oscuro por fuera.
      Azul claro sobre --azul 7.6:1 · sobre rojo 7.4:1 · sobre verde 7.8:1
@@ -49,47 +50,36 @@ html.oscuro {
   --blanco: #14203a;
   --texto: #eef3ff;
   --borde: #8fb0ff;
-  --icono: #a9c6ff;
+  --icono: #ffffff;
   --boton: #14203a;
   --boton-hover: #22345c;
   --boton-sombra: #000000;
   --foco-borde: #ffffff;
 }
 
-/* Daltonismo: azul para lo positivo y naranja oscuro para lo negativo
-   (se distinguen con protanopia y deuteranopia). Blanco encima: 7.9:1 y 7.7:1 */
-html.daltonismo {
-  --verde: #00509e;
-  --verde-hover: #003b75;
-  --verde-sombra: #00264d;
-  --rojo: #8a3b00;
-  --rojo-hover: #662b00;
-  --rojo-sombra: #3d1a00;
-}
-
-/* Alto contraste: solo blanco y negro (21:1).
-   Lo negativo y las emergencias van en blanco (invertido) para destacar sobre el negro. */
+/* Alto contraste: solo blanco y negro (21:1). Fondo blanco y todo lo demás negro.
+   Lo negativo, las emergencias y lo activo van en negro relleno para destacar. */
 html.contraste {
-  --fondo: #000000;
-  --blanco: #000000;
-  --texto: #ffffff;
-  --borde: #ffffff;
-  --icono: #ffffff;
+  --fondo: #ffffff;
+  --blanco: #ffffff;
+  --texto: #000000;
+  --borde: #000000;
+  --icono: #000000;
   --azul: #000000;
   --azul-hover: #333333;
   --azul-sombra: #888888;
-  --boton: #000000;
-  --boton-hover: #333333;
+  --boton: #ffffff;
+  --boton-hover: #d9d9d9;
   --boton-sombra: #888888;
-  --verde: #000000;
-  --verde-hover: #333333;
+  --verde: #ffffff;
+  --verde-hover: #d9d9d9;
   --verde-sombra: #888888;
-  --rojo: #ffffff;
-  --rojo-hover: #d9d9d9;
+  --sobre-verde: #000000;
+  --rojo: #000000;
+  --rojo-hover: #333333;
   --rojo-sombra: #888888;
-  --sobre-rojo: #000000;
-  --foco: #000000;
-  --foco-borde: #ffffff;
+  --foco: #ffffff;
+  --foco-borde: #000000;
 }
 
 * {
@@ -119,6 +109,11 @@ body {
 
 ul {
   list-style: none;
+}
+
+/* Que "hidden" oculte siempre, aunque el elemento tenga su propio display */
+[hidden] {
+  display: none !important;
 }
 
 svg {
@@ -211,7 +206,7 @@ section:focus {
 /* Variantes de color: azul (acciones), rojo (emergencia / pendiente), verde (hecho) */
 .btn-sos,
 .btn-pendiente,
-.btn-confirmar {
+.btn-cerrar {
   --base: var(--rojo);
   --base-hover: var(--rojo-hover);
   --sombra: var(--rojo-sombra);
@@ -233,11 +228,11 @@ section:focus {
   --base-hover: var(--verde-hover);
   --sombra: var(--verde-sombra);
   border-color: var(--verde-sombra);
-  color: #ffffff;
+  color: var(--sobre-verde);
 }
 
 html.contraste .boton {
-  border-color: #ffffff;
+  border-color: #000000;
 }
 
 /* ===== Estructura ===== */
@@ -325,9 +320,9 @@ html.contraste .boton {
 }
 
 html.contraste .nav-item[aria-current="page"] {
-  background: #ffffff;
-  color: #000000;
-  border-left-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+  border-left-color: #000000;
 }
 
 /* Isotipo: algo más grande que los iconos */
@@ -364,14 +359,9 @@ html.contraste .nav-item[aria-current="page"] {
 
 .sos-texto {
   font-size: clamp(2rem, calc(7vh * var(--escala)), 3.2rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 3px;
   line-height: 1;
-}
-
-.sos-ayuda {
-  font-size: 1.05rem;
-  font-weight: 700;
 }
 
 /* ===== Contenido ===== */
@@ -462,13 +452,13 @@ html.contraste .nav-item[aria-current="page"] {
 
 .aviso.al-dia {
   background: var(--verde);
-  color: #ffffff;
+  color: var(--sobre-verde);
   border-color: var(--verde-sombra);
   box-shadow: 0 5px 0 var(--verde-sombra);
 }
 
 html.contraste .aviso {
-  border-color: #ffffff;
+  border-color: #000000;
 }
 
 /* ===== Tarjetas de la casa (sin recuadro exterior) ===== */
@@ -502,8 +492,9 @@ html.contraste .aviso {
 }
 
 .tarjeta-titulo {
-  font-size: clamp(1.05rem, calc(3vh * var(--escala)), 1.4rem);
-  font-weight: 700;
+  font-size: clamp(1.4rem, calc(4.2vh * var(--escala)), 2rem);
+  font-weight: 400;
+  line-height: 1.2;
 }
 
 /* Iconos grandes: ocupan todo el hueco libre de la tarjeta */
@@ -525,7 +516,7 @@ html.contraste .aviso {
   gap: 6px;
   padding: 0 8px;
   font-size: clamp(1rem, calc(3vh * var(--escala)), 1.35rem);
-  font-weight: 700;
+  font-weight: 400;
   white-space: nowrap;
   color: var(--texto);
   border: 2px solid transparent;
@@ -534,7 +525,7 @@ html.contraste .aviso {
 
 .estado.ok {
   background: var(--verde);
-  color: #ffffff;
+  color: var(--sobre-verde);
 }
 
 .estado.alerta {
@@ -549,7 +540,7 @@ html.contraste .aviso {
 
 html.contraste .estado.ok,
 html.contraste .estado.alerta {
-  border-color: #ffffff;
+  border-color: #000000;
 }
 
 /* Temperatura: bajar · valor · subir en una misma línea, proporción 3 · 4 · 3.
@@ -597,7 +588,7 @@ html.contraste .estado.alerta {
 }
 
 .pastilla {
-  font-size: clamp(1.3rem, calc(4.5vh * var(--escala)), 2.2rem);
+  font-size: clamp(1.6rem, calc(5.5vh * var(--escala)), 2.6rem);
   line-height: 1.2;
 }
 
@@ -611,7 +602,7 @@ html.contraste .estado.alerta {
 
 .btn-principal {
   font-size: clamp(1.3rem, calc(4.5vh * var(--escala)), 2.2rem);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.2;
 }
 
@@ -658,8 +649,26 @@ html.contraste .estado.alerta {
 .dialogo-botones .boton {
   padding: 16px 28px;
   font-size: 1.3rem;
-  font-weight: 700;
   min-width: 180px;
+}
+
+/* Botón de cerrar: rojo con una X, en la esquina superior derecha de la ventana */
+.btn-cerrar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+}
+
+.btn-cerrar svg {
+  width: 60%;
+  height: 60%;
+  stroke-width: 3;
 }
 
 /* ===== Menú de accesibilidad (compacto para que quepa sin desplazarse) ===== */
@@ -678,6 +687,7 @@ html.contraste .estado.alerta {
 .dialogo .a11y-titulo {
   font-size: 1.6rem;
   margin-bottom: 8px;
+  padding: 0 52px; /* deja sitio a la X */
 }
 
 .a11y-titulo svg {
@@ -697,6 +707,7 @@ html.contraste .estado.alerta {
   justify-content: center;
   gap: 8px;
   font-size: 1.25rem;
+  font-weight: 400;
   margin-bottom: 10px;
 }
 
@@ -706,17 +717,16 @@ html.contraste .estado.alerta {
   color: var(--icono);
 }
 
-/* + · valor · − */
+/* −  (valor)  + */
 .a11y-fila {
-  display: grid;
-  grid-template-columns: 72px 1fr 72px;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 16px;
-  max-width: 340px;
-  margin: 0 auto;
+  gap: 24px;
 }
 
 .a11y-paso {
+  width: 72px;
   height: 56px;
   font-size: 2rem;
   font-weight: 700;
@@ -724,11 +734,11 @@ html.contraste .estado.alerta {
 }
 
 .a11y-valor {
+  min-width: 100px;
   font-size: 1.2rem;
-  font-weight: 700;
 }
 
-/* Oscuro y Alto contraste arriba, Daltonismo centrado debajo */
+/* Los dos temas en una sola fila */
 .a11y-temas {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -739,13 +749,6 @@ html.contraste .estado.alerta {
   min-height: 52px;
   padding: 8px 12px;
   font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.a11y-tema:last-child {
-  grid-column: 1 / -1;
-  justify-self: center;
-  width: calc(50% - 7px);
 }
 
 /* Opción activada: fondo azul, texto blanco y marca ✓ (no depende solo del color) */
@@ -759,12 +762,6 @@ html.contraste .estado.alerta {
   content: "✓ " / "";
 }
 
-html.contraste .a11y-tema[aria-pressed="true"] {
-  --base: #ffffff;
-  --base-hover: #d9d9d9;
-  color: #000000;
-}
-
 .dialogo-a11y .dialogo-botones {
   border-top: 2px solid var(--borde);
   padding-top: 18px;
@@ -775,6 +772,89 @@ html.contraste .a11y-tema[aria-pressed="true"] {
   padding: 12px 20px;
   min-width: 150px;
   font-size: 1.15rem;
+}
+
+/* ===== Ventana SOS: fondo difuminado, círculo rojo grande y Cancelar con cuenta atrás ===== */
+.dialogo-sos {
+  width: min(720px, calc(100% - 32px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  margin: auto;
+  padding: 72px 24px 32px;
+  background: transparent;
+  border: 0;
+  color: var(--texto);
+}
+
+/* Solo cuando está abierta: si no, el navegador la oculta */
+.dialogo-sos[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.dialogo-sos::backdrop {
+  background: rgba(10, 31, 68, 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.sos-circulo {
+  width: min(55vmin, 380px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--rojo);
+  color: var(--sobre-rojo);
+  border: 4px solid var(--rojo-sombra);
+  box-shadow:
+    0 8px 0 var(--rojo-sombra),
+    0 20px 40px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2vmin;
+}
+
+.sos-circulo svg {
+  width: 38%;
+  height: auto;
+  stroke-width: 3;
+}
+
+.sos-circulo span {
+  font-size: clamp(3rem, 10vmin, 5.5rem);
+  font-weight: 700;
+  letter-spacing: 4px;
+  line-height: 1;
+}
+
+.btn-cancelar-sos {
+  min-width: 260px;
+  padding: 18px 36px;
+  border-radius: 999px;
+  font-size: 1.6rem;
+}
+
+.sos-estado {
+  max-width: 600px;
+  padding: 20px 28px;
+  background: var(--blanco);
+  color: var(--texto);
+  border: 3px solid var(--borde);
+  border-radius: 20px;
+  font-size: clamp(1.4rem, calc(4vh * var(--escala)), 2rem);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.sos-estado:empty {
+  display: none;
+}
+
+html.contraste .sos-circulo {
+  border-color: #000000;
 }
 
 /* Modo de alto contraste de Windows: mantiene bordes y foco visibles */
@@ -917,6 +997,13 @@ html.scroll .tarjeta > svg {
 /* Móvil estrecho: una tarjeta por fila para que quepa − 30 °C + */
 @media (max-width: 480px) {
   .tarjetas {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* En pantallas muy estrechas los temas del menú de accesibilidad van uno debajo de otro */
+@media (max-width: 400px) {
+  .a11y-temas {
     grid-template-columns: 1fr;
   }
 }
