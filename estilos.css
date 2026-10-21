@@ -583,6 +583,47 @@ html.contraste .estado.alerta {
   border: 2px solid var(--borde);
   border-radius: 20px;
   background: var(--blanco);
+  /* Relieve de botón, como las tarjetas de la casa: se puede pulsar */
+  position: relative;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -4px 0 rgba(10, 31, 68, 0.15),
+    0 5px 0 var(--boton-sombra);
+}
+
+.medicacion:hover {
+  background: var(--boton-hover);
+}
+
+/* Enlace "estirado": su zona de pulsación cubre toda la tarjeta */
+.med-enlace {
+  color: inherit;
+  text-decoration: none;
+}
+
+.med-enlace::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+}
+
+/* El anillo de foco rodea la tarjeta entera, no solo el texto */
+.med-enlace:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.med-enlace:focus-visible::after {
+  outline: 4px solid var(--foco-borde);
+  outline-offset: 5px;
+  box-shadow: 0 0 0 5px var(--foco);
+}
+
+/* El botón Pendiente queda por encima del enlace y sigue funcionando aparte */
+.medicacion .btn-pendiente {
+  position: relative;
+  z-index: 1;
 }
 
 .hora {
@@ -1505,27 +1546,275 @@ html.scroll .casa-layout {
   flex: none;
 }
 
-/* ===== Inicio de sesión ===== */
-.marca {
+/* ===== Inicio de sesión (compartido por pacientes y cuidadores) ===== */
+
+/* Colores del logo: degradado verde azulado → azul, como el original.
+   En tema oscuro, tonos claros; en alto contraste, negro. */
+:root {
+  --logo-1: #128a80;
+  --logo-2: #1d5fae;
+}
+
+html.oscuro {
+  --logo-1: #5fd4c8;
+  --logo-2: #8fb0ff;
+}
+
+html.contraste {
+  --logo-1: #000000;
+  --logo-2: #000000;
+}
+
+.logo-color-1 { stop-color: var(--logo-1); }
+.logo-color-2 { stop-color: var(--logo-2); }
+
+/* Logo a la izquierda y formulario a la derecha */
+.login-layout {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr minmax(380px, 560px);
+  align-items: center;
+  gap: 48px;
+}
+
+.login-marca {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 3vh 12px;
-  font-size: 1.3rem;
-  font-weight: 700;
-  border-bottom: 2px solid var(--borde);
+  gap: 4px;
+  text-align: center;
 }
 
-.marca svg {
-  width: 64px;
-  height: 64px;
-  color: var(--icono);
+.logo-grande {
+  width: min(260px, 70%);
+  height: auto;
+  margin-bottom: 12px;
+}
+
+.login-nombre {
+  font-size: clamp(2rem, calc(6vh * var(--escala)), 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.login-lema {
+  font-size: 1.3rem;
+}
+
+/* Parece un enlace (subrayado) pero es un botón: abre una ventana */
+.btn-enlace {
+  align-self: center;
+  min-height: 48px;
+  padding: 8px 12px;
+  background: none;
+  border: 0;
+  color: var(--texto);
+  font: inherit;
+  font-size: 1.2rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.btn-enlace:hover {
+  text-decoration-thickness: 3px;
+}
+
+.login-nuevo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 2px solid var(--borde);
+  font-size: 1.2rem;
+}
+
+.login-nuevo .btn-anadir {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Crear cuenta y restablecer contraseña: ventanas por pasos */
+.dialogo-registro {
+  width: min(760px, calc(100% - 32px));
+}
+
+.dialogo .pasos-indicador {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.pasos-indicador:empty {
+  display: none;
+}
+
+.dialogo .form-texto {
+  margin: 0;
+  font-size: 1.2rem;
+  text-align: left;
+}
+
+/* Recuadro de prueba con el código (en la versión real llega por SMS) */
+.dialogo .demo-sms {
+  margin: 0;
+  padding: 10px 14px;
+  border: 2px dashed var(--borde);
+  border-radius: 10px;
+  font-size: 1.05rem;
+  text-align: left;
+}
+
+.demo-sms:empty {
+  display: none;
+}
+
+.input-codigo {
+  max-width: 260px;
+  font-family: Consolas, "Courier New", monospace;
+  letter-spacing: 6px;
+}
+
+/* Dos campos por fila en pantallas anchas */
+.campos-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Paciente / Cuidador: dos tarjetas grandes; la elegida, azul y con ✓ */
+.opciones-perfil {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  border: 0;
+}
+
+.opciones-perfil legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.opcion-perfil {
+  position: relative;
+  cursor: pointer;
+}
+
+.opcion-perfil input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.opcion-perfil > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  background: var(--boton);
+  border: 2px solid var(--borde);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--boton-sombra);
+  font-size: 1.25rem;
+}
+
+.opcion-perfil:hover > span {
+  background: var(--boton-hover);
+}
+
+.opcion-perfil svg {
+  width: 44px;
+  height: 44px;
+}
+
+.opcion-perfil input:checked + span {
+  background: var(--azul);
+  color: #ffffff;
+  border-color: var(--azul-sombra);
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.35);
+  font-weight: 700;
+}
+
+.opcion-perfil input:checked + span .opcion-texto::before {
+  content: "✓ " / "";
+}
+
+.opcion-perfil input:focus-visible + span {
+  outline: 4px solid var(--foco-borde);
+  outline-offset: 5px;
+  box-shadow: 0 0 0 5px var(--foco);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.check input {
+  width: 28px;
+  height: 28px;
+  accent-color: var(--azul);
+}
+
+.paso-fin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.icono-ok {
+  width: 96px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--verde);
+  color: var(--sobre-verde);
+  border: 3px solid var(--verde-sombra);
+}
+
+.icono-ok svg {
+  width: 60%;
+  height: 60%;
+  stroke-width: 3.5;
+}
+
+.paso-fin .btn-entrar {
+  width: min(100%, 360px);
+}
+
+/* Página provisional del cuidador: sin barra lateral */
+.contenido-solo {
+  min-height: 100vh;
+}
+
+.login.cuidador-aviso {
+  margin: 4vh auto 0;
+}
+
+.cuidador-aviso p {
+  font-size: 1.25rem;
 }
 
 .login {
   width: min(100%, 560px);
-  margin: 2vh auto 0;
+  margin: 0;
   padding: 32px;
   display: flex;
   flex-direction: column;
@@ -1575,9 +1864,28 @@ html.scroll .perfil-layout {
   }
 }
 
+/* Login en tableta y móvil: el logo encima del formulario */
+@media (max-width: 999px) {
+  .login-layout {
+    flex: none;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 24px;
+  }
+
+  .logo-grande {
+    width: 140px;
+  }
+}
+
 @media (max-width: 760px) {
   .login {
     padding: 20px;
+  }
+
+  .campos-2,
+  .opciones-perfil {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -31,15 +31,6 @@
             </a>
           </li>
           <li>
-            <a href="index.html#aviso" class="nav-item">
-              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-                <path d="M12 34h24l-4-6v-8a8 8 0 0 0-16 0v8z"/>
-                <path d="M20 38a4 4 0 0 0 8 0"/>
-              </svg>
-              <span class="nav-texto">Alertas</span>
-            </a>
-          </li>
-          <li>
             <a href="medicacion.html" class="nav-item">
               <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/>
@@ -55,17 +46,6 @@
                 <rect x="13" y="22" width="22" height="18"/>
               </svg>
               <span class="nav-texto">Casa</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="nav-item">
-              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-                <rect x="11" y="5" width="28" height="38" rx="3"/>
-                <path d="M7 14h7M7 24h7M7 34h7"/>
-                <circle cx="25" cy="19" r="5"/>
-                <path d="M17 34c1-5 4-8 8-8s7 3 8 8"/>
-              </svg>
-              <span class="nav-texto">Contactos</span>
             </a>
           </li>
         </ul>
@@ -543,17 +523,7 @@
       }
     });
 
-    // ---------- Cerrar sesión (con confirmación) ----------
-    const dialogoSalir = document.getElementById("dialogo-salir");
-    document.getElementById("abrir-salir").addEventListener("click", () => {
-      dialogoSalir.showModal();
-      document.getElementById("salir-no").focus(); // la opción segura tiene el foco
-    });
-    document.getElementById("salir-no").addEventListener("click", () => dialogoSalir.close());
-    document.getElementById("salir-si").addEventListener("click", () => {
-      try { localStorage.setItem("sesion", "cerrada"); } catch (e) {}
-      location.href = "login.html";
-    });
+    // Cerrar sesión: lo gestiona comun.js (también lo usa la página del cuidador)
   </script>
 </body>
 </html>

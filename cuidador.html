@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuidador · VitalHogar</title>
+  <meta name="description" content="Aplicación del cuidador de VitalHogar (en preparación).">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<!-- Página provisional: aquí llegan los cuidadores al iniciar sesión hasta que exista su aplicación -->
+<body data-pagina="cuidador">
+  <!-- Enlace para saltar al contenido con el teclado (WCAG 2.4.1) -->
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <div class="app">
+
+    <!-- ===== Barra lateral del cuidador: Casa, Medicación y Contactos (sin SOS, que es del paciente).
+         Sus páginas aún no existen: los enlaces "#" no hacen nada (ver comun.js) ===== -->
+    <aside class="sidebar" aria-label="Navegación">
+      <nav aria-label="Menú principal">
+        <ul class="nav">
+          <li>
+            <!-- aria-current marca la página activa: sombreada y en negrita -->
+            <a href="cuidador.html" class="nav-item" aria-current="page">
+              <!-- Isotipo de VitalHogar: casa con corazón y señal wifi -->
+              <svg class="logo" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
+                <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
+                <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
+                <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
+                <path d="M1.5 28.5 25.5 6.5l24 22"/>
+                <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
+              </svg>
+              <span class="nav-texto">Inicio</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/>
+                <line x1="24" y1="16" x2="24" y2="32" transform="rotate(-35 24 24)"/>
+              </svg>
+              <span class="nav-texto">Medicación</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <polyline points="6,24 24,8 42,24"/>
+                <rect x="13" y="22" width="22" height="18"/>
+              </svg>
+              <span class="nav-texto">Casa</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="11" y="5" width="28" height="38" rx="3"/>
+                <path d="M7 14h7M7 24h7M7 34h7"/>
+                <circle cx="25" cy="19" r="5"/>
+                <path d="M17 34c1-5 4-8 8-8s7 3 8 8"/>
+              </svg>
+              <span class="nav-texto">Contactos</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+  <main class="contenido" id="contenido" tabindex="-1">
+    <header class="cabecera">
+      <h1 id="saludo-cuidador">Hola</h1>
+      <div class="perfiles">
+        <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
+        <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
+                aria-label="Menú de accesibilidad" title="Menú de accesibilidad">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+            <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="login cuidador-aviso" aria-labelledby="titulo-cuidador-app">
+      <h2 class="bloque-titulo" id="titulo-cuidador-app">Aplicación del cuidador</h2>
+      <p>Estamos preparando tu aplicación. Desde aquí podrás asociar a tus pacientes con su código
+        de paciente y seguir su día a día.</p>
+      <button class="boton btn-salir" type="button" id="abrir-salir" aria-haspopup="dialog">
+        Cerrar sesión
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/></svg>
+      </button>
+    </section>
+  </main>
+  </div>
+
+  <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
+  <p class="sr-only" id="anuncio" aria-live="polite"></p>
+
+  <!-- ===== Confirmar cierre de sesión (evita cerrarla por un toque accidental) ===== -->
+  <dialog class="dialogo dialogo-salir" id="dialogo-salir" aria-labelledby="salir-titulo" aria-describedby="salir-texto">
+    <h2 id="salir-titulo">¿Cerrar sesión?</h2>
+    <p id="salir-texto">Para volver a usar la aplicación tendrás que entrar otra vez con tu usuario y contraseña.</p>
+    <div class="dialogo-botones">
+      <button class="boton" type="button" id="salir-no">No, seguir aquí</button>
+      <button class="boton btn-salir" type="button" id="salir-si">Sí, cerrar sesión</button>
+    </div>
+  </dialog>
+
+  <!-- ===== Menú de accesibilidad ===== -->
+  <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="a11y-titulo" class="a11y-titulo">
+      Menú de accesibilidad
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+        <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+      </svg>
+    </h2>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-texto">
+      <h3 id="grupo-texto">
+        Tamaño de letra
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="4" y="4" width="24" height="24" rx="2"/>
+          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
+      <h3 id="grupo-vibracion">
+        Vibración
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="5" width="10" height="22" rx="2"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-tema">
+      <h3 id="grupo-tema">
+        Tema
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="5"/>
+          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
+        </svg>
+      </h3>
+      <div class="a11y-temas">
+        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
+      </div>
+    </section>
+
+    <div class="dialogo-botones">
+      <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
+    </div>
+  </dialog>
+
+  <script src="comun.js"></script>
+  <script>
+    let nombreCuidador = "";
+    try { nombreCuidador = (localStorage.getItem("nombre-usuario") || "").split(" ")[0]; } catch (e) {}
+    if (nombreCuidador) document.getElementById("saludo-cuidador").textContent = `Hola, ${nombreCuidador}`;
+  </script>
+</body>
+</html>

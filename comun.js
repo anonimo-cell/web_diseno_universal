@@ -9,14 +9,34 @@ function anunciar(texto) {
 }
 
 // ---------- Sesión ----------
-// Si el paciente ha cerrado sesión, cualquier página lleva al inicio de sesión
+// Sin sesión, cualquier página lleva al inicio de sesión.
+// Un cuidador que abra una página del paciente va a su propia página.
 try {
-  if (localStorage.getItem("sesion") === "cerrada" && document.body.dataset.pagina !== "login") {
-    location.replace("login.html");
+  const pagina = document.body.dataset.pagina;
+  if (pagina !== "login") {
+    if (localStorage.getItem("sesion") === "cerrada") location.replace("login.html");
+    else if (localStorage.getItem("tipo-perfil") === "cuidador" && pagina !== "cuidador") location.replace("cuidador.html");
   }
 } catch (e) {}
 
-// Enlaces que aún no tienen página (contactos): no hacen nada
+// ---------- Cerrar sesión (con confirmación, para evitar toques accidentales) ----------
+const dialogoSalir = document.getElementById("dialogo-salir");
+if (dialogoSalir) {
+  document.getElementById("abrir-salir").addEventListener("click", () => {
+    dialogoSalir.showModal();
+    document.getElementById("salir-no").focus(); // la opción segura tiene el foco
+  });
+  document.getElementById("salir-no").addEventListener("click", () => dialogoSalir.close());
+  document.getElementById("salir-si").addEventListener("click", () => {
+    try {
+      localStorage.setItem("sesion", "cerrada");
+      localStorage.removeItem("tipo-perfil");
+    } catch (e) {}
+    location.href = "login.html";
+  });
+}
+
+// Enlaces que aún no tienen página (medicación, casa y contactos del cuidador): no hacen nada
 document.querySelectorAll('a[href="#"]').forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
 // ---------- Toma de la pastilla ----------
@@ -72,6 +92,7 @@ function configurarTemperatura(valor, clase) {
 // ---------- SOS ----------
 // Al pulsar SOS empieza una cuenta atrás de 5 s. Si no se cancela, se avisa a emergencias.
 // <dialog> con showModal atrapa el foco y devuelve el foco al botón SOS al cerrarse.
+// La página del cuidador no tiene SOS: de ahí los "?.".
 const dialogo = document.getElementById("dialogo-sos");
 const sosCancelar = document.getElementById("sos-cancelar");
 const sosCerrar = document.getElementById("sos-cerrar");
@@ -91,7 +112,7 @@ function cancelarSos() {
   anunciar("Llamada de emergencia cancelada");
 }
 
-document.getElementById("abrir-sos").addEventListener("click", () => {
+document.getElementById("abrir-sos")?.addEventListener("click", () => {
   let segundos = 5;
   sosCuenta.textContent = segundos;
   sosCancelar.hidden = false;
@@ -113,11 +134,11 @@ document.getElementById("abrir-sos").addEventListener("click", () => {
   }, 1000);
 });
 
-sosCancelar.addEventListener("click", cancelarSos);
-sosCerrar.addEventListener("click", () => dialogo.close());
+sosCancelar?.addEventListener("click", cancelarSos);
+sosCerrar?.addEventListener("click", () => dialogo.close());
 // Escape durante la cuenta atrás también cancela
-dialogo.addEventListener("cancel", () => { if (cuentaAtras) cancelarSos(); });
-dialogo.addEventListener("close", pararCuenta);
+dialogo?.addEventListener("cancel", () => { if (cuentaAtras) cancelarSos(); });
+dialogo?.addEventListener("close", pararCuenta);
 
 // ---------- Menú de accesibilidad ----------
 // Los ajustes se guardan en el navegador y se aplican en todas las páginas
