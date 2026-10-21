@@ -1,14 +1,39 @@
-/* ===== Variables ===== */
+/* ===== Paleta AAA =====
+   Contraste del texto (WCAG 1.4.6 AAA pide 7:1):
+   --texto sobre blanco ........ 16.7:1
+   --texto-suave sobre blanco ..  9.3:1   (sobre --fondo 8.4:1)
+   blanco sobre --rojo .........  8.5:1
+   blanco sobre --verde ........  7.9:1
+   blanco sobre --azul .........  8.6:1
+   blanco sobre --gris .........  8.9:1
+   --texto sobre --boton-hover . 13:1
+   Bordes de controles (--borde) sobre blanco 4.5:1 (WCAG 1.4.11 pide 3:1). */
 :root {
   --fondo: #f4f4f2;
   --blanco: #ffffff;
-  --borde: #c9c9c9;
   --texto: #1d1d1d;
-  --texto-suave: #6b6b6b;
-  --verde: #2e9e5b;
-  --rojo: #c62828;
-  --rojo-claro: #e05858;
+  --texto-suave: #474747;
+  --borde: #767676;
+
+  --boton: #f2f2f2;
+  --boton-hover: #dfe5ff;
+  --boton-sombra: #8a8a8a;
+
+  --rojo: #9b1111;
+  --rojo-hover: #750b0b;
+  --rojo-sombra: #4d0808;
+
+  --verde: #1b5e20;
+  --verde-hover: #134517;
+  --verde-sombra: #0b2e0f;
+
   --azul: #2f3fa8;
+  --azul-hover: #222f80;
+  --azul-sombra: #141c4d;
+
+  --gris: #4a4a4a;
+
+  --foco: #000000;
   --radio: 16px;
 }
 
@@ -24,12 +49,16 @@ body {
 }
 
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: "Segoe UI", Verdana, Arial, sans-serif;
   background: var(--fondo);
   color: var(--texto);
-  font-size: 18px;
-  line-height: 1.4;
+  font-size: 1.125rem; /* 18px, en rem para respetar el tamaño del navegador */
+  line-height: 1.5;
   overflow: hidden; /* sin scroll en la pantalla principal */
+}
+
+ul {
+  list-style: none;
 }
 
 svg {
@@ -40,61 +69,114 @@ svg {
   stroke-linejoin: round;
 }
 
+/* Oculto a la vista pero leído por el lector de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Enlace "Saltar al contenido": aparece al recibir el foco */
+.saltar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--texto);
+  color: var(--blanco);
+  font-weight: 700;
+  border-radius: 8px;
+  transform: translateY(-200%);
+}
+
+.saltar:focus {
+  transform: none;
+  outline: 4px solid var(--azul);
+  outline-offset: 2px;
+}
+
+/* Foco visible y grueso en todo lo que se puede usar con teclado (WCAG 2.4.7 / 2.4.13) */
+:focus-visible {
+  outline: 4px solid var(--foco);
+  outline-offset: 4px;
+}
+
+main:focus,
+section:focus {
+  outline: none;
+}
+
 /* ===== Botones con relieve =====
-   Cada botón define --base (color) y --sombra (borde inferior más oscuro).
-   Al pulsarlo baja y la sombra se reduce, como una tecla. */
-.nav-item,
-.logo,
-.btn-sos,
-.avatar,
-.btn-pendiente {
-  --base: #f2f2f2;
-  --sombra: #a8a8a8;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0.08)), var(--base);
-  border: 2px solid rgba(0, 0, 0, 0.35);
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -3px 0 rgba(0, 0, 0, 0.15),
-    0 6px 0 var(--sombra),
-    0 9px 14px rgba(0, 0, 0, 0.25);
-  transition: transform 0.1s, box-shadow 0.1s, filter 0.2s;
+   Cada botón define --base, --base-hover y --sombra (el "grosor" de la tecla). */
+.boton {
+  --base: var(--boton);
+  --base-hover: var(--boton-hover);
+  --sombra: var(--boton-sombra);
+  background: var(--base);
+  color: var(--texto);
+  border: 2px solid var(--texto);
+  border-radius: var(--radio);
+  font: inherit;
+  text-decoration: none;
   cursor: pointer;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.18),
+    0 6px 0 var(--sombra),
+    0 10px 16px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;
 }
 
-.nav-item:hover,
-.logo:hover,
-.btn-sos:hover,
-.avatar:hover,
-.btn-pendiente:hover {
-  filter: brightness(1.06);
+.boton:hover {
+  background: var(--base-hover);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.18),
+    0 8px 0 var(--sombra),
+    0 14px 20px rgba(0, 0, 0, 0.3);
 }
 
-.nav-item:active,
-.logo:active,
-.btn-sos:active,
-.avatar:active,
-.btn-pendiente:active {
+.boton:active {
   transform: translateY(5px);
   box-shadow:
     inset 0 2px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
     0 1px 0 var(--sombra),
     0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-.nav-item:focus-visible,
-.logo:focus-visible,
-.btn-sos:focus-visible,
-.avatar:focus-visible,
-.btn-pendiente:focus-visible {
-  outline: 4px solid #000;
-  outline-offset: 3px;
+/* Variantes de color */
+.btn-sos,
+.btn-pendiente,
+.btn-confirmar {
+  --base: var(--rojo);
+  --base-hover: var(--rojo-hover);
+  --sombra: var(--rojo-sombra);
+  color: var(--blanco);
+}
+
+.avatar {
+  --base: var(--azul);
+  --base-hover: var(--azul-hover);
+  --sombra: var(--azul-sombra);
+  color: var(--blanco);
+}
+
+.btn-pendiente.tomada {
+  --base: var(--verde);
+  --base-hover: var(--verde-hover);
+  --sombra: var(--verde-sombra);
 }
 
 /* ===== Estructura ===== */
 .app {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 210px 1fr;
   height: 100vh;
   height: 100dvh;
 }
@@ -105,8 +187,8 @@ svg {
   border-right: 2px solid var(--borde);
   display: flex;
   flex-direction: column;
-  gap: 2.5vh;
-  padding: 2.5vh 16px 3vh;
+  gap: 3vh;
+  padding: 2.5vh 18px 3.5vh;
   min-height: 0;
 }
 
@@ -116,52 +198,61 @@ svg {
   gap: 2.5vh;
 }
 
-.logo,
 .nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 1.5vh 10px;
-  border-radius: var(--radio);
-  color: var(--texto);
-  text-decoration: none;
-}
-
-.logo-texto {
-  font-size: clamp(1.4rem, 4vh, 2rem);
-  color: var(--texto-suave);
+  gap: 2px;
+  padding: 1.2vh 10px;
+  min-height: 44px;
 }
 
 .nav-item svg {
-  width: clamp(32px, 6vh, 56px);
-  height: clamp(32px, 6vh, 56px);
+  width: clamp(30px, 5.5vh, 52px);
+  height: clamp(30px, 5.5vh, 52px);
 }
 
 .nav-texto {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
+/* Página actual: marcada con algo más que el color (borde izquierdo grueso) */
+.nav-item[aria-current="page"] {
+  --base: var(--boton-hover);
+  border-left-width: 8px;
+}
+
+/* SOS grande: ocupa todo el hueco libre de la barra lateral */
 .btn-sos {
-  --base: var(--rojo);
-  --sombra: #7d1515;
+  flex: 1;
+  min-height: 140px;
+  max-height: 340px;
   margin-top: auto;
-  color: var(--texto);
-  border-radius: var(--radio);
-  padding: 2vh 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font-size: clamp(1.3rem, 4vh, 1.8rem);
-  font-weight: 700;
-  letter-spacing: 2px;
+  justify-content: center;
+  gap: 0.5vh;
+  border-width: 3px;
+  border-radius: 22px;
 }
 
 .btn-sos svg {
-  width: clamp(32px, 6vh, 56px);
-  height: clamp(32px, 6vh, 56px);
+  width: clamp(48px, 10vh, 96px);
+  height: clamp(48px, 10vh, 96px);
+}
+
+.sos-texto {
+  font-size: clamp(2rem, 7vh, 3.2rem);
+  font-weight: 800;
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+.sos-ayuda {
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 /* ===== Contenido ===== */
@@ -184,20 +275,18 @@ svg {
 .cabecera h1 {
   font-size: clamp(1.6rem, 5vh, 2.6rem);
   font-weight: 400;
+  line-height: 1.2;
 }
 
 .perfiles {
   display: flex;
-  gap: 14px;
+  gap: 16px;
 }
 
 .avatar {
-  --base: var(--azul);
-  --sombra: #1a2466;
   width: clamp(48px, 8vh, 70px);
   height: clamp(48px, 8vh, 70px);
   border-radius: 50%;
-  color: var(--blanco);
   display: grid;
   place-items: center;
 }
@@ -212,16 +301,27 @@ svg {
   align-self: flex-start;
   background: var(--blanco);
   border: 2px solid var(--borde);
-  border-left: 8px solid var(--rojo);
-  padding: 1vh 22px;
+  border-left: 10px solid var(--rojo);
+  padding: 0.8vh 22px;
   font-size: clamp(1.2rem, 3.5vh, 1.8rem);
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.icono-aviso {
+.aviso-icono {
+  width: 1.2em;
+  height: 1.2em;
   color: var(--rojo);
+  flex: none;
+}
+
+.aviso.al-dia {
+  border-left-color: var(--verde);
+}
+
+.aviso.al-dia .aviso-icono {
+  display: none;
 }
 
 /* ===== Tarjetas de la casa ===== */
@@ -231,28 +331,31 @@ svg {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  padding: 2.5vh 24px;
+  padding: 2.5vh 24px 3.5vh;
   border: 2px solid var(--borde);
   background: var(--blanco);
 }
 
 .tarjeta {
   min-height: 0;
-  background: var(--blanco);
-  border: 2px solid var(--borde);
-  border-radius: var(--radio);
   padding: 1.5vh 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   gap: 1vh;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.tarjeta h2 {
+/* Tarjeta que no es botón (temperatura): sin relieve */
+.tarjeta.panel {
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+.tarjeta-titulo {
   font-size: clamp(1rem, 2.8vh, 1.3rem);
-  font-weight: 400;
+  font-weight: 600;
   color: var(--texto-suave);
 }
 
@@ -262,16 +365,16 @@ svg {
   min-height: 0;
   width: 100%;
   max-height: 90px;
-  color: #555;
+  color: var(--texto-suave);
 }
 
 .estado {
   width: 100%;
   text-align: center;
-  padding: 1vh 10px;
-  font-size: clamp(1rem, 3vh, 1.4rem);
+  padding: 0.8vh 10px;
+  font-size: clamp(1rem, 3vh, 1.35rem);
   font-weight: 700;
-  color: var(--texto);
+  color: var(--blanco);
   border-radius: 8px;
 }
 
@@ -283,13 +386,32 @@ svg {
   background: var(--rojo);
 }
 
+.estado.neutro {
+  background: var(--gris);
+}
+
+.temp-botones {
+  display: flex;
+  gap: 12px;
+}
+
+/* Mínimo 48x48 px (WCAG 2.5.5 AAA pide 44) */
+.btn-temp {
+  width: 52px;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 /* ===== Medicación ===== */
 .medicacion {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 40px;
-  padding: 2vh 40px;
+  padding: 2vh 40px 2.8vh;
   border: 2px solid var(--borde);
   background: var(--blanco);
 }
@@ -306,57 +428,145 @@ svg {
 }
 
 .btn-pendiente {
-  --base: var(--rojo);
-  --sombra: #7d1515;
-  color: var(--texto);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.2vh 44px;
   border-radius: 12px;
-  padding: 1.8vh 50px;
+}
+
+.btn-principal {
   font-size: clamp(1.3rem, 4.5vh, 2.2rem);
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 1000px) {
-  .app {
-    grid-template-columns: 140px 1fr;
+.btn-secundario {
+  font-size: 1rem;
+}
+
+/* ===== Ventana SOS ===== */
+.dialogo {
+  width: min(560px, calc(100% - 32px));
+  margin: auto;
+  padding: 32px;
+  border: 3px solid var(--texto);
+  border-radius: 20px;
+  background: var(--blanco);
+  color: var(--texto);
+  text-align: center;
+}
+
+.dialogo::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.dialogo h2 {
+  font-size: 1.9rem;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.dialogo p {
+  font-size: 1.25rem;
+  margin-bottom: 28px;
+}
+
+.dialogo-botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.dialogo-botones .boton {
+  padding: 16px 28px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  min-width: 180px;
+}
+
+/* ===== Preferencias del usuario ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 
-  .contenido {
-    padding: 2vh 20px 3vh;
-  }
-
-  .tarjetas {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5vh 16px;
-  }
-
-  .medicacion {
-    gap: 20px;
-    padding: 1.5vh 20px;
-  }
-
-  .btn-pendiente {
-    padding: 1.5vh 24px;
+  .boton:hover,
+  .boton:active {
+    transform: none;
   }
 }
 
-/* En móvil no cabe todo sin desplazar: aquí sí se permite el scroll */
-@media (max-width: 640px) {
+/* Modo de alto contraste de Windows: mantiene bordes y foco visibles */
+@media (forced-colors: active) {
+  .boton,
+  .estado {
+    border: 2px solid ButtonText;
+  }
+
+  :focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ===== Pantallas pequeñas o zoom alto =====
+   Si no cabe todo (o se amplía el texto al 200 %, WCAG 1.4.4 / 1.4.10)
+   se vuelve a permitir el scroll para no cortar contenido. */
+@media (max-width: 899px), (max-height: 559px) {
   body {
     overflow: auto;
   }
 
   .app {
-    grid-template-columns: 1fr;
     height: auto;
+    min-height: 100vh;
+  }
+
+  .tarjetas {
+    flex: none;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .tarjeta {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .tarjeta svg {
+    flex: none;
+    height: 64px;
+  }
+
+  .btn-sos {
+    flex: none;
+    min-height: 180px;
+  }
+
+  .medicacion {
+    gap: 20px;
+    padding: 16px 20px 22px;
+  }
+
+  .btn-pendiente {
+    padding: 12px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app {
+    grid-template-columns: 1fr;
   }
 
   .sidebar {
     flex-direction: row;
-    align-items: center;
+    flex-wrap: wrap;
+    align-items: stretch;
     border-right: none;
     border-bottom: 2px solid var(--borde);
-    padding: 10px;
-    gap: 10px;
+    padding: 12px 16px 18px;
+    gap: 12px;
   }
 
   .nav {
@@ -364,24 +574,26 @@ svg {
     gap: 10px;
   }
 
-  .logo,
   .nav-item {
     padding: 8px;
   }
 
+  .nav-item[aria-current="page"] {
+    border-left-width: 2px;
+    border-bottom-width: 6px;
+  }
+
+  /* El SOS sigue siendo el control más grande: fila completa */
   .btn-sos {
-    margin: 0 0 0 auto;
-    padding: 8px 14px;
+    flex: 1 1 100%;
+    flex-direction: row;
+    min-height: 90px;
+    gap: 14px;
   }
 
   .contenido {
     padding: 20px 16px;
-    gap: 16px;
-  }
-
-  .tarjeta svg {
-    flex: none;
-    height: 60px;
+    gap: 18px;
   }
 
   .medicacion {
