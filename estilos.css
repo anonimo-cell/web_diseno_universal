@@ -857,6 +857,103 @@ html.contraste .sos-circulo {
   border-color: #000000;
 }
 
+/* ===== Página Mi medicación =====
+   Izquierda: próximas tomas. Derecha: hora actual y toma pendiente. */
+.med-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 38%);
+  gap: 32px;
+}
+
+.med-lista ul {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.med-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 28px;
+  padding: 2vh 28px;
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: 28px;
+}
+
+.med-item-hora {
+  font-size: clamp(1.8rem, calc(6vh * var(--escala)), 3rem);
+  line-height: 1.1;
+}
+
+.med-item-nombre {
+  font-size: clamp(1.3rem, calc(4vh * var(--escala)), 2rem);
+  line-height: 1.2;
+}
+
+.btn-foto {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+}
+
+.btn-foto svg {
+  width: 28px;
+  height: 28px;
+  flex: none;
+}
+
+.med-ahora {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 2vh;
+  padding: 3vh 28px;
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: 20px;
+  text-align: center;
+}
+
+.med-reloj {
+  padding: 0 32px;
+  border: 3px solid var(--borde);
+  border-radius: 16px;
+  font-size: clamp(3.5rem, calc(13vh * var(--escala)), 7rem);
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+.med-ahora .btn-pendiente {
+  width: 100%;
+}
+
+/* Foto de la pastilla */
+.dialogo-foto h2 {
+  padding: 0 52px; /* deja sitio a la X */
+}
+
+.foto-pastilla svg {
+  width: min(320px, 100%);
+  height: auto;
+  color: var(--texto);
+}
+
+.foto-pastilla figcaption {
+  margin-top: 12px;
+  font-size: 1.2rem;
+}
+
 /* Modo de alto contraste de Windows: mantiene bordes y foco visibles */
 @media (forced-colors: active) {
   .boton,
@@ -998,6 +1095,23 @@ html.scroll .tarjeta > svg {
 @media (max-width: 480px) {
   .tarjetas {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Medicación: en pantallas medianas la toma pendiente va debajo de la lista */
+@media (max-width: 899px) {
+  .med-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Móvil: cada toma se apila (hora, nombre y botón uno debajo de otro) */
+@media (max-width: 640px) {
+  .med-item {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 10px;
+    text-align: center;
   }
 }
 
