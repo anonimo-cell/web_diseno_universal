@@ -206,7 +206,8 @@ section:focus {
 /* Variantes de color: azul (acciones), rojo (emergencia / pendiente), verde (hecho) */
 .btn-sos,
 .btn-pendiente,
-.btn-cerrar {
+.btn-cerrar,
+.btn-salir {
   --base: var(--rojo);
   --base-hover: var(--rojo-hover);
   --sombra: var(--rojo-sombra);
@@ -225,7 +226,8 @@ section:focus {
 }
 
 .btn-pendiente.tomada,
-.btn-confirmar {
+.btn-confirmar,
+.btn-llamar {
   --base: var(--verde);
   --base-hover: var(--verde-hover);
   --sombra: var(--verde-sombra);
@@ -999,7 +1001,8 @@ html.contraste .sos-circulo {
 .casa-puertas { grid-area: puertas; }
 .casa-ventanas { grid-area: ventanas; }
 
-.casa-bloque {
+.casa-bloque,
+.perfil-bloque {
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -1127,14 +1130,17 @@ html.contraste .disp-icono {
   font-size: clamp(1.8rem, calc(6vh * var(--escala)), 3rem);
 }
 
-/* Formulario de añadir dispositivo: fondo difuminado como en el SOS */
-.dialogo-nuevo::backdrop {
+/* Formularios y confirmaciones: fondo difuminado como en el SOS */
+.dialogo-nuevo::backdrop,
+.dialogo-editar::backdrop,
+.dialogo-salir::backdrop {
   background: rgba(10, 31, 68, 0.45);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
-.dialogo-nuevo h2 {
+.dialogo-nuevo h2,
+.dialogo-editar h2 {
   padding: 0 52px; /* deja sitio a la X */
 }
 
@@ -1232,6 +1238,346 @@ html.scroll .casa-layout {
   .disp-icono {
     width: 48px;
     height: 48px;
+  }
+}
+
+/* ===== Campos de texto (editar perfil e inicio de sesión) ===== */
+.campos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.campo input,
+.campo textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 18px;
+  font: inherit;
+  font-size: 1.3rem;
+  color: var(--texto);
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: 12px;
+}
+
+.campo textarea {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.campo [aria-invalid="true"] {
+  border-width: 4px;
+}
+
+.campo .campo-pista {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+
+/* Error: bloque rojo con icono y texto (no depende solo del color, WCAG 1.4.1) */
+.campo .campo-error {
+  margin: 8px 0 0;
+  padding: 6px 12px;
+  background: var(--rojo);
+  color: var(--sobre-rojo);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.campo-error::before {
+  content: "⚠ " / "";
+}
+
+.campo-error:empty {
+  display: none;
+}
+
+/* Teléfono: prefijo +34 fijo delante del número */
+.campo-tel {
+  display: flex;
+}
+
+.prefijo {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-size: 1.3rem;
+  background: var(--fondo);
+  border: 2px solid var(--borde);
+  border-right: 0;
+  border-radius: 12px 0 0 12px;
+}
+
+.campo-tel input {
+  border-radius: 0 12px 12px 0;
+}
+
+/* ===== Página Mi perfil =====
+   Arriba: datos personales · datos médicos. Abajo: contactos · cuidador.
+   Al pie, Cerrar sesión centrado, como en el boceto. */
+
+/* El avatar se ve pulsado y con un anillo mientras se está en el perfil */
+.avatar[aria-current="page"] {
+  box-shadow:
+    inset 0 5px 10px rgba(0, 0, 0, 0.45),
+    0 0 0 4px var(--fondo),
+    0 0 0 7px var(--texto);
+}
+
+.perfil-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 24px;
+}
+
+.perfil-cuidador {
+  overflow-y: auto;
+}
+
+.bloque-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.btn-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: 1.15rem;
+}
+
+.btn-editar svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.btn-editar.solo-icono {
+  width: 52px;
+  min-height: 52px;
+  padding: 0;
+}
+
+/* Etiqueta a la izquierda y el dato en su recuadro, como en el boceto */
+.datos {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1.2vh 18px;
+}
+
+.datos dt {
+  font-size: 1.2rem;
+}
+
+.datos dd {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: var(--fondo);
+  border: 2px solid var(--borde);
+  border-radius: 10px;
+  font-size: 1.2rem;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+/* Si hay muchos contactos, la lista se desplaza dentro de su bloque */
+.contactos-lista {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 12px 14px;
+}
+
+.contacto,
+.cuidador {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 10px 14px;
+  border: 2px solid var(--borde);
+  border-radius: 16px;
+}
+
+.cuidador {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.contacto-datos {
+  flex: 1 1 10em;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.contacto-nombre {
+  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.7rem);
+  line-height: 1.2;
+}
+
+.contacto-tel {
+  font-size: 1.15rem;
+}
+
+.btn-llamar {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 22px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+}
+
+.btn-llamar svg {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+
+/* Código único del paciente: grande, con borde discontinuo y letra de ancho fijo */
+.codigo {
+  border-top: 2px solid var(--borde);
+  padding-top: 1.5vh;
+}
+
+.codigo-ayuda {
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+.codigo-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.codigo-valor {
+  padding: 2px 16px;
+  border: 3px dashed var(--borde);
+  border-radius: 12px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: clamp(1.4rem, calc(4.5vh * var(--escala)), 2.2rem);
+  font-weight: 700;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.perfil-pie {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 6px;
+}
+
+.btn-salir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 40px;
+  font-size: 1.35rem;
+}
+
+.btn-salir svg {
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
+
+/* ===== Inicio de sesión ===== */
+.marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 3vh 12px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--borde);
+}
+
+.marca svg {
+  width: 64px;
+  height: 64px;
+  color: var(--icono);
+}
+
+.login {
+  width: min(100%, 560px);
+  margin: 2vh auto 0;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  background: var(--blanco);
+  border: 2px solid var(--borde);
+  border-radius: 20px;
+}
+
+.login-intro {
+  font-size: 1.25rem;
+}
+
+.campo-clave {
+  display: flex;
+  gap: 12px;
+}
+
+.campo-clave input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-entrar {
+  min-height: 64px;
+  font-size: 1.5rem;
+}
+
+/* Si no cabe todo, los bloques crecen con su contenido y la página se desplaza */
+html.scroll .perfil-layout {
+  flex: none;
+  grid-template-rows: auto auto;
+}
+
+@media (max-width: 1199px), (max-height: 559px) {
+  .perfil-layout {
+    flex: none;
+    grid-template-rows: auto;
+  }
+}
+
+/* Tableta y móvil: un bloque debajo de otro para que los datos no se partan */
+@media (max-width: 999px) {
+  .perfil-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 760px) {
+  .login {
+    padding: 20px;
   }
 }
 

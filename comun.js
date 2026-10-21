@@ -8,6 +8,14 @@ function anunciar(texto) {
   setTimeout(() => { anuncio.textContent = texto; }, 50);
 }
 
+// ---------- Sesión ----------
+// Si el paciente ha cerrado sesión, cualquier página lleva al inicio de sesión
+try {
+  if (localStorage.getItem("sesion") === "cerrada" && document.body.dataset.pagina !== "login") {
+    location.replace("login.html");
+  }
+} catch (e) {}
+
 // Enlaces que aún no tienen página (contactos): no hacen nada
 document.querySelectorAll('a[href="#"]').forEach(a => a.addEventListener("click", e => e.preventDefault()));
 
@@ -175,7 +183,8 @@ document.getElementById("a11y-reset").addEventListener("click", () => {
 
 // Cerrar al pulsar fuera de la ventana (menú de accesibilidad y otras ventanas .dialogo).
 // La ventana SOS no: un toque accidental no debe cancelar una emergencia.
-document.querySelectorAll("dialog.dialogo").forEach(d => d.addEventListener("click", e => {
+// Los formularios (.dialogo-form) tampoco: no se pierde lo escrito por un toque fuera.
+document.querySelectorAll("dialog.dialogo:not(.dialogo-form)").forEach(d => d.addEventListener("click", e => {
   const r = d.getBoundingClientRect();
   const fuera = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
   if (e.target === d && fuera) d.close();

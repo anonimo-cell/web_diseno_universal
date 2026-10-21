@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión · VitalHogar</title>
+  <meta name="description" content="Entrada a VitalHogar con usuario y contraseña.">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<!-- data-pagina="login": comun.js no redirige aquí aunque la sesión esté cerrada -->
+<body data-pagina="login">
+  <!-- Enlace para saltar la navegación con el teclado (WCAG 2.4.1) -->
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <div class="app">
+
+    <!-- ===== Barra lateral: sin apartados (no hay sesión), pero el SOS sigue disponible ===== -->
+    <aside class="sidebar" aria-label="Emergencias">
+      <p class="marca">
+        <svg class="logo" viewBox="0 0 54 50" aria-hidden="true" focusable="false">
+          <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
+          <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
+          <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
+          <path d="M1.5 28.5 25.5 6.5l24 22"/>
+          <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
+        </svg>
+        VitalHogar
+      </p>
+
+      <button class="boton btn-sos" type="button" id="abrir-sos" aria-haspopup="dialog">
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <polygon points="24,5 45,41 3,41"/>
+          <line x1="24" y1="18" x2="24" y2="29"/>
+          <circle cx="24" cy="35" r="1.5"/>
+        </svg>
+        <span class="sos-texto">SOS</span>
+        <span class="sr-only">: pedir ayuda</span>
+      </button>
+    </aside>
+
+    <!-- ===== Contenido principal ===== -->
+    <main class="contenido" id="contenido" tabindex="-1">
+      <header class="cabecera">
+        <h1>Iniciar sesión</h1>
+        <div class="perfiles">
+          <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
+          <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
+                  aria-label="Menú de accesibilidad" title="Menú de accesibilidad">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+              <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <form class="login" id="form-login" novalidate>
+        <p class="login-intro" id="login-intro">Escribe tu usuario y tu contraseña para entrar.</p>
+
+        <div class="campo">
+          <label for="login-usuario">Usuario</label>
+          <input id="login-usuario" type="text" autocomplete="username" aria-required="true"
+                 aria-describedby="error-usuario">
+          <p class="campo-error" id="error-usuario"></p>
+        </div>
+
+        <div class="campo">
+          <label for="login-clave">Contraseña</label>
+          <div class="campo-clave">
+            <input id="login-clave" type="password" autocomplete="current-password" aria-required="true"
+                   aria-describedby="error-clave">
+            <button class="boton btn-editar" type="button" id="ver-clave" aria-pressed="false">Mostrar</button>
+          </div>
+          <p class="campo-error" id="error-clave"></p>
+        </div>
+
+        <button class="boton btn-confirmar btn-entrar" type="submit">Entrar</button>
+      </form>
+    </main>
+  </div>
+
+  <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
+  <p class="sr-only" id="anuncio" aria-live="polite"></p>
+
+  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
+       (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
+  <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
+    <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
+
+    <!-- Solo aparece cuando ya se está avisando -->
+    <button class="boton btn-cerrar" type="button" id="sos-cerrar" aria-label="Cerrar" title="Cerrar" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <div class="sos-circulo" aria-hidden="true">
+      <svg viewBox="0 0 48 48" focusable="false">
+        <polygon points="24,5 45,41 3,41"/>
+        <line x1="24" y1="18" x2="24" y2="29"/>
+        <circle cx="24" cy="35" r="1.5"/>
+      </svg>
+      <span>SOS</span>
+    </div>
+
+    <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
+      Cancelar (<span id="sos-cuenta">5</span>)
+    </button>
+
+    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al acabar la cuenta atrás -->
+    <p class="sos-estado" id="sos-estado" role="status"></p>
+    <p class="sr-only" id="sos-aviso" aria-live="assertive"></p>
+  </dialog>
+
+  <!-- ===== Menú de accesibilidad ===== -->
+  <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="a11y-titulo" class="a11y-titulo">
+      Menú de accesibilidad
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+        <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+      </svg>
+    </h2>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-texto">
+      <h3 id="grupo-texto">
+        Tamaño de letra
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="4" y="4" width="24" height="24" rx="2"/>
+          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
+      <h3 id="grupo-vibracion">
+        Vibración
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="5" width="10" height="22" rx="2"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-tema">
+      <h3 id="grupo-tema">
+        Tema
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="5"/>
+          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
+        </svg>
+      </h3>
+      <div class="a11y-temas">
+        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
+      </div>
+    </section>
+
+    <div class="dialogo-botones">
+      <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
+    </div>
+  </dialog>
+
+  <script src="comun.js"></script>
+  <script>
+    // ---------- Mostrar / ocultar la contraseña ----------
+    const clave = document.getElementById("login-clave");
+    const verClave = document.getElementById("ver-clave");
+    verClave.addEventListener("click", () => {
+      const visible = clave.type === "password";
+      clave.type = visible ? "text" : "password";
+      verClave.setAttribute("aria-pressed", String(visible));
+      verClave.textContent = visible ? "Ocultar" : "Mostrar";
+    });
+
+    // ---------- Entrar ----------
+    // Prototipo: basta con rellenar los dos campos. La comprobación real llegará con el servidor.
+    document.getElementById("form-login").addEventListener("submit", e => {
+      e.preventDefault();
+      const campos = [
+        { el: document.getElementById("login-usuario"), error: "error-usuario", falta: "Escribe tu usuario" },
+        { el: clave, error: "error-clave", falta: "Escribe tu contraseña" }
+      ];
+      let primerError = null;
+      campos.forEach(c => {
+        const falta = !c.el.value.trim();
+        c.el.setAttribute("aria-invalid", String(falta));
+        document.getElementById(c.error).textContent = falta ? c.falta : "";
+        if (falta && !primerError) primerError = c.el;
+      });
+      // El foco va al primer campo con error y el lector lee el mensaje (WCAG 3.3.1)
+      if (primerError) {
+        primerError.focus();
+        return;
+      }
+      try { localStorage.setItem("sesion", "abierta"); } catch (e) {}
+      location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
