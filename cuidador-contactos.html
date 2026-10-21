@@ -368,6 +368,7 @@
           <a class="boton btn-editar btn-fila" href="cuidador-casa.html?p=${i}">Ver casa</a>
         </div>`;
       // Texto escrito por el usuario: con textContent, nunca como HTML
+      dialogoInfo.querySelector(".btn-llamar").setAttribute("aria-label", `Llamar a ${p.nombre}`);
       const dd = dialogoInfo.querySelectorAll("dd");
       dd[3].textContent = p.alergias || "Ninguna";
       dd[4].textContent = p.patologias || "Ninguna";

@@ -225,6 +225,82 @@ if (document.body.dataset.pagina === "cuidador") {
   revisarAvisoSos();
 }
 
+// ---------- Llamadas ----------
+// Todos los botones "Llamar" (enlaces tel:) abren una ventana de llamada en lugar de marcar
+// directamente: quién, a qué número, el estado de la llamada y un botón grande de Colgar.
+// La llamada real se conectará más adelante; de momento se simula.
+const dialogoLlamada = document.createElement("dialog");
+dialogoLlamada.className = "dialogo dialogo-llamada";
+dialogoLlamada.setAttribute("aria-labelledby", "llamada-titulo");
+dialogoLlamada.setAttribute("aria-describedby", "llamada-numero llamada-estado");
+dialogoLlamada.innerHTML = `
+  <span class="llamada-icono" aria-hidden="true">
+    <svg viewBox="0 0 48 48" focusable="false"><path d="M13 6h7l3 9-5 3a24 24 0 0 0 12 12l3-5 9 3v7a4 4 0 0 1-4 4C21 39 9 27 9 10a4 4 0 0 1 4-4z"/></svg>
+  </span>
+  <h2 id="llamada-titulo"></h2>
+  <p class="llamada-numero" id="llamada-numero"></p>
+  <p class="llamada-estado" id="llamada-estado" role="status"></p>
+  <p class="llamada-tiempo" id="llamada-tiempo" aria-hidden="true"></p>
+  <button class="boton btn-colgar" type="button" id="llamada-colgar">
+    <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M13 6h7l3 9-5 3a24 24 0 0 0 12 12l3-5 9 3v7a4 4 0 0 1-4 4C21 39 9 27 9 10a4 4 0 0 1 4-4z"/></svg>
+    Colgar
+  </button>`;
+document.body.append(dialogoLlamada);
+
+let relojLlamada = null;
+
+// "+34611223344" → "+34 611 223 344"
+function formatoNumero(numero) {
+  return numero.replace(/^\+34(\d{3})(\d{3})(\d{3})$/, "+34 $1 $2 $3");
+}
+
+function llamar(enlace) {
+  const numero = enlace.getAttribute("href").replace(/^tel:/, "");
+  // Nombre: data-nombre, la etiqueta accesible o el texto del botón, sin el "Llamar a"
+  const nombre = (enlace.dataset.nombre || enlace.getAttribute("aria-label") || enlace.textContent)
+    .trim().replace(/^Llamar( a| al)?\s*/i, "").trim();
+  document.getElementById("llamada-titulo").textContent =
+    numero === "112" ? "Llamando al 112" : nombre ? `Llamando a ${nombre}` : "Llamando";
+  document.getElementById("llamada-numero").textContent = formatoNumero(numero);
+  const estado = document.getElementById("llamada-estado");
+  const tiempo = document.getElementById("llamada-tiempo");
+  estado.textContent = "Conectando…";
+  tiempo.textContent = "";
+  dialogoLlamada.classList.remove("conectada");
+  dialogoLlamada.showModal();
+  document.getElementById("llamada-colgar").focus();
+
+  // A los 3 s la llamada "se conecta" y empieza a contar el tiempo.
+  // El lector anuncia el cambio una vez; el contador de segundos no se lee (aria-hidden).
+  let segundos = -3;
+  clearInterval(relojLlamada);
+  relojLlamada = setInterval(() => {
+    segundos++;
+    if (segundos === 0) {
+      document.getElementById("llamada-titulo").textContent =
+        numero === "112" ? "En llamada con el 112" : nombre ? `En llamada con ${nombre}` : "En llamada";
+      estado.textContent = "Llamada en curso";
+      dialogoLlamada.classList.add("conectada");
+    }
+    if (segundos >= 0) {
+      tiempo.textContent = `${String(Math.floor(segundos / 60)).padStart(2, "0")}:${String(segundos % 60).padStart(2, "0")}`;
+    }
+  }, 1000);
+}
+
+document.addEventListener("click", e => {
+  const enlace = e.target.closest('a[href^="tel:"]');
+  if (!enlace) return;
+  e.preventDefault();
+  llamar(enlace);
+});
+
+document.getElementById("llamada-colgar").addEventListener("click", () => dialogoLlamada.close());
+dialogoLlamada.addEventListener("close", () => {
+  clearInterval(relojLlamada);
+  anunciar("Llamada finalizada");
+});
+
 // ---------- Menú de accesibilidad ----------
 // Los ajustes se guardan en el navegador y se aplican en todas las páginas
 const raiz = document.documentElement;
@@ -290,7 +366,8 @@ document.getElementById("a11y-reset").addEventListener("click", () => {
 // Cerrar al pulsar fuera de la ventana (menú de accesibilidad y otras ventanas .dialogo).
 // La ventana SOS no: un toque accidental no debe cancelar una emergencia.
 // Los formularios (.dialogo-form) tampoco: no se pierde lo escrito por un toque fuera.
-document.querySelectorAll("dialog.dialogo:not(.dialogo-form)").forEach(d => d.addEventListener("click", e => {
+// Ni la llamada: solo se cuelga con el botón Colgar (o Escape).
+document.querySelectorAll("dialog.dialogo:not(.dialogo-form):not(.dialogo-llamada)").forEach(d => d.addEventListener("click", e => {
   const r = d.getBoundingClientRect();
   const fuera = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
   if (e.target === d && fuera) d.close();
