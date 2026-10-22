@@ -85,14 +85,17 @@
         </div>
       </header>
 
-      <p class="aviso" id="aviso">
+      <!-- El aviso lleva a Mi medicación -->
+      <a class="aviso" id="aviso" href="medicacion.html">
         <svg class="aviso-icono" viewBox="0 0 48 48" role="img" aria-label="Atención:" focusable="false">
           <polygon points="24,5 45,41 3,41"/>
           <line x1="24" y1="18" x2="24" y2="29"/>
           <circle cx="24" cy="35" r="1.5"/>
         </svg>
         <span id="aviso-texto">Medicación pendiente</span>
-      </p>
+        <span class="sr-only">: ver mi medicación</span>
+        <svg class="aviso-flecha" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg>
+      </a>
 
       <!-- Estado de la casa. Luces, puertas y ventanas llevan a su bloque en la página Casa -->
       <section class="tarjetas" id="casa" aria-labelledby="titulo-casa" tabindex="-1">

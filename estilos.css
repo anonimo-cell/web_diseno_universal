@@ -55,10 +55,23 @@ html.oscuro {
   --boton-hover: #22345c;
   --boton-sombra: #000000;
   --foco-borde: #ffffff;
+
+  /* Rojo y verde claros con texto negro para que destaquen sobre el azul noche:
+     negro sobre --rojo 7.6:1 · negro sobre --verde 12:1
+     --rojo sobre --blanco 5.8:1 · --verde sobre --blanco 9.3:1 (WCAG 1.4.11 pide 3:1) */
+  --verde: #4ade80;
+  --verde-hover: #86efac;
+  --verde-sombra: #16a34a;
+  --rojo: #ff6b6b;
+  --rojo-hover: #ff9b9b;
+  --rojo-sombra: #e53935;
+  --sobre-rojo: #000000;
+  --sobre-verde: #000000;
 }
 
-/* Alto contraste: solo blanco y negro (21:1). Fondo blanco y todo lo demás negro.
-   Lo negativo, las emergencias y lo activo van en negro relleno para destacar. */
+/* Alto contraste: blanco y negro (21:1), salvo el rojo y el verde, que se mantienen
+   para no perder su significado, en tonos muy oscuros con texto blanco:
+   blanco sobre --rojo 8.9:1 · blanco sobre --verde 8.3:1. Sombras y bordes en negro. */
 html.contraste {
   --fondo: #ffffff;
   --blanco: #ffffff;
@@ -71,13 +84,14 @@ html.contraste {
   --boton: #ffffff;
   --boton-hover: #d9d9d9;
   --boton-sombra: #888888;
-  --verde: #ffffff;
-  --verde-hover: #d9d9d9;
-  --verde-sombra: #888888;
-  --sobre-verde: #000000;
-  --rojo: #000000;
-  --rojo-hover: #333333;
-  --rojo-sombra: #888888;
+  --verde: #005c00;
+  --verde-hover: #003d00;
+  --verde-sombra: #000000;
+  --sobre-verde: #ffffff;
+  --rojo: #990000;
+  --rojo-hover: #660000;
+  --rojo-sombra: #000000;
+  --sobre-rojo: #ffffff;
   --foco: #ffffff;
   --foco-borde: #000000;
 }
@@ -452,6 +466,11 @@ html.contraste .nav-item[aria-current="page"] {
   align-items: center;
   gap: 18px;
   box-shadow: 0 5px 0 var(--rojo-sombra);
+  text-decoration: none;
+}
+
+.aviso:hover {
+  background: var(--rojo-hover);
 }
 
 .aviso-icono {
@@ -461,11 +480,24 @@ html.contraste .nav-item[aria-current="page"] {
   stroke-width: 3.5;
 }
 
+/* Flecha al final: indica que el aviso lleva a otra página */
+.aviso-flecha {
+  width: 1em;
+  height: 1em;
+  margin-left: auto;
+  flex: none;
+  stroke-width: 3.5;
+}
+
 .aviso.al-dia {
   background: var(--verde);
   color: var(--sobre-verde);
   border-color: var(--verde-sombra);
   box-shadow: 0 5px 0 var(--verde-sombra);
+}
+
+.aviso.al-dia:hover {
+  background: var(--verde-hover);
 }
 
 html.contraste .aviso {
@@ -979,8 +1011,6 @@ html.contraste .sos-circulo {
 
 .med-reloj {
   padding: 0 32px;
-  border: 3px solid var(--borde);
-  border-radius: 16px;
   font-size: clamp(3.5rem, calc(13vh * var(--escala)), 7rem);
   font-weight: 300;
   line-height: 1.25;
@@ -1368,12 +1398,28 @@ html.scroll .casa-layout {
    Arriba: datos personales · datos médicos. Abajo: contactos · cuidador.
    Al pie, Cerrar sesión centrado, como en el boceto. */
 
-/* El avatar se ve pulsado y con un anillo mientras se está en el perfil */
+/* Mientras se está en el perfil el avatar cambia a colores invertidos
+   (fondo azul claro, icono azul) con borde grueso y anillo, para distinguirlo
+   del botón azul de accesibilidad. --azul sobre --azul-claro 8.6:1
+   Borde y anillo en --borde, que se ve en todos los temas (oscuro: 8.7:1 sobre el fondo) */
 .avatar[aria-current="page"] {
+  --base: var(--azul-claro);
+  --base-hover: var(--azul-claro);
+  color: var(--azul);
+  border: 4px solid var(--borde);
   box-shadow:
-    inset 0 5px 10px rgba(0, 0, 0, 0.45),
+    inset 0 4px 8px rgba(10, 31, 68, 0.3),
     0 0 0 4px var(--fondo),
-    0 0 0 7px var(--texto);
+    0 0 0 8px var(--borde);
+}
+
+.avatar[aria-current="page"] svg {
+  stroke-width: 3.5;
+}
+
+html.contraste .avatar[aria-current="page"] {
+  --base: #ffffff;
+  --base-hover: #ffffff;
 }
 
 .perfil-layout {
@@ -1999,7 +2045,7 @@ html.oscuro {
 }
 
 html.contraste {
-  --barra-baja: #000000;
+  --barra-baja: #990000;
 }
 
 /* Paciente: etiqueta y desplegable en la misma línea */
