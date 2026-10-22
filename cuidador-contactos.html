@@ -106,13 +106,12 @@
               <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
             </svg>
           </button>
-          <button class="boton avatar" type="button" id="abrir-perfil" aria-haspopup="dialog"
-                  aria-label="Mi perfil" title="Mi perfil">
+          <a class="boton avatar" href="cuidador-perfil.html" aria-label="Mi perfil" title="Mi perfil">
             <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
               <circle cx="24" cy="17" r="8"/>
               <path d="M8 42c2-10 9-14 16-14s14 4 16 14"/>
             </svg>
-          </button>
+          </a>
         </div>
       </header>
 
@@ -182,31 +181,6 @@
         <button class="boton btn-confirmar" type="submit" id="guardar-contacto">Guardar</button>
       </div>
     </form>
-  </dialog>
-
-  <!-- ===== Mi perfil (cuidador) ===== -->
-  <dialog class="dialogo dialogo-perfil" id="dialogo-perfil" aria-labelledby="perfil-titulo">
-    <button class="boton btn-cerrar" type="button" id="cerrar-perfil" aria-label="Cerrar" title="Cerrar">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-    <h2 id="perfil-titulo">Mi perfil</h2>
-    <p id="perfil-nombre">Cuidador</p>
-    <div class="dialogo-botones">
-      <button class="boton btn-salir" type="button" id="abrir-salir" aria-haspopup="dialog">
-        Cerrar sesión
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/></svg>
-      </button>
-    </div>
-  </dialog>
-
-  <!-- ===== Confirmar cierre de sesión (evita cerrarla por un toque accidental) ===== -->
-  <dialog class="dialogo dialogo-salir" id="dialogo-salir" aria-labelledby="salir-titulo" aria-describedby="salir-texto">
-    <h2 id="salir-titulo">¿Cerrar sesión?</h2>
-    <p id="salir-texto">Para volver a usar la aplicación tendrás que entrar otra vez con tu usuario y contraseña.</p>
-    <div class="dialogo-botones">
-      <button class="boton" type="button" id="salir-no">No, seguir aquí</button>
-      <button class="boton btn-salir" type="button" id="salir-si">Sí, cerrar sesión</button>
-    </div>
   </dialog>
 
   <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
@@ -302,14 +276,6 @@
   <script src="comun.js"></script>
   <script src="cuidador-datos.js"></script>
   <script>
-    // ---------- Perfil ----------
-    let nombreCuidador = "";
-    try { nombreCuidador = sessionStorage.getItem("nombre-usuario") || ""; } catch (e) {}
-    if (nombreCuidador) document.getElementById("perfil-nombre").textContent = `${nombreCuidador} · Cuidador`;
-    const dialogoPerfil = document.getElementById("dialogo-perfil");
-    document.getElementById("abrir-perfil").addEventListener("click", () => dialogoPerfil.showModal());
-    document.getElementById("cerrar-perfil").addEventListener("click", () => dialogoPerfil.close());
-
     const formatoTelefono = t => "+34 " + t.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
     const ICONO_LLAMAR = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M13 6h7l3 9-5 3a24 24 0 0 0 12 12l3-5 9 3v7a4 4 0 0 1-4 4C21 39 9 27 9 10a4 4 0 0 1 4-4z"/></svg>';
     const ICONO_INFO = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>';

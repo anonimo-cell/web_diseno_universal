@@ -8,6 +8,59 @@ function anunciar(texto) {
   setTimeout(() => { anuncio.textContent = texto; }, 50);
 }
 
+// ---------- Sonido y vibración de las alertas (teléfono y tableta) ----------
+// Mientras una alerta está abierta suena un pitido doble y vibra, con una pausa entre
+// repeticiones, hasta que se cierra. En el ordenador no suena ni vibra.
+// Los navegadores solo dejan sonar audio después de que el usuario haya tocado la página,
+// así que el sonido se prepara con el primer toque o tecla.
+const ES_MOVIL_O_TABLETA = matchMedia("(max-width: 1199px), (pointer: coarse)");
+let audio = null;
+
+function prepararAudio() {
+  const Contexto = window.AudioContext || window.webkitAudioContext;
+  if (!audio && Contexto) audio = new Contexto();
+  if (audio && audio.state === "suspended") audio.resume();
+}
+document.addEventListener("pointerdown", prepararAudio);
+document.addEventListener("keydown", prepararAudio);
+
+// Pitido doble; el urgente (SOS) es más agudo y triple
+function pitido(urgente) {
+  if (!audio || audio.state !== "running") return;
+  const inicio = audio.currentTime;
+  const tonos = urgente ? [0, 0.3, 0.6] : [0, 0.35];
+  tonos.forEach(retraso => {
+    const t = inicio + retraso;
+    const osc = audio.createOscillator();
+    const volumen = audio.createGain();
+    osc.type = "sine";
+    osc.frequency.value = urgente ? 1040 : 880;
+    volumen.gain.setValueAtTime(0.0001, t);
+    volumen.gain.exponentialRampToValueAtTime(0.5, t + 0.02);
+    volumen.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    osc.connect(volumen).connect(audio.destination);
+    osc.start(t);
+    osc.stop(t + 0.25);
+  });
+}
+
+// Repite sonido + vibración cada pocos segundos hasta que se cierra la ventana
+function avisarConSonido(dialogo, urgente) {
+  if (!ES_MOVIL_O_TABLETA.matches) return;
+  const patron = urgente ? [500, 200, 500, 200, 500] : [400, 200, 400];
+  const repetir = () => {
+    prepararAudio(); // lo reintenta en cada repetición por si el navegador aún no lo dejaba
+    pitido(urgente);
+    if (navigator.vibrate) navigator.vibrate(patron);
+  };
+  repetir();
+  const intervalo = setInterval(repetir, urgente ? 2500 : 3000);
+  dialogo.addEventListener("close", () => {
+    clearInterval(intervalo);
+    if (navigator.vibrate) navigator.vibrate(0);
+  }, { once: true });
+}
+
 // ---------- Sesión ----------
 // La sesión dura mientras el navegador esté abierto (sessionStorage): cada vez que se
 // entra en la web se empieza por el inicio de sesión (index.html), que decide qué
@@ -55,11 +108,97 @@ function configurarPastilla(boton, alCambiar) {
 
   boton.addEventListener("click", () => {
     tomada = !tomada;
-    try { localStorage.setItem("pastilla-tomada", tomada ? "1" : "0"); } catch (e) {}
+    try {
+      localStorage.setItem("pastilla-tomada", tomada ? "1" : "0");
+      // Al deshacer, el recordatorio no salta al instante: espera los 5 minutos de cortesía
+      if (!tomada) localStorage.setItem("recordatorio-hasta", String(Date.now() + RETRASO_RECORDATORIO_MS));
+    } catch (e) {}
     pintar();
     anunciar(tomada ? "Pastilla de la tensión marcada como tomada" : "Pastilla de la tensión pendiente");
   });
+  // Si se marca como tomada desde el recordatorio, el botón se pone al día
+  document.addEventListener("pastilla-tomada", () => {
+    tomada = true;
+    pintar();
+  });
   pintar();
+}
+
+// ---------- Recordatorio de la toma ----------
+// En las páginas del paciente, cuando llega la hora de la toma y aún no está tomada,
+// salta una ventana "Tómate la medicación" con dos opciones:
+//   · "Ya me la he tomado": la marca como tomada y no vuelve a salir.
+//   · "Retrasar 5 minutos": vuelve a salir 5 minutos después, y así hasta que se tome.
+// El retraso se guarda en el navegador para que valga en todas las páginas.
+// Si se entra más tarde de la hora y sigue sin tomar, salta igualmente.
+const TOMA_PENDIENTE = { hora: "21:00", nombre: "Pastilla de la tensión" };
+const RETRASO_RECORDATORIO_MS = 5 * 60 * 1000;
+
+if (!document.body.dataset.pagina) {
+  const ICONO_PASTILLA = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/><line x1="24" y1="16" x2="24" y2="32" transform="rotate(-35 24 24)"/></svg>';
+  const dialogoToma = document.createElement("dialog");
+  dialogoToma.className = "dialogo dialogo-toma";
+  dialogoToma.setAttribute("role", "alertdialog");
+  dialogoToma.setAttribute("aria-labelledby", "toma-titulo");
+  dialogoToma.setAttribute("aria-describedby", "toma-texto");
+  dialogoToma.innerHTML = `
+    <span class="toma-icono">${ICONO_PASTILLA}</span>
+    <h2 id="toma-titulo">Tómate la medicación</h2>
+    <p id="toma-texto"></p>
+    <div class="dialogo-botones">
+      <button class="boton btn-confirmar" type="button" id="toma-hecha">Ya me la he tomado <span aria-hidden="true">✓</span></button>
+      <button class="boton" type="button" id="toma-retrasar">Retrasar 5 minutos</button>
+    </div>`;
+  document.body.append(dialogoToma);
+  document.getElementById("toma-texto").textContent = `Son las ${TOMA_PENDIENTE.hora}: ${TOMA_PENDIENTE.nombre}.`;
+
+  function tocaRecordar() {
+    let tomada = false, hasta = 0;
+    try {
+      tomada = localStorage.getItem("pastilla-tomada") === "1";
+      hasta = Number(localStorage.getItem("recordatorio-hasta")) || 0;
+    } catch (e) {}
+    const [h, m] = TOMA_PENDIENTE.hora.split(":").map(Number);
+    const ahora = new Date();
+    const yaEsLaHora = ahora.getHours() * 60 + ahora.getMinutes() >= h * 60 + m;
+    return !tomada && yaEsLaHora && Date.now() >= hasta;
+  }
+
+  function revisarToma() {
+    if (dialogoToma.open || !tocaRecordar()) return;
+    dialogoToma.showModal();
+    document.getElementById("toma-hecha").focus();
+    avisarConSonido(dialogoToma, false);
+  }
+
+  document.getElementById("toma-hecha").addEventListener("click", () => {
+    try {
+      localStorage.setItem("pastilla-tomada", "1");
+      localStorage.removeItem("recordatorio-hasta");
+    } catch (e) {}
+    dialogoToma.close();
+    document.dispatchEvent(new Event("pastilla-tomada"));
+    anunciar("Pastilla de la tensión marcada como tomada");
+  });
+
+  document.getElementById("toma-retrasar").addEventListener("click", () => {
+    try { localStorage.setItem("recordatorio-hasta", String(Date.now() + RETRASO_RECORDATORIO_MS)); } catch (e) {}
+    dialogoToma.close();
+    anunciar("Te lo recordaremos dentro de 5 minutos");
+  });
+
+  // Hay que elegir una de las dos opciones: Escape no la cierra
+  dialogoToma.addEventListener("cancel", e => e.preventDefault());
+
+  // Si en otra pestaña se toma o se retrasa, esta ventana también se cierra
+  window.addEventListener("storage", e => {
+    if ((e.key === "pastilla-tomada" || e.key === "recordatorio-hasta") && dialogoToma.open && !tocaRecordar()) {
+      dialogoToma.close();
+    }
+  });
+
+  revisarToma();
+  setInterval(revisarToma, 5000);
 }
 
 // ---------- Temperatura ----------
@@ -204,9 +343,11 @@ if (document.body.dataset.pagina === "cuidador") {
     llamar.hidden = !avisoSos.telefono;
     llamar.href = `tel:+34${avisoSos.telefono}`;
     document.title = `⚠ Alerta ${avisoSos.nombre} · ${tituloOriginal}`;
-    if (!dialogoAlerta.open) dialogoAlerta.showModal();
+    if (!dialogoAlerta.open) {
+      dialogoAlerta.showModal();
+      avisarConSonido(dialogoAlerta, true);
+    }
     (avisoSos.telefono ? llamar : dialogoAlerta.querySelector('[href="tel:112"]')).focus();
-    if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 400]);
   }
 
   function revisarAvisoSos() {

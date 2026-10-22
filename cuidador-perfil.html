@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi perfil del cuidador · VitalHogar</title>
+  <meta name="description" content="Datos personales del cuidador, alertas SOS, pacientes a cargo y cierre de sesión.">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<!-- data-pagina="cuidador": comun.js deja entrar aquí a los cuidadores -->
+<body data-pagina="cuidador">
+  <!-- Enlace para saltar la navegación con el teclado (WCAG 2.4.1) -->
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <div class="app">
+
+    <!-- ===== Barra lateral del cuidador (ningún apartado activo: el perfil se abre desde el avatar) ===== -->
+    <aside class="sidebar" aria-label="Navegación y emergencias">
+      <nav aria-label="Menú principal">
+        <ul class="nav">
+          <li>
+            <a href="cuidador.html" class="nav-item">
+              <!-- Isotipo de VitalHogar: casa con corazón y señal wifi -->
+              <svg class="logo" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
+                <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
+                <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
+                <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
+                <path d="M1.5 28.5 25.5 6.5l24 22"/>
+                <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
+              </svg>
+              <span class="nav-texto">Inicio</span>
+            </a>
+          </li>
+          <li>
+            <a href="cuidador-medicacion.html" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/>
+                <line x1="24" y1="16" x2="24" y2="32" transform="rotate(-35 24 24)"/>
+              </svg>
+              <span class="nav-texto">Medicación</span>
+            </a>
+          </li>
+          <li>
+            <a href="cuidador-casa.html" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <polyline points="6,24 24,8 42,24"/>
+                <rect x="13" y="22" width="22" height="18"/>
+              </svg>
+              <span class="nav-texto">Casa</span>
+            </a>
+          </li>
+          <li>
+            <a href="cuidador-contactos.html" class="nav-item">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="11" y="5" width="28" height="38" rx="3"/>
+                <path d="M7 14h7M7 24h7M7 34h7"/>
+                <circle cx="25" cy="19" r="5"/>
+                <path d="M17 34c1-5 4-8 8-8s7 3 8 8"/>
+              </svg>
+              <span class="nav-texto">Contactos</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <button class="boton btn-sos" type="button" id="abrir-sos" aria-haspopup="dialog">
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <polygon points="24,5 45,41 3,41"/>
+          <line x1="24" y1="18" x2="24" y2="29"/>
+          <circle cx="24" cy="35" r="1.5"/>
+        </svg>
+        <span class="sos-texto">SOS</span>
+        <span class="sr-only">: pedir ayuda</span>
+      </button>
+    </aside>
+
+    <!-- ===== Contenido principal ===== -->
+    <main class="contenido" id="contenido" tabindex="-1">
+      <header class="cabecera">
+        <h1><span id="saludo">Hola</span><span class="sr-only">: tu perfil</span></h1>
+        <div class="perfiles">
+          <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
+          <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
+                  aria-label="Menú de accesibilidad" title="Menú de accesibilidad">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+              <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+            </svg>
+          </button>
+          <!-- aria-current: el avatar se ve pulsado mientras se está en el perfil -->
+          <a class="boton avatar" href="cuidador-perfil.html" aria-current="page" aria-label="Mi perfil" title="Mi perfil">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <circle cx="24" cy="17" r="8"/>
+              <path d="M8 42c2-10 9-14 16-14s14 4 16 14"/>
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <div class="perfil-layout" id="perfil">
+        <!-- Datos personales -->
+        <section class="perfil-bloque" aria-labelledby="titulo-personales">
+          <div class="bloque-cabecera">
+            <h2 class="bloque-titulo" id="titulo-personales">Datos personales</h2>
+            <button class="boton btn-editar" type="button" id="editar-personales" aria-haspopup="dialog"
+                    aria-label="Editar datos personales">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>
+              Editar
+            </button>
+          </div>
+          <dl class="datos">
+            <dt>Nombre</dt>
+            <dd id="dato-nombre"></dd>
+            <dt>Teléfono</dt>
+            <dd id="dato-telefono"></dd>
+            <dt>Parentesco</dt>
+            <dd id="dato-parentesco"></dd>
+          </dl>
+        </section>
+
+        <!-- Alertas SOS: siempre activas; se muestra la última recibida y si se atendió -->
+        <section class="perfil-bloque" aria-labelledby="titulo-avisos">
+          <h2 class="bloque-titulo" id="titulo-avisos">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M12 34h24l-4-6v-8a8 8 0 0 0-16 0v8z"/>
+              <path d="M20 38a4 4 0 0 0 8 0"/>
+            </svg>
+            Alertas SOS
+          </h2>
+          <dl class="datos">
+            <dt>Estado</dt>
+            <dd>Siempre activadas</dd>
+            <dt>Última alerta</dt>
+            <dd id="dato-ultima-alerta"></dd>
+          </dl>
+          <p class="codigo-ayuda">Cuando un paciente vinculado pulsa SOS, te salta una ventana roja en cualquier página de la aplicación.</p>
+        </section>
+
+        <!-- Pacientes a cargo: nombre, teléfono y Llamar. Se gestionan en Contactos -->
+        <section class="perfil-bloque" id="pacientes" aria-labelledby="titulo-pacientes" tabindex="-1">
+          <div class="bloque-cabecera">
+            <h2 class="bloque-titulo" id="titulo-pacientes">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <circle cx="24" cy="17" r="8"/>
+                <path d="M8 42c2-10 9-14 16-14s14 4 16 14"/>
+              </svg>
+              Mis pacientes
+            </h2>
+            <a class="boton btn-editar" href="cuidador-contactos.html">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M7 12h10"/></svg>
+              Gestionar<span class="sr-only"> pacientes en Contactos</span>
+            </a>
+          </div>
+          <ul class="contactos-lista" id="lista-pacientes"></ul>
+        </section>
+
+        <!-- Cuenta: usuario con el que se entra y cómo asociar pacientes nuevos -->
+        <section class="perfil-bloque perfil-cuidador" aria-labelledby="titulo-cuenta">
+          <h2 class="bloque-titulo" id="titulo-cuenta">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <rect x="10" y="22" width="28" height="20" rx="3"/>
+              <path d="M16 22v-6a8 8 0 0 1 16 0v6"/>
+              <circle cx="24" cy="32" r="2"/>
+            </svg>
+            Cuenta
+          </h2>
+          <dl class="datos">
+            <dt>Usuario</dt>
+            <dd id="dato-usuario"></dd>
+            <dt>Tipo</dt>
+            <dd>Familiar cuidador</dd>
+          </dl>
+          <div class="codigo">
+            <p class="codigo-ayuda">Para asociar a un paciente nuevo, pídele el código que aparece en su perfil (Mi perfil → Cuidador) y añádelo en Contactos.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="perfil-pie">
+        <button class="boton btn-salir" type="button" id="abrir-salir" aria-haspopup="dialog">
+          Cerrar sesión
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/></svg>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
+  <p class="sr-only" id="anuncio" aria-live="polite"></p>
+
+  <!-- ===== Editar los datos personales ===== -->
+  <dialog class="dialogo dialogo-editar dialogo-form" id="dialogo-editar" aria-labelledby="editar-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-editar" aria-label="Cerrar sin guardar" title="Cerrar sin guardar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="editar-titulo">Editar datos personales</h2>
+
+    <form class="form-nuevo" id="form-editar" novalidate>
+      <div class="campos">
+        <div class="campo">
+          <label for="campo-nombre">Nombre</label>
+          <input id="campo-nombre" type="text" autocomplete="name" aria-required="true" aria-describedby="error-nombre">
+          <p class="campo-error" id="error-nombre"></p>
+        </div>
+        <div class="campo">
+          <label for="campo-telefono">Teléfono</label>
+          <p class="campo-pista" id="pista-telefono">9 cifras, sin el +34</p>
+          <div class="campo-tel">
+            <span class="prefijo" aria-hidden="true">+34</span>
+            <input id="campo-telefono" type="tel" inputmode="tel" autocomplete="tel-national" aria-required="true"
+                   aria-describedby="pista-telefono error-telefono">
+          </div>
+          <p class="campo-error" id="error-telefono"></p>
+        </div>
+        <div class="campo">
+          <label for="campo-parentesco">Parentesco</label>
+          <p class="campo-pista" id="pista-parentesco">Opcional. Por ejemplo: hija, sobrino, vecina</p>
+          <input id="campo-parentesco" type="text" autocomplete="off" aria-describedby="pista-parentesco">
+        </div>
+      </div>
+      <div class="dialogo-botones">
+        <button class="boton" type="button" id="cancelar-editar">Cancelar</button>
+        <button class="boton btn-confirmar" type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Confirmar cierre de sesión (evita cerrarla por un toque accidental) ===== -->
+  <dialog class="dialogo dialogo-salir" id="dialogo-salir" aria-labelledby="salir-titulo" aria-describedby="salir-texto">
+    <h2 id="salir-titulo">¿Cerrar sesión?</h2>
+    <p id="salir-texto">Para volver a usar la aplicación tendrás que entrar otra vez con tu usuario y contraseña.</p>
+    <div class="dialogo-botones">
+      <button class="boton" type="button" id="salir-no">No, seguir aquí</button>
+      <button class="boton btn-salir" type="button" id="salir-si">Sí, cerrar sesión</button>
+    </div>
+  </dialog>
+
+  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
+       (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
+  <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
+    <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
+
+    <!-- Solo aparece cuando ya se está avisando -->
+    <button class="boton btn-cerrar" type="button" id="sos-cerrar" aria-label="Cerrar" title="Cerrar" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <div class="sos-circulo" aria-hidden="true">
+      <svg viewBox="0 0 48 48" focusable="false">
+        <polygon points="24,5 45,41 3,41"/>
+        <line x1="24" y1="18" x2="24" y2="29"/>
+        <circle cx="24" cy="35" r="1.5"/>
+      </svg>
+      <span>SOS</span>
+    </div>
+
+    <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
+      Cancelar (<span id="sos-cuenta">5</span>)
+    </button>
+
+    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al acabar la cuenta atrás -->
+    <p class="sos-estado" id="sos-estado" role="status"></p>
+    <p class="sr-only" id="sos-aviso" aria-live="assertive"></p>
+  </dialog>
+
+  <!-- ===== Menú de accesibilidad ===== -->
+  <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="a11y-titulo" class="a11y-titulo">
+      Menú de accesibilidad
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+        <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+      </svg>
+    </h2>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-texto">
+      <h3 id="grupo-texto">
+        Tamaño de letra
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="4" y="4" width="24" height="24" rx="2"/>
+          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
+      <h3 id="grupo-vibracion">
+        Vibración
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="5" width="10" height="22" rx="2"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-tema">
+      <h3 id="grupo-tema">
+        Tema
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="5"/>
+          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
+        </svg>
+      </h3>
+      <div class="a11y-temas">
+        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
+      </div>
+    </section>
+
+    <div class="dialogo-botones">
+      <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
+    </div>
+  </dialog>
+
+  <script src="comun.js"></script>
+  <script src="cuidador-datos.js"></script>
+  <script>
+    // ---------- Datos del cuidador ----------
+    // Parten de la sesión (nombre y teléfono con los que entró) y lo editado se guarda
+    // en el navegador, una ficha por usuario
+    let usuario = "", sesionNombre = "", sesionTelefono = "";
+    try {
+      usuario = sessionStorage.getItem("usuario") || "";
+      sesionNombre = sessionStorage.getItem("nombre-usuario") || "";
+      sesionTelefono = sessionStorage.getItem("telefono-usuario") || "";
+    } catch (e) {}
+    const CLAVE_PERFIL = "perfil-cuidador-" + usuario;
+
+    let perfil = { nombre: sesionNombre || "Cuidador", telefono: sesionTelefono, parentesco: "" };
+    try { perfil = { ...perfil, ...JSON.parse(localStorage.getItem(CLAVE_PERFIL)) }; } catch (e) {}
+
+    const formatoTelefono = t => t ? "+34 " + t.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3") : "Sin teléfono";
+
+    function pintarPerfil() {
+      document.getElementById("saludo").textContent = `Hola, ${perfil.nombre.split(" ")[0]}`;
+      document.getElementById("dato-nombre").textContent = perfil.nombre;
+      document.getElementById("dato-telefono").textContent = formatoTelefono(perfil.telefono);
+      document.getElementById("dato-parentesco").textContent = perfil.parentesco || "Sin indicar";
+    }
+    document.getElementById("dato-usuario").textContent = usuario || "—";
+
+    // ---------- Última alerta SOS dirigida a este cuidador ----------
+    function pintarUltimaAlerta() {
+      let avisoSos = null, atendido = "";
+      try {
+        avisoSos = JSON.parse(localStorage.getItem("sos-aviso"));
+        atendido = localStorage.getItem("sos-atendido-" + usuario);
+      } catch (e) {}
+      const mia = avisoSos && Array.isArray(avisoSos.para) && avisoSos.para.includes(usuario);
+      const dd = document.getElementById("dato-ultima-alerta");
+      if (!mia) {
+        dd.textContent = "Ninguna";
+        return;
+      }
+      const cuando = new Date(avisoSos.id).toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+      const ok = String(avisoSos.id) === atendido;
+      dd.innerHTML = `${avisoSos.nombre} · ${cuando} <span class="estado ${ok ? "ok" : "alerta"}"><span aria-hidden="true">${ok ? "✓" : "⚠"}</span> ${ok ? "Atendida" : "Sin atender"}</span>`;
+    }
+    // Se actualiza si llega una alerta o se marca como atendida mientras se está aquí
+    window.addEventListener("storage", e => { if (e.key && e.key.startsWith("sos-")) pintarUltimaAlerta(); });
+    document.addEventListener("click", e => { if (e.target.closest("#alerta-atendido")) pintarUltimaAlerta(); });
+
+    // ---------- Pacientes a cargo (cuidador-datos.js) ----------
+    const ICONO_TELEFONO = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M13 6h7l3 9-5 3a24 24 0 0 0 12 12l3-5 9 3v7a4 4 0 0 1-4 4C21 39 9 27 9 10a4 4 0 0 1 4-4z"/></svg>';
+
+    function pintarPacientes() {
+      const lista = document.getElementById("lista-pacientes");
+      lista.innerHTML = "";
+      pacientes.forEach(p => {
+        const li = document.createElement("li");
+        li.className = "contacto";
+        li.innerHTML = `
+          <span class="contacto-datos">
+            <span class="contacto-nombre"></span>
+            <span class="contacto-tel"></span>
+          </span>
+          ${p.telefono ? `<a class="boton btn-llamar" href="tel:+34${p.telefono}">Llamar ${ICONO_TELEFONO}</a>` : ""}`;
+        li.querySelector(".contacto-nombre").textContent = p.edad ? `${p.nombre}, ${p.edad} años` : p.nombre;
+        li.querySelector(".contacto-tel").textContent = formatoTelefono(p.telefono);
+        li.querySelector(".btn-llamar")?.setAttribute("aria-label", `Llamar a ${p.nombre}`);
+        lista.append(li);
+      });
+      if (!pacientes.length) lista.innerHTML = '<li class="disp-vacio">Todavía no tienes pacientes asociados</li>';
+    }
+
+    pintarPerfil();
+    pintarUltimaAlerta();
+    pintarPacientes();
+
+    // ---------- Editar datos personales ----------
+    const dialogoEditar = document.getElementById("dialogo-editar");
+    const campoNombre = document.getElementById("campo-nombre");
+    const campoTelefono = document.getElementById("campo-telefono");
+    const campoParentesco = document.getElementById("campo-parentesco");
+
+    document.getElementById("editar-personales").addEventListener("click", () => {
+      campoNombre.value = perfil.nombre;
+      campoTelefono.value = perfil.telefono ? perfil.telefono.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3") : "";
+      campoParentesco.value = perfil.parentesco;
+      dialogoEditar.querySelectorAll(".campo-error").forEach(p => { p.textContent = ""; });
+      dialogoEditar.querySelectorAll("[aria-invalid]").forEach(el => el.removeAttribute("aria-invalid"));
+      dialogoEditar.showModal();
+      campoNombre.focus();
+    });
+
+    document.getElementById("form-editar").addEventListener("submit", e => {
+      e.preventDefault();
+      const nombre = campoNombre.value.trim();
+      const telefono = campoTelefono.value.replace(/[\s.-]/g, "").replace(/^\+?34(?=\d{9}$)/, "");
+      const errores = [
+        [campoNombre, "error-nombre", !nombre ? "Escribe tu nombre" : ""],
+        [campoTelefono, "error-telefono", !telefono ? "Escribe tu teléfono"
+          : !/^\d{9}$/.test(telefono) ? "El teléfono debe tener 9 cifras" : ""]
+      ];
+      errores.forEach(([el, id, mensaje]) => {
+        el.setAttribute("aria-invalid", String(Boolean(mensaje)));
+        document.getElementById(id).textContent = mensaje;
+      });
+      // El foco va al primer campo con error y el lector lee el mensaje (WCAG 3.3.1)
+      const primero = errores.find(([, , mensaje]) => mensaje);
+      if (primero) {
+        primero[0].focus();
+        return;
+      }
+
+      perfil = { nombre, telefono, parentesco: campoParentesco.value.trim() };
+      try {
+        localStorage.setItem(CLAVE_PERFIL, JSON.stringify(perfil));
+        // El saludo de las demás páginas y el aviso SOS usan los datos de la sesión
+        sessionStorage.setItem("nombre-usuario", nombre);
+        sessionStorage.setItem("telefono-usuario", telefono);
+      } catch (e) {}
+      pintarPerfil();
+      dialogoEditar.close();
+      anunciar("Datos personales guardados");
+    });
+
+    document.getElementById("cerrar-editar").addEventListener("click", () => dialogoEditar.close());
+    document.getElementById("cancelar-editar").addEventListener("click", () => dialogoEditar.close());
+
+    // Cerrar sesión: lo gestiona comun.js
+  </script>
+</body>
+</html>
