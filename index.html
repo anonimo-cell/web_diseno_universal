@@ -361,10 +361,11 @@
     // Prototipo sin servidor: las cuentas se guardan en el navegador (la contraseña en claro,
     // solo para la demo). Cuentas de prueba:
     //   pacientes: mario / 1234, carmen / carmen123 · cuidadores: dara / 1234, paula / paula123
+    // "cuidadores": familiares vinculados al paciente, los que reciben su SOS (Mario → Dara)
     const USUARIOS_INICIALES = {
-      mario: { nombre: "Mario", telefono: "655123456", clave: "1234", tipo: "paciente" },
+      mario: { nombre: "Mario", telefono: "655123456", clave: "1234", tipo: "paciente", cuidadores: ["dara"] },
       dara: { nombre: "Dara", telefono: "677123456", clave: "1234", tipo: "cuidador" },
-      carmen: { nombre: "Carmen García", telefono: "612345678", clave: "carmen123", tipo: "paciente" },
+      carmen: { nombre: "Carmen García", telefono: "612345678", clave: "carmen123", tipo: "paciente", cuidadores: ["paula"] },
       paula: { nombre: "Paula Martín", telefono: "634567890", clave: "paula123", tipo: "cuidador" }
     };
     // Cada tipo de perfil entra en su propia aplicación
@@ -379,9 +380,13 @@
 
     function entrar(usuario) {
       const u = usuarios[usuario];
+      // Las cuentas guardadas antes de existir la vinculación no la tienen: se toma la de ejemplo
+      const cuidadores = u.cuidadores || USUARIOS_INICIALES[usuario]?.cuidadores || [];
       // La sesión se guarda solo mientras el navegador esté abierto (ver comun.js)
       try {
         sessionStorage.setItem("sesion", "abierta");
+        sessionStorage.setItem("usuario", usuario);
+        sessionStorage.setItem("cuidadores", JSON.stringify(cuidadores)); // a quién llega su SOS
         sessionStorage.setItem("tipo-perfil", u.tipo);
         sessionStorage.setItem("nombre-usuario", u.nombre);
         sessionStorage.setItem("telefono-usuario", u.telefono); // para que el cuidador pueda llamarle si pulsa SOS

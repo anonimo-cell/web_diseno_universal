@@ -1876,14 +1876,13 @@ html.contraste {
   content: " ✓" / "";
 }
 
-/* Si hay muchos pacientes, la tabla se desplaza dentro de su marco */
+/* Si hay muchos pacientes, la tabla se desplaza dentro de su marco.
+   Sin recuadro: solo las líneas que separan la cabecera y las filas */
 .tabla-marco {
   width: 100%;
   min-height: 0;
   overflow: auto;
-  background: var(--blanco);
-  border: 2px solid var(--borde);
-  border-radius: 20px;
+  border-bottom: 2px solid var(--borde);
 }
 
 /* Columnas fijas: no cambian de ancho al filtrar */
@@ -1898,8 +1897,8 @@ html.contraste {
   top: 0;
   z-index: 1;
   padding: 1.8vh 22px;
-  background: var(--blanco);
-  border-bottom: 2px solid var(--borde);
+  background: var(--fondo);
+  border-bottom: 3px solid var(--borde);
   font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.6rem);
   font-weight: 400;
   text-align: left;
@@ -1924,23 +1923,42 @@ html.contraste {
 
 .tabla-pacientes tbody th,
 .tabla-pacientes td {
-  padding: 12px 10px 16px;
+  padding: 0;
   vertical-align: middle;
   font-weight: 400;
   text-align: left;
 }
 
-/* Cada casilla es un botón con relieve: se ve que se puede pulsar */
+/* Cada casilla es un botón plano que ocupa toda la celda: sin recuadro ni relieve.
+   Al pasar el ratón o con el foco se colorea la celda entera para ver que se puede pulsar */
 .celda {
   width: 100%;
-  min-height: 88px;
+  min-height: 96px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
   gap: 4px;
-  padding: 10px 16px;
+  padding: 14px 22px;
   text-align: left;
+}
+
+.tabla-pacientes .celda.boton {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.tabla-pacientes .celda.boton:hover,
+.tabla-pacientes .celda.boton:active {
+  background: var(--boton-hover);
+}
+
+/* El foco va por dentro de la celda para que el marco con scroll no lo recorte */
+.tabla-pacientes .celda.boton:focus-visible {
+  outline-offset: -4px;
+  box-shadow: none;
 }
 
 .celda-nombre {

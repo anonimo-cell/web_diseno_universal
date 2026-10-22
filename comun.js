@@ -145,17 +145,21 @@ dialogo?.addEventListener("close", pararCuenta);
 // abiertas en otra pestaña lo reciben al momento con el evento "storage"; si el cuidador
 // entra más tarde, lo ve igualmente mientras no lo haya atendido (durante 1 hora).
 // Solo se avisa al acabar la cuenta atrás: si el paciente cancela, no llega nada.
+// El aviso lleva la lista de cuidadores vinculados ("para"): solo ellos ven la alerta
+// (el SOS de Mario le llega a Dara, no a Paula).
 const SOS_VIGENTE_MS = 60 * 60 * 1000;
 
 function avisarCuidadores() {
-  let nombre = "", telefono = "", tipo = "";
+  let nombre = "", telefono = "", tipo = "", para = [];
   try {
     nombre = sessionStorage.getItem("nombre-usuario") || "";
     telefono = sessionStorage.getItem("telefono-usuario") || "";
     tipo = sessionStorage.getItem("tipo-perfil") || "";
+    para = JSON.parse(sessionStorage.getItem("cuidadores")) || [];
   } catch (e) {}
   if (tipo === "cuidador") return; // el SOS del propio cuidador no se avisa a sí mismo
-  const avisoSos = { id: Date.now(), nombre: nombre.split(" ")[0] || "Tu paciente", telefono };
+  if (!para.length) return; // paciente sin familiares vinculados: no hay a quién avisar
+  const avisoSos = { id: Date.now(), nombre: nombre.split(" ")[0] || "Tu paciente", telefono, para };
   try { localStorage.setItem("sos-aviso", JSON.stringify(avisoSos)); } catch (e) {}
 }
 
@@ -185,6 +189,10 @@ if (document.body.dataset.pagina === "cuidador") {
 
   const tituloOriginal = document.title;
   let avisoMostrado = null;
+  let usuarioCuidador = "";
+  try { usuarioCuidador = sessionStorage.getItem("usuario") || ""; } catch (e) {}
+  // Cada cuidador marca "atendido" por su cuenta
+  const claveAtendido = "sos-atendido-" + usuarioCuidador;
 
   function mostrarAlertaSos(avisoSos) {
     avisoMostrado = avisoSos;
@@ -205,9 +213,10 @@ if (document.body.dataset.pagina === "cuidador") {
     let avisoSos = null, atendido = "";
     try {
       avisoSos = JSON.parse(localStorage.getItem("sos-aviso"));
-      atendido = localStorage.getItem("sos-atendido");
+      atendido = localStorage.getItem(claveAtendido);
     } catch (e) {}
-    if (avisoSos && String(avisoSos.id) !== atendido && Date.now() - avisoSos.id < SOS_VIGENTE_MS) {
+    if (avisoSos && Array.isArray(avisoSos.para) && avisoSos.para.includes(usuarioCuidador)
+        && String(avisoSos.id) !== atendido && Date.now() - avisoSos.id < SOS_VIGENTE_MS) {
       mostrarAlertaSos(avisoSos);
     }
   }
@@ -215,7 +224,7 @@ if (document.body.dataset.pagina === "cuidador") {
   // Se cierra solo a propósito: ni Escape ni un toque fuera la quitan
   dialogoAlerta.addEventListener("cancel", e => e.preventDefault());
   document.getElementById("alerta-atendido").addEventListener("click", () => {
-    try { localStorage.setItem("sos-atendido", String(avisoMostrado.id)); } catch (e) {}
+    try { localStorage.setItem(claveAtendido, String(avisoMostrado.id)); } catch (e) {}
     dialogoAlerta.close();
     document.title = tituloOriginal;
     anunciar(`Alerta de ${avisoMostrado.nombre} marcada como atendida`);
