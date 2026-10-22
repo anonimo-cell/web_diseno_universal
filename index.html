@@ -14,20 +14,7 @@
 
   <div class="app">
 
-    <!-- ===== Barra lateral: sin apartados (no hay sesión), pero el SOS sigue disponible ===== -->
-    <aside class="sidebar" aria-label="Emergencias">
-      <button class="boton btn-sos" type="button" id="abrir-sos" aria-haspopup="dialog">
-        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-          <polygon points="24,5 45,41 3,41"/>
-          <line x1="24" y1="18" x2="24" y2="29"/>
-          <circle cx="24" cy="35" r="1.5"/>
-        </svg>
-        <span class="sos-texto">SOS</span>
-        <span class="sr-only">: pedir ayuda</span>
-      </button>
-    </aside>
-
-    <!-- ===== Contenido principal ===== -->
+    <!-- ===== Contenido principal (sin barra lateral: no hay sesión) ===== -->
     <main class="contenido" id="contenido" tabindex="-1">
       <header class="cabecera">
         <h1>Iniciar sesión</h1>
@@ -304,34 +291,6 @@
       <button class="boton btn-confirmar btn-entrar" type="button" id="olvido-volver"
               aria-describedby="olvido-fin-texto">Volver a iniciar sesión</button>
     </div>
-  </dialog>
-
-  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
-       (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
-  <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
-    <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
-
-    <!-- Solo aparece cuando ya se está avisando -->
-    <button class="boton btn-cerrar" type="button" id="sos-cerrar" aria-label="Cerrar" title="Cerrar" hidden>
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-
-    <div class="sos-circulo" aria-hidden="true">
-      <svg viewBox="0 0 48 48" focusable="false">
-        <polygon points="24,5 45,41 3,41"/>
-        <line x1="24" y1="18" x2="24" y2="29"/>
-        <circle cx="24" cy="35" r="1.5"/>
-      </svg>
-      <span>SOS</span>
-    </div>
-
-    <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
-      Cancelar (<span id="sos-cuenta">5</span>)
-    </button>
-
-    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al acabar la cuenta atrás -->
-    <p class="sos-estado" id="sos-estado" role="status"></p>
-    <p class="sr-only" id="sos-aviso" aria-live="assertive"></p>
   </dialog>
 
   <!-- ===== Menú de accesibilidad ===== -->

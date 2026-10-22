@@ -249,6 +249,11 @@ html.contraste .boton {
   height: 100dvh;
 }
 
+/* Inicio de sesión: sin barra lateral, el contenido ocupa todo el ancho */
+body[data-pagina="login"] .app {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 /* ===== Barra lateral ===== */
 .sidebar {
   background: var(--blanco);
@@ -2564,6 +2569,11 @@ html.scroll .perfil-layout {
   gap: 22px;
 }
 
+/* Si no cabe, la ventana se desplaza en vez de aplastar sus partes */
+.dialogo-alerta > * {
+  flex-shrink: 0;
+}
+
 .dialogo-alerta::backdrop {
   background: rgba(92, 0, 0, 0.35);
   -webkit-backdrop-filter: blur(4px);
@@ -2638,9 +2648,51 @@ html.contraste .dialogo-alerta {
   border-color: #000000;
 }
 
+/* Teléfono: los tamaños dependen del ancho (no del alto) para que
+   "Alerta Mario" y "Llamar a Mario" no se corten ni se salgan de la ventana */
 @media (max-width: 640px) {
+  .dialogo-alerta {
+    width: calc(100% - 24px);
+    gap: 16px;
+    border-radius: 20px;
+  }
+
+  .alerta-cabecera {
+    gap: 12px;
+    padding: 16px 12px;
+  }
+
+  .alerta-cabecera h2 {
+    font-size: clamp(1.6rem, calc(9vw * var(--escala)), 2.6rem);
+    overflow-wrap: normal;
+    word-break: normal;
+    min-width: 0;
+  }
+
+  .alerta-cabecera svg {
+    width: clamp(40px, 12vw, 64px);
+  }
+
+  .alerta-texto {
+    font-size: 1.2rem;
+  }
+
   .alerta-acciones {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .btn-alerta {
+    min-height: 72px;
+    padding: 12px 16px;
+    font-size: clamp(1.3rem, calc(6.5vw * var(--escala)), 2rem);
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .btn-atendido {
+    align-self: stretch;
+    font-size: 1.15rem;
   }
 }
 
@@ -2849,13 +2901,9 @@ html.scroll .tarjeta > svg {
     letter-spacing: 2px;
   }
 
-  /* Inicio de sesión: solo está el SOS, que ocupa toda la barra */
-  .sidebar > .btn-sos:only-child {
-    flex: 1;
-    width: auto;
-    flex-direction: row;
-    gap: 14px;
-    border-width: 0;
+  /* Inicio de sesión: no hay barra fija abajo, así que no hace falta el hueco */
+  body[data-pagina="login"] .contenido {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
   }
 
   /* Hueco al final para que la barra fija no tape el contenido */
