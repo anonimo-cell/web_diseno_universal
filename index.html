@@ -382,8 +382,12 @@
       const u = usuarios[usuario];
       // Las cuentas guardadas antes de existir la vinculación no la tienen: se toma la de ejemplo
       const cuidadores = u.cuidadores || USUARIOS_INICIALES[usuario]?.cuidadores || [];
+      // Nombre y teléfono de esos familiares, para que el paciente los tenga en sus contactos
+      const familiares = cuidadores.filter(id => usuarios[id])
+        .map(id => ({ nombre: usuarios[id].nombre, telefono: usuarios[id].telefono }));
       // La sesión se guarda solo mientras el navegador esté abierto (ver comun.js)
       try {
+        sessionStorage.setItem("familiares", JSON.stringify(familiares));
         sessionStorage.setItem("sesion", "abierta");
         sessionStorage.setItem("usuario", usuario);
         sessionStorage.setItem("cuidadores", JSON.stringify(cuidadores)); // a quién llega su SOS

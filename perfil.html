@@ -303,19 +303,33 @@
   <script src="comun.js"></script>
   <script>
     // ---------- Datos (se guardan en el navegador) ----------
+    // Parten de la sesión (nombre, teléfono y familiares vinculados de quien entró) y lo
+    // editado se guarda en el navegador, una ficha por usuario
+    let usuario = "", sesionNombre = "", sesionTelefono = "", familiares = [];
+    try {
+      usuario = sessionStorage.getItem("usuario") || "";
+      sesionNombre = sessionStorage.getItem("nombre-usuario") || "";
+      sesionTelefono = sessionStorage.getItem("telefono-usuario") || "";
+      familiares = JSON.parse(sessionStorage.getItem("familiares")) || [];
+    } catch (e) {}
+
     const PERFIL_INICIAL = {
-      nombre: "Carmen García", edad: "78", telefono: "612345678",
+      nombre: sesionNombre || "Carmen García", edad: "78", telefono: sesionTelefono || "612345678",
       alergias: "Penicilina", patologias: "Hipertensión"
     };
-    const CONTACTOS_INICIALES = [{ nombre: "Hija", telefono: "623456789" }];
-    // El cuidador se asocia desde la aplicación del cuidador (más adelante): aquí solo se muestra
-    const CUIDADOR = { nombre: "Paula", telefono: "634567890" };
+    // Los familiares vinculados (Mario → Dara) aparecen ya en los contactos
+    const CONTACTOS_INICIALES = [
+      ...familiares.map(f => ({ nombre: `${f.nombre} (familiar)`, telefono: f.telefono })),
+      { nombre: "Hija", telefono: "623456789" }
+    ];
+    // El cuidador se asocia desde la aplicación del cuidador: aquí solo se muestra
+    const CUIDADOR = familiares[0] || { nombre: "Paula", telefono: "634567890" };
 
     function leer(clave) {
-      try { return JSON.parse(localStorage.getItem(clave)); } catch (e) { return null; }
+      try { return JSON.parse(localStorage.getItem(clave + "-" + usuario)); } catch (e) { return null; }
     }
     function guardar(clave, valor) {
-      try { localStorage.setItem(clave, JSON.stringify(valor)); } catch (e) {}
+      try { localStorage.setItem(clave + "-" + usuario, JSON.stringify(valor)); } catch (e) {}
     }
 
     let perfil = { ...PERFIL_INICIAL, ...leer("perfil") };

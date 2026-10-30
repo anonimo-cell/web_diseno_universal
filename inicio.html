@@ -66,7 +66,7 @@
     <!-- ===== Contenido principal ===== -->
     <main class="contenido" id="contenido" tabindex="-1">
       <header class="cabecera">
-        <h1>Buenos días, X</h1>
+        <h1 id="saludo">Buenos días</h1>
         <div class="perfiles">
           <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
           <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
@@ -254,6 +254,13 @@
 
   <script src="comun.js"></script>
   <script>
+    // ---------- Saludo con el nombre de quien ha entrado ----------
+    let nombreUsuario = "";
+    try { nombreUsuario = sessionStorage.getItem("nombre-usuario") || ""; } catch (e) {}
+    if (nombreUsuario) {
+      document.getElementById("saludo").textContent = `Buenos días, ${nombreUsuario.split(" ")[0]}`;
+    }
+
     // ---------- Temperatura (compartida con la página Casa) ----------
     configurarTemperatura(document.getElementById("temp-estado"), "estado temp-valor");
 

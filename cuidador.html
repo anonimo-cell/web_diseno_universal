@@ -78,7 +78,7 @@
     <!-- ===== Contenido principal ===== -->
     <main class="contenido" id="contenido" tabindex="-1">
       <header class="cabecera">
-        <h1 id="saludo-cuidador">Hola</h1>
+        <h1 id="saludo-cuidador">Buenos días</h1>
         <div class="perfiles">
           <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
           <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
@@ -264,7 +264,7 @@
     let nombreCuidador = "";
     try { nombreCuidador = sessionStorage.getItem("nombre-usuario") || ""; } catch (e) {}
     if (nombreCuidador) {
-      document.getElementById("saludo-cuidador").textContent = `Hola, ${nombreCuidador.split(" ")[0]}`;
+      document.getElementById("saludo-cuidador").textContent = `Buenos días, ${nombreCuidador.split(" ")[0]}`;
     }
 
     // ---------- Pacientes a cargo ----------

@@ -345,7 +345,7 @@
     const formatoTelefono = t => t ? "+34 " + t.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3") : "Sin teléfono";
 
     function pintarPerfil() {
-      document.getElementById("saludo").textContent = `Hola, ${perfil.nombre.split(" ")[0]}`;
+      document.getElementById("saludo").textContent = `Buenos días, ${perfil.nombre.split(" ")[0]}`;
       document.getElementById("dato-nombre").textContent = perfil.nombre;
       document.getElementById("dato-telefono").textContent = formatoTelefono(perfil.telefono);
       document.getElementById("dato-parentesco").textContent = perfil.parentesco || "Sin indicar";
