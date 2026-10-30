@@ -92,10 +92,12 @@ const PACIENTES_INICIALES = [
 ];
 
 // Lo guardado se completa con los datos iniciales, por si se guardó antes de que
-// existiera algún apartado (por ejemplo, la casa)
+// existiera algún apartado (por ejemplo, la casa).
+// La clave lleva versión: al cambiar los ejemplos se sube el número para que se carguen
+const CLAVE_PACIENTES = "pacientes-cuidador-v2";
 let pacientes = PACIENTES_INICIALES;
 try {
-  const guardados = JSON.parse(localStorage.getItem("pacientes-cuidador"));
+  const guardados = JSON.parse(localStorage.getItem(CLAVE_PACIENTES));
   if (Array.isArray(guardados) && guardados.length) {
     pacientes = guardados.map((p, i) => ({ ...PACIENTES_INICIALES[i], ...p }));
   }
@@ -113,7 +115,7 @@ function nuevoPaciente(datos) {
 }
 
 function guardarPacientes() {
-  try { localStorage.setItem("pacientes-cuidador", JSON.stringify(pacientes)); } catch (e) {}
+  try { localStorage.setItem(CLAVE_PACIENTES, JSON.stringify(pacientes)); } catch (e) {}
 }
 
 // Estado de una toma de hoy: tomada, pendiente (ya pasó su hora) o más tarde (aún no toca)

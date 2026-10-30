@@ -340,15 +340,17 @@
       { tipo: "ventana", lugar: "Baño", activo: false }
     ];
 
-    // Se guardan en el navegador para que no se pierdan al cambiar de página
+    // Se guardan en el navegador para que no se pierdan al cambiar de página.
+    // La clave lleva versión: al cambiar los ejemplos se sube el número para que se carguen
+    const CLAVE_DISPOSITIVOS = "dispositivos-v2";
     let dispositivos = DISPOSITIVOS_INICIALES;
     try {
-      const guardados = JSON.parse(localStorage.getItem("dispositivos"));
+      const guardados = JSON.parse(localStorage.getItem(CLAVE_DISPOSITIVOS));
       if (Array.isArray(guardados)) dispositivos = guardados.filter(d => TIPOS[d.tipo]);
     } catch (e) {}
 
     function guardarDispositivos() {
-      try { localStorage.setItem("dispositivos", JSON.stringify(dispositivos)); } catch (e) {}
+      try { localStorage.setItem(CLAVE_DISPOSITIVOS, JSON.stringify(dispositivos)); } catch (e) {}
     }
 
     function pintarBoton(boton, d) {

@@ -91,9 +91,22 @@
           <h2 id="titulo-proximas" class="sr-only">Próximas tomas</h2>
           <ul>
             <li class="med-item">
+              <time class="med-item-hora" datetime="21:30">21:30</time>
+              <span class="med-item-nombre">Omeprazol</span>
+              <button class="boton btn-foto" type="button" data-foto="omeprazol" aria-haspopup="dialog" aria-describedby="nombre-omeprazol">
+                Ver foto
+                <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                  <rect x="4" y="5" width="24" height="22" rx="2"/>
+                  <circle cx="16" cy="17" r="5"/>
+                  <path d="M21 5v4h7"/>
+                </svg>
+              </button>
+              <span id="nombre-omeprazol" class="sr-only">del omeprazol de las 21:30</span>
+            </li>
+            <li class="med-item">
               <time class="med-item-hora" datetime="22:00">22:00</time>
               <span class="med-item-nombre">Pastilla tensión</span>
-              <button class="boton btn-foto" type="button" aria-haspopup="dialog" aria-describedby="nombre-proxima">
+              <button class="boton btn-foto" type="button" data-foto="tension" aria-haspopup="dialog" aria-describedby="nombre-proxima">
                 Ver foto
                 <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
                   <rect x="4" y="5" width="24" height="22" rx="2"/>
@@ -102,6 +115,32 @@
                 </svg>
               </button>
               <span id="nombre-proxima" class="sr-only">de la pastilla de la tensión de las 22:00</span>
+            </li>
+            <li class="med-item">
+              <time class="med-item-hora" datetime="22:30">22:30</time>
+              <span class="med-item-nombre">Sobre estómago</span>
+              <button class="boton btn-foto" type="button" data-foto="estomago" aria-haspopup="dialog" aria-describedby="nombre-estomago">
+                Ver foto
+                <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                  <rect x="4" y="5" width="24" height="22" rx="2"/>
+                  <circle cx="16" cy="17" r="5"/>
+                  <path d="M21 5v4h7"/>
+                </svg>
+              </button>
+              <span id="nombre-estomago" class="sr-only">del sobre para el estómago de las 22:30</span>
+            </li>
+            <li class="med-item">
+              <time class="med-item-hora" datetime="23:00">23:00</time>
+              <span class="med-item-nombre">Vitamina D</span>
+              <button class="boton btn-foto" type="button" data-foto="vitamina-d" aria-haspopup="dialog" aria-describedby="nombre-vitamina">
+                Ver foto
+                <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                  <rect x="4" y="5" width="24" height="22" rx="2"/>
+                  <circle cx="16" cy="17" r="5"/>
+                  <path d="M21 5v4h7"/>
+                </svg>
+              </button>
+              <span id="nombre-vitamina" class="sr-only">de la vitamina D de las 23:00</span>
             </li>
           </ul>
         </section>
@@ -114,7 +153,7 @@
             <time id="reloj">--:--</time>
           </p>
           <p class="pastilla">Pastilla tensión</p>
-          <button class="boton btn-foto" type="button" aria-haspopup="dialog" aria-describedby="nombre-pendiente">
+          <button class="boton btn-foto" type="button" data-foto="tension" aria-haspopup="dialog" aria-describedby="nombre-pendiente">
             Ver foto
             <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
               <rect x="4" y="5" width="24" height="22" rx="2"/>
@@ -142,15 +181,10 @@
     </button>
     <h2 id="foto-titulo">Pastilla tensión</h2>
     <figure class="foto-pastilla">
-      <!-- Imagen provisional: se sustituirá por la foto real del medicamento -->
-      <svg viewBox="0 0 200 140" role="img"
-           aria-label="Foto de la pastilla de la tensión: comprimido redondo de color blanco con una ranura en el centro"
-           focusable="false">
-        <ellipse cx="100" cy="78" rx="70" ry="44" fill="#ffffff" stroke="currentColor" stroke-width="3"/>
-        <ellipse cx="100" cy="70" rx="70" ry="44" fill="#ffffff" stroke="currentColor" stroke-width="3"/>
-        <line x1="100" y1="30" x2="100" y2="110" stroke="currentColor" stroke-width="3"/>
-      </svg>
-      <figcaption>Comprimido redondo blanco con una ranura en el centro.</figcaption>
+      <!-- La imagen y el texto se cambian según el botón "Ver foto" pulsado -->
+      <img id="foto-imagen" src="img/pastillas/tension.svg" width="320" height="224"
+           alt="Foto de la pastilla de la tensión: comprimido redondo de color blanco con una ranura en el centro">
+      <figcaption id="foto-texto">Comprimido redondo blanco con una ranura en el centro.</figcaption>
     </figure>
   </dialog>
 
@@ -262,8 +296,36 @@
     configurarPastilla(document.getElementById("btn-pastilla"));
 
     // ---------- Ver foto ----------
+    // Cada botón indica en data-foto qué medicamento enseña
+    const FOTOS = {
+      "tension": {
+        nombre: "Pastilla tensión", texto: "Comprimido redondo blanco con una ranura en el centro.",
+        alt: "Foto de la pastilla de la tensión: comprimido redondo de color blanco con una ranura en el centro"
+      },
+      "omeprazol": {
+        nombre: "Omeprazol", texto: "Cápsula alargada, mitad rosa y mitad blanca.",
+        alt: "Foto del omeprazol: cápsula alargada de color rosa y blanco"
+      },
+      "estomago": {
+        nombre: "Sobre estómago", texto: "Sobre blanco con una cruz verde. Disolver en medio vaso de agua.",
+        alt: "Foto del sobre para el estómago: sobre blanco con una cruz verde"
+      },
+      "vitamina-d": {
+        nombre: "Vitamina D", texto: "Perla ovalada de color amarillo.",
+        alt: "Foto de la vitamina D: perla ovalada de color amarillo"
+      }
+    };
     const dialogoFoto = document.getElementById("dialogo-foto");
-    document.querySelectorAll(".btn-foto").forEach(b => b.addEventListener("click", () => dialogoFoto.showModal()));
+    const fotoImagen = document.getElementById("foto-imagen");
+    document.querySelectorAll(".btn-foto").forEach(b => b.addEventListener("click", () => {
+      const id = b.dataset.foto in FOTOS ? b.dataset.foto : "tension";
+      const foto = FOTOS[id];
+      document.getElementById("foto-titulo").textContent = foto.nombre;
+      document.getElementById("foto-texto").textContent = foto.texto;
+      fotoImagen.src = `img/pastillas/${id}.svg`;
+      fotoImagen.alt = foto.alt;
+      dialogoFoto.showModal();
+    }));
     document.getElementById("cerrar-foto").addEventListener("click", () => dialogoFoto.close());
   </script>
 </body>
