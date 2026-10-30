@@ -35,8 +35,16 @@ const PACIENTES_INICIALES = [
       dispositivos: [
         { tipo: "luz", lugar: "Cocina", activo: false },
         { tipo: "luz", lugar: "Salón", activo: true },
+        { tipo: "luz", lugar: "Dormitorio", activo: false },
+        { tipo: "luz", lugar: "Baño", activo: false },
+        { tipo: "luz", lugar: "Pasillo", activo: true },
         { tipo: "puerta", lugar: "Entrada", activo: true },
-        { tipo: "ventana", lugar: "Cocina", activo: false }
+        { tipo: "puerta", lugar: "Terraza", activo: false },
+        { tipo: "puerta", lugar: "Baño", activo: false },
+        { tipo: "ventana", lugar: "Cocina", activo: false },
+        { tipo: "ventana", lugar: "Salón", activo: false },
+        { tipo: "ventana", lugar: "Dormitorio", activo: true },
+        { tipo: "ventana", lugar: "Baño", activo: false }
       ]
     }
   },
@@ -68,9 +76,16 @@ const PACIENTES_INICIALES = [
       dispositivos: [
         { tipo: "luz", lugar: "Dormitorio", activo: false },
         { tipo: "luz", lugar: "Cocina", activo: false },
+        { tipo: "luz", lugar: "Salón", activo: true },
+        { tipo: "luz", lugar: "Baño", activo: false },
+        { tipo: "luz", lugar: "Entrada", activo: false },
         { tipo: "puerta", lugar: "Entrada", activo: false },
         { tipo: "puerta", lugar: "Terraza", activo: false },
-        { tipo: "ventana", lugar: "Salón", activo: true }
+        { tipo: "puerta", lugar: "Dormitorio", activo: true },
+        { tipo: "ventana", lugar: "Salón", activo: true },
+        { tipo: "ventana", lugar: "Cocina", activo: false },
+        { tipo: "ventana", lugar: "Dormitorio", activo: false },
+        { tipo: "ventana", lugar: "Terraza", activo: false }
       ]
     }
   }
