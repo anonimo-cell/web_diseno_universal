@@ -34,6 +34,12 @@
   --sobre-rojo: #ffffff; /* texto encima del rojo */
   --sobre-verde: #ffffff; /* texto encima del verde */
 
+  /* Amarillo = situación intermedia (p. ej. puertas parcialmente cerradas).
+     Texto negro encima: 13:1. Borde oscuro para que se distinga sobre blanco. */
+  --amarillo: #f5c518;
+  --amarillo-borde: #7a5c00;
+  --sobre-amarillo: #000000;
+
   /* Foco de teclado: anillo azul claro pegado al control + borde azul oscuro por fuera.
      Azul claro sobre --azul 7.6:1 · sobre rojo 7.4:1 · sobre verde 7.8:1
      Borde --texto sobre blanco / fondo 16:1 → AAA en cualquier control */
@@ -67,6 +73,8 @@ html.oscuro {
   --rojo-sombra: #e53935;
   --sobre-rojo: #000000;
   --sobre-verde: #000000;
+  --amarillo: #facc15;     /* negro encima 12:1 */
+  --amarillo-borde: #facc15;
 }
 
 /* Alto contraste: blanco y negro (21:1), salvo el rojo y el verde, que se mantienen
@@ -92,6 +100,8 @@ html.contraste {
   --rojo-hover: #660000;
   --rojo-sombra: #000000;
   --sobre-rojo: #ffffff;
+  --amarillo: #ffd400;     /* negro encima 14:1, con borde negro */
+  --amarillo-borde: #000000;
   --foco: #ffffff;
   --foco-borde: #000000;
 }
@@ -574,6 +584,12 @@ html.contraste .aviso {
 .estado.alerta {
   background: var(--rojo);
   color: var(--sobre-rojo);
+}
+
+.estado.medio {
+  background: var(--amarillo);
+  color: var(--sobre-amarillo);
+  border-color: var(--amarillo-borde);
 }
 
 /* "Parcialmente abiertas / cerradas" es más largo: puede bajar a dos líneas */

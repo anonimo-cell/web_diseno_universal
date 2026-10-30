@@ -267,7 +267,7 @@
     // ---------- Puertas y ventanas: resumen de lo que hay en la página Casa ----------
     // Todas abiertas → "Abiertas"; todas cerradas → "Cerradas"; si hay de las dos,
     // "Parcialmente abiertas" cuando son más las abiertas y "Parcialmente cerradas" si no.
-    // Verde solo si todo está cerrado: cualquier abierta conviene revisarla.
+    // Verde si todo está cerrado, amarillo si son más las cerradas y rojo si son más las abiertas.
     function pintarResumenCasa() {
       const dispositivos = leerDispositivos();
       ["puerta", "ventana"].forEach(tipo => {
@@ -275,13 +275,14 @@
         const lista = dispositivos.filter(d => d.tipo === tipo);
         const abiertas = lista.filter(d => d.activo).length;
         const cerradas = lista.length - abiertas;
-        let texto;
-        if (!lista.length) texto = "No hay";
-        else if (!cerradas) texto = "Abiertas";
-        else if (!abiertas) texto = "Cerradas";
-        else texto = abiertas > cerradas ? "Parcialmente abiertas" : "Parcialmente cerradas";
+        let texto, color;
+        if (!lista.length) [texto, color] = ["No hay", "ok"];
+        else if (!cerradas) [texto, color] = ["Abiertas", "alerta"];
+        else if (!abiertas) [texto, color] = ["Cerradas", "ok"];
+        else if (abiertas > cerradas) [texto, color] = ["Parcialmente abiertas", "alerta parcial"];
+        else [texto, color] = ["Parcialmente cerradas", "medio parcial"];
         estado.textContent = texto;
-        estado.className = "estado " + (abiertas ? "alerta" : "ok") + (abiertas && cerradas ? " parcial" : "");
+        estado.className = "estado " + color;
       });
     }
     pintarResumenCasa();
