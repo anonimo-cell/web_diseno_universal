@@ -74,6 +74,24 @@ try {
   }
 } catch (e) {}
 
+// ---------- Enlaces a un bloque (casa.html#puertas, inicio.html#casa…) ----------
+// El navegador desplaza la pantalla hasta el bloque, pero en pantalla grande no hay
+// scroll (overflow: hidden) y el contenido se quedaba cortado sin poder volver.
+// Se deshace ese desplazamiento y en su lugar se lleva el foco al bloque.
+// Donde sí hay scroll (móvil) se deja el salto del navegador, que es lo esperado.
+function irAlBloque() {
+  const bloque = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (!bloque) return;
+  // El overflow del body se aplica a la ventana (que se desplaza como <html>)
+  for (let el = bloque.parentElement; el; el = el.parentElement) {
+    const estilo = getComputedStyle(el === document.documentElement ? document.body : el);
+    if (el.scrollTop && estilo.overflowY === "hidden") el.scrollTop = 0;
+  }
+  if (document.activeElement !== bloque && bloque.tabIndex === -1) bloque.focus({ preventScroll: true });
+}
+window.addEventListener("load", () => requestAnimationFrame(irAlBloque));
+window.addEventListener("hashchange", irAlBloque);
+
 // ---------- Cerrar sesión (con confirmación, para evitar toques accidentales) ----------
 const dialogoSalir = document.getElementById("dialogo-salir");
 if (dialogoSalir) {
