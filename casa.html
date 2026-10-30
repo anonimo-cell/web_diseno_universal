@@ -325,29 +325,8 @@
       }
     };
 
-    const DISPOSITIVOS_INICIALES = [
-      { tipo: "luz", lugar: "Cocina", activo: false },
-      { tipo: "luz", lugar: "Salón", activo: true },
-      { tipo: "luz", lugar: "Dormitorio", activo: false },
-      { tipo: "luz", lugar: "Baño", activo: false },
-      { tipo: "luz", lugar: "Pasillo", activo: true },
-      { tipo: "puerta", lugar: "Entrada", activo: true },
-      { tipo: "puerta", lugar: "Terraza", activo: false },
-      { tipo: "puerta", lugar: "Baño", activo: false },
-      { tipo: "ventana", lugar: "Cocina", activo: false },
-      { tipo: "ventana", lugar: "Salón", activo: false },
-      { tipo: "ventana", lugar: "Dormitorio", activo: true },
-      { tipo: "ventana", lugar: "Baño", activo: false }
-    ];
-
-    // Se guardan en el navegador para que no se pierdan al cambiar de página.
-    // La clave lleva versión: al cambiar los ejemplos se sube el número para que se carguen
-    const CLAVE_DISPOSITIVOS = "dispositivos-v2";
-    let dispositivos = DISPOSITIVOS_INICIALES;
-    try {
-      const guardados = JSON.parse(localStorage.getItem(CLAVE_DISPOSITIVOS));
-      if (Array.isArray(guardados)) dispositivos = guardados.filter(d => TIPOS[d.tipo]);
-    } catch (e) {}
+    // Lista compartida con Inicio (comun.js): se guarda para que no se pierda al cambiar de página
+    let dispositivos = leerDispositivos().filter(d => TIPOS[d.tipo]);
 
     function guardarDispositivos() {
       try { localStorage.setItem(CLAVE_DISPOSITIVOS, JSON.stringify(dispositivos)); } catch (e) {}

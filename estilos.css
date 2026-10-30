@@ -576,6 +576,13 @@ html.contraste .aviso {
   color: var(--sobre-rojo);
 }
 
+/* "Parcialmente abiertas / cerradas" es más largo: puede bajar a dos líneas */
+.estado.parcial {
+  white-space: normal;
+  text-align: center;
+  line-height: 1.15;
+}
+
 .estado.neutro {
   background: var(--azul);
   color: #ffffff;

@@ -130,7 +130,7 @@
             <rect x="12" y="4" width="24" height="40" rx="2"/>
             <circle cx="30" cy="25" r="1.8"/>
           </svg>
-          <span class="estado alerta">Abiertas</span>
+          <span class="estado alerta" id="estado-puerta">Abiertas</span>
         </a>
 
         <a class="boton tarjeta" href="casa.html#ventanas">
@@ -140,7 +140,7 @@
             <line x1="24" y1="6" x2="24" y2="42"/>
             <line x1="8" y1="24" x2="40" y2="24"/>
           </svg>
-          <span class="estado ok">Cerradas</span>
+          <span class="estado ok" id="estado-ventana">Cerradas</span>
         </a>
       </section>
 
@@ -256,6 +256,30 @@
   <script>
     // ---------- Temperatura (compartida con la página Casa) ----------
     configurarTemperatura(document.getElementById("temp-estado"), "estado temp-valor");
+
+    // ---------- Puertas y ventanas: resumen de lo que hay en la página Casa ----------
+    // Todas abiertas → "Abiertas"; todas cerradas → "Cerradas"; si hay de las dos,
+    // "Parcialmente abiertas" cuando son más las abiertas y "Parcialmente cerradas" si no.
+    // Verde solo si todo está cerrado: cualquier abierta conviene revisarla.
+    function pintarResumenCasa() {
+      const dispositivos = leerDispositivos();
+      ["puerta", "ventana"].forEach(tipo => {
+        const estado = document.getElementById("estado-" + tipo);
+        const lista = dispositivos.filter(d => d.tipo === tipo);
+        const abiertas = lista.filter(d => d.activo).length;
+        const cerradas = lista.length - abiertas;
+        let texto;
+        if (!lista.length) texto = "No hay";
+        else if (!cerradas) texto = "Abiertas";
+        else if (!abiertas) texto = "Cerradas";
+        else texto = abiertas > cerradas ? "Parcialmente abiertas" : "Parcialmente cerradas";
+        estado.textContent = texto;
+        estado.className = "estado " + (abiertas ? "alerta" : "ok") + (abiertas && cerradas ? " parcial" : "");
+      });
+    }
+    pintarResumenCasa();
+    // Al volver desde Casa con el botón Atrás la página puede venir de la caché: se repinta
+    window.addEventListener("pageshow", pintarResumenCasa);
 
     // ---------- Medicación: el aviso de arriba sigue al botón Pendiente ----------
     const aviso = document.getElementById("aviso");

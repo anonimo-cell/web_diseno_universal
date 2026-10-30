@@ -227,6 +227,34 @@ function configurarTemperatura(valor, clase) {
   pintar();
 }
 
+// ---------- Dispositivos de la casa ----------
+// Se guardan en el navegador para que Inicio y Casa muestren los mismos.
+// activo = encendida (luz) o abierta (puerta, ventana).
+// La clave lleva versión: al cambiar los ejemplos se sube el número para que se carguen
+const CLAVE_DISPOSITIVOS = "dispositivos-v2";
+const DISPOSITIVOS_INICIALES = [
+  { tipo: "luz", lugar: "Cocina", activo: false },
+  { tipo: "luz", lugar: "Salón", activo: true },
+  { tipo: "luz", lugar: "Dormitorio", activo: false },
+  { tipo: "luz", lugar: "Baño", activo: false },
+  { tipo: "luz", lugar: "Pasillo", activo: true },
+  { tipo: "puerta", lugar: "Entrada", activo: true },
+  { tipo: "puerta", lugar: "Terraza", activo: false },
+  { tipo: "puerta", lugar: "Baño", activo: false },
+  { tipo: "ventana", lugar: "Cocina", activo: false },
+  { tipo: "ventana", lugar: "Salón", activo: false },
+  { tipo: "ventana", lugar: "Dormitorio", activo: true },
+  { tipo: "ventana", lugar: "Baño", activo: false }
+];
+
+function leerDispositivos() {
+  try {
+    const guardados = JSON.parse(localStorage.getItem(CLAVE_DISPOSITIVOS));
+    if (Array.isArray(guardados)) return guardados;
+  } catch (e) {}
+  return DISPOSITIVOS_INICIALES;
+}
+
 // ---------- SOS ----------
 // Al pulsar SOS empieza una cuenta atrás de 5 s. Si no se cancela, se avisa a emergencias.
 // <dialog> con showModal atrapa el foco y devuelve el foco al botón SOS al cerrarse.
