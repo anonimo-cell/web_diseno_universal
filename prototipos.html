@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototipos alternativos · VitalHogar</title>
+  <meta name="description" content="Cómo se adapta VitalHogar a distintos colores, orientaciones de pantalla y texto ampliado al 200 %.">
+  <script src="preferencias.js"></script>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <main class="doc doc-ancha" id="contenido" tabindex="-1">
+    <p><a class="enlace-pie" href="accesibilidad.html">Volver a Accesibilidad</a></p>
+    <h1>Prototipos alternativos</h1>
+    <p>Elige una combinación para ver cómo se adapta el diseño. Cada vista es la página real y se puede usar: el SOS de estos prototipos no avisa a nadie. Los cambios que hagas se guardan en este navegador. Los datos son de ejemplo.</p>
+
+    <form class="proto-controles" id="controles">
+      <div class="campo">
+        <label for="pantalla">Pantalla</label>
+        <div class="selector">
+          <select id="pantalla">
+            <optgroup label="Persona mayor">
+              <option value="inicio.html">Inicio</option>
+              <option value="medicacion.html">Medicación</option>
+              <option value="casa.html">Casa</option>
+              <option value="perfil.html">Mi perfil</option>
+            </optgroup>
+            <optgroup label="Cuidador">
+              <option value="cuidador.html">Panel de pacientes</option>
+              <option value="cuidador-medicacion.html">Medicación</option>
+              <option value="cuidador-casa.html">Casa</option>
+              <option value="cuidador-contactos.html">Contactos</option>
+              <option value="cuidador-perfil.html">Mi perfil</option>
+            </optgroup>
+            <optgroup label="Común">
+              <option value="index.html">Iniciar sesión</option>
+            </optgroup>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="tema">Colores</label>
+        <div class="selector">
+          <select id="tema">
+            <option value="claro">Claro</option>
+            <option value="oscuro">Oscuro</option>
+            <option value="contraste">Alto contraste</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="dispositivo">Orientación</label>
+        <div class="selector">
+          <select id="dispositivo">
+            <option value="1280x800">Ordenador horizontal</option>
+            <option value="800x1280">Tableta vertical</option>
+            <option value="390x844">Móvil vertical</option>
+            <option value="844x390">Móvil horizontal</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="texto">Tamaño del texto</label>
+        <div class="selector">
+          <select id="texto">
+            <option value="100">100 %</option>
+            <option value="200">200 %</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </form>
+
+    <p id="resumen" role="status"></p>
+    <p><a class="enlace-pie" id="abrir" href="#" target="_blank" rel="noopener">Abrir esta combinación en una pestaña nueva</a></p>
+
+    <!-- La vista conserva su tamaño real (con sus mismas reglas responsive) y se reduce para caber -->
+    <div class="proto-escenario" id="escenario">
+      <div class="proto-marco" id="marco">
+        <iframe id="vista" title="Vista previa de la combinación elegida"></iframe>
+      </div>
+    </div>
+
+    <h2>Combinaciones comprobadas</h2>
+    <p>Prueba automática en Chrome de 12 páginas: 336 combinaciones de tamaño de pantalla (1280 × 800, 800 × 1280, 390 × 844, 844 × 390, 320 × 568 y 320 × 256 px), colores y texto al 100 % y al 200 %. Se comprueba que la página no necesita desplazamiento lateral, que el contenido no se sale de la pantalla y que los botones miden al menos 24 × 24 px.</p>
+    <p>El SOS se prueba también en cada combinación con colores claros: Cancelar lleva el foco, Avisar ahora confirma al momento y ambos se ven sin desplazarse. <strong>Excepción:</strong> con texto al 200 % en 320 × 256 px no caben los dos a la vez y la ventana se desplaza.</p>
+
+    <h2>Lo que estas vistas no sustituyen</h2>
+    <ul class="doc-lista">
+      <li>El tema de contraste de Windows solo se ve activándolo en el sistema: Configuración › Accesibilidad › Temas de contraste.</li>
+      <li>El zoom real del navegador: con <kbd>Ctrl</kbd> y <kbd>+</kbd> al 200 %, la ventana se comporta como una pantalla de la mitad de ancho.</li>
+      <li>Las pruebas con lectores de pantalla y con personas mayores.</li>
+    </ul>
+  </main>
+
+  <script>
+    const controles = document.getElementById("controles");
+    const marco = document.getElementById("marco");
+    const vista = document.getElementById("vista");
+    const escenario = document.getElementById("escenario");
+    const campo = id => document.getElementById(id);
+
+    function textoElegido(id) {
+      const select = campo(id);
+      return select.options[select.selectedIndex].text;
+    }
+
+    function ajustarTamano() {
+      const [ancho, alto] = campo("dispositivo").value.split("x").map(Number);
+      const escala = Math.min(1, (escenario.clientWidth - 6) / ancho);
+      vista.style.width = `${ancho}px`;
+      vista.style.height = `${alto}px`;
+      vista.style.transform = `scale(${escala})`;
+      marco.style.width = `${Math.floor(ancho * escala)}px`;
+      marco.style.height = `${Math.floor(alto * escala)}px`;
+    }
+
+    function mostrar() {
+      const direccion = `${campo("pantalla").value}?vista=1&tema=${campo("tema").value}&texto=${campo("texto").value}`;
+      vista.src = direccion;
+      campo("abrir").href = direccion;
+      ajustarTamano();
+      campo("resumen").textContent =
+        `Mostrando ${textoElegido("pantalla")}. Colores: ${textoElegido("tema").toLowerCase()}. Pantalla: ${textoElegido("dispositivo").toLowerCase()}, ${campo("dispositivo").value.replace("x", " × ")} px. Texto: ${textoElegido("texto")}.`;
+    }
+
+    controles.addEventListener("change", mostrar);
+    controles.addEventListener("submit", e => e.preventDefault());
+    // También se reajusta cuando aparece la barra de desplazamiento de la página
+    new ResizeObserver(ajustarTamano).observe(escenario);
+    mostrar();
+  </script>
+</body>
+</html>

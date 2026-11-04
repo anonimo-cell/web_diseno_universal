@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contactos · Cuidador · VitalHogar</title>
   <meta name="description" content="Pacientes a cargo del cuidador: llamar, ver su información y editar sus datos de contacto.">
+  <script src="preferencias.js"></script>
   <link rel="stylesheet" href="estilos.css">
 </head>
 <!-- data-pagina="cuidador": comun.js deja entrar aquí a los cuidadores -->
@@ -98,14 +99,6 @@
           </button>
         </div>
         <div class="perfiles">
-          <!-- Pestaña de accesibilidad: cuelga del borde superior de la pantalla -->
-          <button class="boton btn-a11y" type="button" id="abrir-a11y" aria-haspopup="dialog"
-                  aria-label="Menú de accesibilidad" title="Menú de accesibilidad">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
-              <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
-            </svg>
-          </button>
           <a class="boton avatar" href="cuidador-perfil.html" aria-label="Mi perfil" title="Mi perfil">
             <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
               <circle cx="24" cy="17" r="8"/>
@@ -176,6 +169,24 @@
         <p class="campo-error" id="error-c-telefono"></p>
       </div>
 
+      <div class="campos-2">
+        <div class="campo">
+          <label for="c-alergias">Alergias</label>
+          <textarea id="c-alergias" rows="2" autocomplete="off"></textarea>
+        </div>
+        <div class="campo">
+          <label for="c-patologias">Patologías</label>
+          <textarea id="c-patologias" rows="2" autocomplete="off"></textarea>
+        </div>
+      </div>
+
+      <!-- Los contactos que el paciente puede llamar: los mantiene el cuidador -->
+      <fieldset class="contactos-edicion">
+        <legend>Contactos del paciente</legend>
+        <ul class="pautas-lista" id="c-contactos"></ul>
+        <button class="boton btn-editar btn-anadir-toma" type="button" id="c-anadir-contacto">Añadir contacto</button>
+      </fieldset>
+
       <div class="dialogo-botones">
         <button class="boton" type="button" id="cancelar-contacto">Cancelar</button>
         <button class="boton btn-confirmar" type="submit" id="guardar-contacto">Guardar</button>
@@ -183,7 +194,7 @@
     </form>
   </dialog>
 
-  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s para cancelar
+  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s con Cancelar y Avisar ahora
        (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
   <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
     <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
@@ -202,75 +213,17 @@
       <span>SOS</span>
     </div>
 
-    <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
-      Cancelar (<span id="sos-cuenta">5</span>)
-    </button>
+    <!-- Cancelar lleva el foco: es la opción segura si se ha pulsado sin querer -->
+    <div class="sos-acciones">
+      <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
+        Cancelar (<span id="sos-cuenta">5</span>)
+      </button>
+      <button class="boton btn-sos-ahora" type="button" id="sos-ahora">Avisar ahora</button>
+    </div>
 
-    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al acabar la cuenta atrás -->
+    <!-- Mensaje de estado (WCAG 4.1.3): se rellena al avisar -->
     <p class="sos-estado" id="sos-estado" role="status"></p>
     <p class="sr-only" id="sos-aviso" aria-live="assertive"></p>
-  </dialog>
-
-  <!-- ===== Menú de accesibilidad ===== -->
-  <dialog class="dialogo dialogo-a11y" id="dialogo-a11y" aria-labelledby="a11y-titulo">
-    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-    <h2 id="a11y-titulo" class="a11y-titulo">
-      Menú de accesibilidad
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
-        <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
-      </svg>
-    </h2>
-
-    <section class="a11y-grupo" aria-labelledby="grupo-texto">
-      <h3 id="grupo-texto">
-        Tamaño de letra
-        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <rect x="4" y="4" width="24" height="24" rx="2"/>
-          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
-        </svg>
-      </h3>
-      <div class="a11y-fila">
-        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
-        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
-      </div>
-    </section>
-
-    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
-      <h3 id="grupo-vibracion">
-        Vibración
-        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <rect x="11" y="5" width="10" height="22" rx="2"/>
-          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
-          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
-        </svg>
-      </h3>
-      <div class="a11y-fila">
-        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
-        <output class="a11y-valor" id="vibra-valor" aria-live="polite">Apagada</output>
-        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
-      </div>
-    </section>
-
-    <section class="a11y-grupo" aria-labelledby="grupo-tema">
-      <h3 id="grupo-tema">
-        Tema
-        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <circle cx="16" cy="16" r="5"/>
-          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
-        </svg>
-      </h3>
-      <div class="a11y-temas">
-        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
-        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
-      </div>
-    </section>
-
-    <div class="dialogo-botones">
-      <button class="boton btn-cancelar" type="button" id="a11y-reset">Restablecer</button>
-    </div>
   </dialog>
 
   <script src="comun.js"></script>
@@ -322,6 +275,7 @@
           <dt>Alergias</dt><dd></dd>
           <dt>Patologías</dt><dd></dd>
         </dl>
+        <ul class="detalle-lista info-resumen" id="info-contactos"></ul>
         <ul class="detalle-lista info-resumen">
           <li><span><strong>Medicación de hoy</strong></span>
             <span class="estado ${!p.tomas.length ? "espera" : hechas === p.tomas.length ? "ok" : "alerta"}">${p.tomas.length ? `${hechas} de ${p.tomas.length}` : "Sin pautas"}</span></li>
@@ -338,6 +292,13 @@
       const dd = dialogoInfo.querySelectorAll("dd");
       dd[3].textContent = p.alergias || "Ninguna";
       dd[4].textContent = p.patologias || "Ninguna";
+      const listaInfo = document.getElementById("info-contactos");
+      listaInfo.hidden = !(p.contactos || []).length;
+      (p.contactos || []).forEach(c => {
+        const li = document.createElement("li");
+        li.textContent = `${c.nombre}: ${formatoTelefono(c.telefono)}`;
+        listaInfo.append(li);
+      });
       dialogoInfo.showModal();
     }
     document.getElementById("cerrar-info").addEventListener("click", () => dialogoInfo.close());
@@ -347,6 +308,63 @@
     const formContacto = document.getElementById("form-contacto");
     const campoCodigo = document.getElementById("campo-codigo");
     let editando = null; // índice del paciente, o null si se añade uno nuevo
+
+    // Una fila por contacto: nombre · teléfono · quitar
+    const listaContactosPaciente = document.getElementById("c-contactos");
+    let siguienteFila = 0;
+
+    function anadirFilaContacto(c = {}) {
+      const n = siguienteFila++;
+      const li = document.createElement("li");
+      li.className = "pauta-fila contacto-fila";
+      li.innerHTML = `
+        <div class="campo">
+          <label for="cc-nombre-${n}">Nombre</label>
+          <input id="cc-nombre-${n}" class="cc-nombre" type="text" autocomplete="off">
+        </div>
+        <div class="campo">
+          <label for="cc-telefono-${n}">Teléfono</label>
+          <input id="cc-telefono-${n}" class="cc-telefono" type="tel" inputmode="tel" autocomplete="off">
+        </div>
+        <button class="boton btn-editar btn-quitar" type="button">Quitar</button>
+        <p class="campo-error"></p>`;
+      li.querySelector(".cc-nombre").value = c.nombre || "";
+      li.querySelector(".cc-telefono").value = c.telefono || "";
+      li.querySelector(".btn-quitar").setAttribute("aria-label", `Quitar contacto ${c.nombre || "nuevo"}`);
+      listaContactosPaciente.append(li);
+      return li;
+    }
+
+    document.getElementById("c-anadir-contacto").addEventListener("click", () => {
+      anadirFilaContacto().querySelector(".cc-nombre").focus();
+    });
+
+    listaContactosPaciente.addEventListener("click", e => {
+      const quitar = e.target.closest(".btn-quitar");
+      if (!quitar) return;
+      quitar.closest("li").remove();
+      document.getElementById("c-anadir-contacto").focus();
+      anunciar("Contacto quitado");
+    });
+
+    // Lee las filas; las vacías se ignoran. Devuelve null si alguna está incompleta
+    function leerContactosPaciente() {
+      const contactos = [];
+      let primero = null;
+      listaContactosPaciente.querySelectorAll("li").forEach(li => {
+        const nombre = li.querySelector(".cc-nombre");
+        const telefono = li.querySelector(".cc-telefono");
+        const cifras = telefono.value.replace(/[\s.-]/g, "").replace(/^\+?34(?=\d{9}$)/, "");
+        const vacia = !nombre.value.trim() && !cifras;
+        const mal = vacia ? "" : !nombre.value.trim() ? "Escribe el nombre del contacto"
+          : !/^\d{9}$/.test(cifras) ? "El teléfono debe tener 9 cifras" : "";
+        li.querySelector(".campo-error").textContent = mal;
+        if (mal && !primero) primero = !nombre.value.trim() ? nombre : telefono;
+        if (!vacia && !mal) contactos.push({ nombre: nombre.value.trim(), telefono: cifras });
+      });
+      if (primero) primero.focus();
+      return primero ? null : contactos;
+    }
 
     function abrirFormulario(i) {
       editando = i;
@@ -361,6 +379,10 @@
       document.getElementById("c-nombre").value = p.nombre || "";
       document.getElementById("c-edad").value = p.edad || "";
       document.getElementById("c-telefono").value = p.telefono ? p.telefono.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3") : "";
+      document.getElementById("c-alergias").value = p.alergias || "";
+      document.getElementById("c-patologias").value = p.patologias || "";
+      listaContactosPaciente.innerHTML = "";
+      (p.contactos || []).forEach(c => anadirFilaContacto(c));
       dialogoContacto.showModal();
       document.getElementById(nuevo ? "c-codigo" : "c-nombre").focus();
     }
@@ -404,11 +426,15 @@
         ["c-telefono", !telefono ? "Escribe el teléfono" : !/^\d{9}$/.test(telefono) ? "El teléfono debe tener 9 cifras" : ""]
       );
       if (!comprobar(reglas)) return;
+      const contactos = leerContactosPaciente();
+      if (!contactos) return;
+      const alergias = document.getElementById("c-alergias").value.trim();
+      const patologias = document.getElementById("c-patologias").value.trim();
 
       if (nuevo) {
-        pacientes.push(nuevoPaciente({ nombre, edad: Number(edad), telefono, codigo }));
+        pacientes.push(nuevoPaciente({ nombre, edad: Number(edad), telefono, codigo, alergias, patologias, contactos }));
       } else {
-        Object.assign(pacientes[editando], { nombre, edad: Number(edad), telefono });
+        Object.assign(pacientes[editando], { nombre, edad: Number(edad), telefono, alergias, patologias, contactos });
       }
       guardarPacientes();
       pintarContactos();

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accesibilidad · VitalHogar</title>
+  <meta name="description" content="Cómo adaptar VitalHogar desde tu dispositivo y qué normativa de accesibilidad sigue.">
+  <script src="preferencias.js"></script>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+
+  <main class="doc" id="contenido" tabindex="-1">
+    <p><a class="enlace-pie" href="index.html" id="volver">Volver</a></p>
+    <h1>Accesibilidad</h1>
+    <p>VitalHogar no tiene ajustes de accesibilidad propios: usa los de tu dispositivo, los mismos que ya conoces y que valen para todas tus aplicaciones.</p>
+
+    <h2>Adáptala desde tu dispositivo</h2>
+    <dl class="doc-ajustes">
+      <dt>Letra más grande</dt>
+      <dd>En el navegador del ordenador pulsa <kbd>Ctrl</kbd> y <kbd>+</kbd> (en Mac, <kbd>Cmd</kbd> y <kbd>+</kbd>). En el móvil, usa el tamaño de texto de los ajustes del navegador.</dd>
+      <dt>Modo oscuro</dt>
+      <dd>Actívalo en los ajustes de pantalla de tu móvil o, en Windows, en Configuración › Personalización › Colores. La web cambia de color sola.</dd>
+      <dt>Más contraste</dt>
+      <dd>En Windows: Configuración › Accesibilidad › Temas de contraste. En iPhone y iPad: Ajustes › Accesibilidad › Pantalla y tamaño del texto › Aumentar contraste.</dd>
+      <dt>Lector de pantalla</dt>
+      <dd>Funciona con el de tu dispositivo: Narrador o NVDA en Windows, VoiceOver en Apple y TalkBack en Android.</dd>
+    </dl>
+
+    <h2>Referencia normativa</h2>
+    <p>Objetivo de diseño: <strong>WCAG 2.2, nivel AA</strong>, y <strong>EN 301 549 v4.1.1</strong> (publicada en septiembre de 2026), que incorpora WCAG 2.2 y añade requisitos propios. A fecha de esta revisión no hemos podido confirmar su cita en el Diario Oficial de la UE; hasta entonces, la v3.2.1 puede seguir siendo la versión armonizada.</p>
+    <p><strong>Esto es un prototipo.</strong> La tabla recoge una revisión interna del equipo, no una auditoría ni una declaración de conformidad.</p>
+
+    <div class="doc-tabla">
+      <table>
+        <caption>Requisitos añadidos respecto a WCAG 2.1 y EN 301 549 v3.2.1</caption>
+        <thead>
+          <tr><th scope="col">Requisito</th><th scope="col">Cómo se aborda</th><th scope="col">Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">WCAG 2.4.11 Foco no oculto</th><td>En el móvil, la barra fija inferior deja un margen para no tapar lo que recibe el foco. Con texto grande la barra deja de ser fija.</td><td>Aplicado</td></tr>
+          <tr><th scope="row">WCAG 2.5.7 Movimientos de arrastre</th><td>Ninguna función usa arrastre.</td><td>Aplicado</td></tr>
+          <tr><th scope="row">WCAG 2.5.8 Tamaño del objetivo</th><td>Los botones superan los 24 × 24 px que pide el criterio; la mayoría miden 44 px o más.</td><td>Aplicado</td></tr>
+          <tr><th scope="row">WCAG 3.2.6 Ayuda coherente</th><td>El SOS y el perfil están siempre en el mismo sitio dentro de cada aplicación.</td><td>Aplicado</td></tr>
+          <tr><th scope="row">WCAG 3.3.7 Entrada redundante</th><td>Al volver atrás en el registro se conservan los datos; al restablecer la contraseña se aprovecha el usuario ya escrito.</td><td>Aplicado</td></tr>
+          <tr><th scope="row">WCAG 3.3.8 Autenticación accesible</th><td>Se puede pegar la contraseña y usar un gestor de contraseñas. No hay captcha ni pruebas de memoria.</td><td>Aplicado</td></tr>
+          <tr><th scope="row">EN 301 549: preferencias de usuario</th><td>Colores, contraste y tamaño de letra siguen los ajustes del sistema y del navegador.</td><td>Aplicado</td></tr>
+          <tr><th scope="row">EN 301 549, cláusula 6: comunicación en tiempo real</th><td>Las llamadas están simuladas. Al conectarlas habrá que resolver el texto en tiempo real, la identificación de llamada, los avisos y los controles de llamada.</td><td>Pendiente</td></tr>
+          <tr><th scope="row">Pruebas con personas usuarias y productos de apoyo</th><td>Falta probar con lectores de pantalla reales y con personas mayores.</td><td>Pendiente</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><a class="enlace-pie" href="prototipos.html">Ver los prototipos de colores, orientación y texto al 200 %</a></p>
+  </main>
+
+  <script>
+    // "Volver" regresa a la página anterior; sin ella (enlace abierto directamente), al inicio de sesión
+    document.getElementById("volver").addEventListener("click", e => {
+      if (history.length <= 1) return;
+      e.preventDefault();
+      history.back();
+    });
+  </script>
+</body>
+</html>

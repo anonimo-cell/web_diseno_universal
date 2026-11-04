@@ -1,5 +1,5 @@
 // Código común a todas las páginas: avisos al lector de pantalla, SOS,
-// menú de accesibilidad, estado de la pastilla y temperatura.
+// estado de la pastilla y temperatura.
 
 const anuncio = document.getElementById("anuncio");
 // Vacía y vuelve a escribir para que el lector repita mensajes iguales
@@ -61,6 +61,28 @@ function avisarConSonido(dialogo, urgente) {
   }, { once: true });
 }
 
+// ---------- Vista previa (prototipos.html) ----------
+// Con ?vista=1 la página se enseña sin iniciar sesión, con datos de ejemplo: Mario y su
+// familiar Dara o, en las páginas del cuidador, Dara. No salta el recordatorio de la toma
+// y el SOS no avisa a nadie.
+const VISTA_PREVIA = new URLSearchParams(location.search).has("vista");
+if (VISTA_PREVIA) {
+  try {
+    if (sessionStorage.getItem("sesion") !== "abierta") {
+      const esCuidador = document.body.dataset.pagina === "cuidador";
+      sessionStorage.setItem("nombre-usuario", esCuidador ? "Dara" : "Mario");
+      sessionStorage.setItem("familiares", JSON.stringify(esCuidador ? [] : [{ nombre: "Dara", telefono: "677123456" }]));
+    }
+  } catch (e) {}
+}
+
+// ---------- Familiar o cuidador vinculado ----------
+// Quien tiene un cuidador vinculado ve solo lo esencial: la gestión (editar datos, contactos
+// y dispositivos) la hace el cuidador. Sin cuidador, la persona conserva esas opciones.
+function leerFamiliares() {
+  try { return JSON.parse(sessionStorage.getItem("familiares")) || []; } catch (e) { return []; }
+}
+
 // ---------- Sesión ----------
 // La sesión dura mientras el navegador esté abierto (sessionStorage): cada vez que se
 // entra en la web se empieza por el inicio de sesión (index.html), que decide qué
@@ -68,25 +90,17 @@ function avisarConSonido(dialogo, urgente) {
 // Un cuidador que abra una página del paciente va a su propia página.
 try {
   const pagina = document.body.dataset.pagina;
-  if (pagina !== "login") {
+  if (pagina !== "login" && !VISTA_PREVIA) {
     if (sessionStorage.getItem("sesion") !== "abierta") location.replace("index.html");
     else if (sessionStorage.getItem("tipo-perfil") === "cuidador" && pagina !== "cuidador") location.replace("cuidador.html");
   }
 } catch (e) {}
 
-// ---------- Enlaces a un bloque (casa.html#puertas, inicio.html#casa…) ----------
-// El navegador desplaza la pantalla hasta el bloque, pero en pantalla grande no hay
-// scroll (overflow: hidden) y el contenido se quedaba cortado sin poder volver.
-// Se deshace ese desplazamiento y en su lugar se lleva el foco al bloque.
-// Donde sí hay scroll (móvil) se deja el salto del navegador, que es lo esperado.
+// ---------- Enlaces a un bloque (casa.html#puertas, perfil.html#contactos…) ----------
+// El navegador desplaza la pantalla hasta el bloque; además se lleva allí el foco del teclado.
 function irAlBloque() {
   const bloque = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
   if (!bloque) return;
-  // El overflow del body se aplica a la ventana (que se desplaza como <html>)
-  for (let el = bloque.parentElement; el; el = el.parentElement) {
-    const estilo = getComputedStyle(el === document.documentElement ? document.body : el);
-    if (el.scrollTop && estilo.overflowY === "hidden") el.scrollTop = 0;
-  }
   if (document.activeElement !== bloque && bloque.tabIndex === -1) bloque.focus({ preventScroll: true });
 }
 window.addEventListener("load", () => requestAnimationFrame(irAlBloque));
@@ -152,7 +166,7 @@ function configurarPastilla(boton, alCambiar) {
 const TOMA_PENDIENTE = { hora: "21:00", nombre: "Pastilla de la tensión" };
 const RETRASO_RECORDATORIO_MS = 5 * 60 * 1000;
 
-if (!document.body.dataset.pagina) {
+if (!document.body.dataset.pagina && !VISTA_PREVIA) {
   const ICONO_PASTILLA = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="6" y="16" width="36" height="16" rx="8" transform="rotate(-35 24 24)"/><line x1="24" y1="16" x2="24" y2="32" transform="rotate(-35 24 24)"/></svg>';
   const dialogoToma = document.createElement("dialog");
   dialogoToma.className = "dialogo dialogo-toma";
@@ -275,10 +289,12 @@ function leerDispositivos() {
 
 // ---------- SOS ----------
 // Al pulsar SOS empieza una cuenta atrás de 5 s. Si no se cancela, se avisa a emergencias.
+// "Avisar ahora" confirma al momento, sin esperar a que termine.
 // <dialog> con showModal atrapa el foco y devuelve el foco al botón SOS al cerrarse.
 // La página del cuidador no tiene SOS: de ahí los "?.".
 const dialogo = document.getElementById("dialogo-sos");
 const sosCancelar = document.getElementById("sos-cancelar");
+const sosAhora = document.getElementById("sos-ahora");
 const sosCerrar = document.getElementById("sos-cerrar");
 const sosCuenta = document.getElementById("sos-cuenta");
 const sosEstado = document.getElementById("sos-estado");
@@ -288,6 +304,16 @@ let cuentaAtras = null;
 function pararCuenta() {
   clearInterval(cuentaAtras);
   cuentaAtras = null;
+}
+
+function enviarSos() {
+  pararCuenta();
+  sosCancelar.hidden = true;
+  sosAhora.hidden = true;
+  sosCerrar.hidden = false;
+  sosCerrar.focus();
+  sosEstado.textContent = "Comunicando con los contactos y servicios de emergencia";
+  avisarCuidadores();
 }
 
 function cancelarSos() {
@@ -300,26 +326,22 @@ document.getElementById("abrir-sos")?.addEventListener("click", () => {
   let segundos = 5;
   sosCuenta.textContent = segundos;
   sosCancelar.hidden = false;
+  sosAhora.hidden = false;
   sosCerrar.hidden = true;
   sosEstado.textContent = "";
   dialogo.showModal();
   sosCancelar.focus();
-  sosAviso.textContent = "Se avisará a emergencias en 5 segundos. Pulsa Cancelar para detenerlo.";
+  sosAviso.textContent = "Se avisará a emergencias en 5 segundos. Pulsa Cancelar para detenerlo o Avisar ahora para no esperar.";
 
   cuentaAtras = setInterval(() => {
     segundos--;
     sosCuenta.textContent = segundos;
-    if (segundos > 0) return;
-    pararCuenta();
-    sosCancelar.hidden = true;
-    sosCerrar.hidden = false;
-    sosCerrar.focus();
-    sosEstado.textContent = "Comunicando con los contactos y servicios de emergencia";
-    avisarCuidadores();
+    if (segundos <= 0) enviarSos();
   }, 1000);
 });
 
 sosCancelar?.addEventListener("click", cancelarSos);
+sosAhora?.addEventListener("click", enviarSos);
 sosCerrar?.addEventListener("click", () => dialogo.close());
 // Escape durante la cuenta atrás también cancela
 dialogo?.addEventListener("cancel", () => { if (cuentaAtras) cancelarSos(); });
@@ -329,12 +351,13 @@ dialogo?.addEventListener("close", pararCuenta);
 // Sin servidor, el aviso se deja en el navegador (localStorage). Las páginas del cuidador
 // abiertas en otra pestaña lo reciben al momento con el evento "storage"; si el cuidador
 // entra más tarde, lo ve igualmente mientras no lo haya atendido (durante 1 hora).
-// Solo se avisa al acabar la cuenta atrás: si el paciente cancela, no llega nada.
+// Solo se avisa al confirmar o al acabar la cuenta atrás: si el paciente cancela, no llega nada.
 // El aviso lleva la lista de cuidadores vinculados ("para"): solo ellos ven la alerta
 // (el SOS de Mario le llega a Dara, no a Paula).
 const SOS_VIGENTE_MS = 60 * 60 * 1000;
 
 function avisarCuidadores() {
+  if (VISTA_PREVIA) return; // en los prototipos el SOS no avisa a nadie
   let nombre = "", telefono = "", tipo = "", para = [];
   try {
     nombre = sessionStorage.getItem("nombre-usuario") || "";
@@ -497,69 +520,7 @@ dialogoLlamada.addEventListener("close", () => {
   anunciar("Llamada finalizada");
 });
 
-// ---------- Menú de accesibilidad ----------
-// Los ajustes se guardan en el navegador y se aplican en todas las páginas
-const raiz = document.documentElement;
-const dialogoA11y = document.getElementById("dialogo-a11y");
-const TAMANOS = [100, 115, 130, 150];
-const VIBRACION = ["Apagada", "Baja", "Media", "Alta"];
-const INICIALES = { texto: 0, vibracion: 0, tema: "claro" };
-let ajustes = { ...INICIALES };
-try { ajustes = { ...INICIALES, ...JSON.parse(localStorage.getItem("a11y") || "{}") }; } catch (e) {}
-if (!TAMANOS[ajustes.texto]) ajustes.texto = 0;
-if (!VIBRACION[ajustes.vibracion]) ajustes.vibracion = 0;
-
-function aplicarAjustes() {
-  const tamano = TAMANOS[ajustes.texto];
-  // Solo crece el texto (no los iconos ni el diseño): todo el texto está en rem
-  raiz.style.setProperty("--escala", tamano / 100);
-  raiz.classList.toggle("scroll", tamano > 100); // con texto grande se permite el scroll
-  raiz.classList.toggle("oscuro", ajustes.tema === "oscuro");
-  raiz.classList.toggle("contraste", ajustes.tema === "contraste");
-
-  document.getElementById("texto-mas").disabled = ajustes.texto === TAMANOS.length - 1;
-  document.getElementById("texto-menos").disabled = ajustes.texto === 0;
-  document.getElementById("vibra-valor").textContent = VIBRACION[ajustes.vibracion];
-  document.getElementById("vibra-mas").disabled = ajustes.vibracion === VIBRACION.length - 1;
-  document.getElementById("vibra-menos").disabled = ajustes.vibracion === 0;
-  document.getElementById("tema-oscuro").setAttribute("aria-pressed", String(ajustes.tema === "oscuro"));
-  document.getElementById("tema-contraste").setAttribute("aria-pressed", String(ajustes.tema === "contraste"));
-  try { localStorage.setItem("a11y", JSON.stringify(ajustes)); } catch (e) {}
-}
-
-// Vibración al pulsar cualquier botón (solo en dispositivos que lo permiten)
-function vibrar() {
-  if (ajustes.vibracion && navigator.vibrate) navigator.vibrate(ajustes.vibracion * 60);
-}
-document.addEventListener("click", e => { if (e.target.closest(".boton")) vibrar(); });
-
-function cambiarTema(tema) {
-  ajustes.tema = ajustes.tema === tema ? "claro" : tema;
-  aplicarAjustes();
-}
-
-// El porcentaje no se muestra, pero el lector de pantalla lo anuncia
-function cambiarTexto(paso) {
-  ajustes.texto += paso;
-  aplicarAjustes();
-  anunciar(`Tamaño de letra ${TAMANOS[ajustes.texto]} %`);
-}
-
-document.getElementById("abrir-a11y").addEventListener("click", () => dialogoA11y.showModal());
-document.getElementById("cerrar-a11y").addEventListener("click", () => dialogoA11y.close());
-document.getElementById("texto-mas").addEventListener("click", () => cambiarTexto(1));
-document.getElementById("texto-menos").addEventListener("click", () => cambiarTexto(-1));
-document.getElementById("vibra-mas").addEventListener("click", () => { ajustes.vibracion++; aplicarAjustes(); });
-document.getElementById("vibra-menos").addEventListener("click", () => { ajustes.vibracion--; aplicarAjustes(); });
-document.getElementById("tema-oscuro").addEventListener("click", () => cambiarTema("oscuro"));
-document.getElementById("tema-contraste").addEventListener("click", () => cambiarTema("contraste"));
-document.getElementById("a11y-reset").addEventListener("click", () => {
-  ajustes = { ...INICIALES };
-  aplicarAjustes();
-  anunciar("Ajustes de accesibilidad restablecidos");
-});
-
-// Cerrar al pulsar fuera de la ventana (menú de accesibilidad y otras ventanas .dialogo).
+// Cerrar al pulsar fuera de la ventana (ventanas .dialogo).
 // La ventana SOS no: un toque accidental no debe cancelar una emergencia.
 // Los formularios (.dialogo-form) tampoco: no se pierde lo escrito por un toque fuera.
 // Ni la llamada: solo se cuelga con el botón Colgar (o Escape).
@@ -568,5 +529,3 @@ document.querySelectorAll("dialog.dialogo:not(.dialogo-form):not(.dialogo-llamad
   const fuera = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
   if (e.target === d && fuera) d.close();
 }));
-
-aplicarAjustes();

@@ -7,8 +7,6 @@
    blanco sobre --rojo ......... 10:1
    Bordes (--borde) sobre blanco 10.2:1 (WCAG 1.4.11 pide 3:1). */
 :root {
-  --escala: 1;          /* tamaño de letra (lo cambia el menú de accesibilidad) */
-
   --fondo: #f5f8fd;
   --blanco: #ffffff;    /* superficie de tarjetas, barra y ventanas */
   --texto: #0a1f44;     /* azul muy oscuro para el texto */
@@ -52,6 +50,7 @@
 /* Tema oscuro: texto claro sobre azul noche
    --texto sobre --blanco 14.5:1 · --borde sobre --blanco 7.4:1 · texto sobre hover 10.9:1 */
 html.oscuro {
+  color-scheme: dark;
   --fondo: #0a1222;
   --blanco: #14203a;
   --texto: #eef3ff;
@@ -112,14 +111,9 @@ html.contraste {
   padding: 0;
 }
 
-/* Todo el texto está en rem: al cambiar --escala crece solo el texto */
+/* Todo el texto está en rem: sigue el tamaño de letra y el zoom del navegador */
 html {
-  font-size: calc(100% * var(--escala));
-}
-
-html,
-body {
-  height: 100%;
+  font-size: 100%;
 }
 
 body {
@@ -128,7 +122,6 @@ body {
   color: var(--texto);
   font-size: 1.125rem;
   line-height: 1.5;
-  overflow: hidden; /* sin scroll en la pantalla principal */
 }
 
 ul {
@@ -229,6 +222,7 @@ section:focus {
 
 /* Variantes de color: azul (acciones), rojo (emergencia / pendiente), verde (hecho) */
 .btn-sos,
+.btn-sos-ahora,
 .btn-pendiente,
 .btn-cerrar,
 .btn-salir,
@@ -242,7 +236,6 @@ section:focus {
 }
 
 .avatar,
-.btn-a11y,
 .btn-anadir {
   --base: var(--azul);
   --base-hover: var(--azul-hover);
@@ -268,9 +261,9 @@ html.contraste .boton {
 /* ===== Estructura ===== */
 .app {
   display: grid;
-  grid-template-columns: clamp(170px, 13vw, 210px) 1fr;
-  height: 100vh;
-  height: 100dvh;
+  grid-template-columns: clamp(190px, 15vw, 230px) minmax(0, 1fr);
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Inicio de sesión: sin barra lateral, el contenido ocupa todo el ancho */
@@ -281,6 +274,11 @@ body[data-pagina="login"] .app {
 /* ===== Barra lateral ===== */
 .sidebar {
   background: var(--blanco);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
   border-right: 2px solid var(--borde);
   display: flex;
   flex-direction: column;
@@ -393,7 +391,7 @@ html.contraste .nav-item[aria-current="page"] {
 }
 
 .sos-texto {
-  font-size: clamp(2rem, calc(7vh * var(--escala)), 3.2rem);
+  font-size: clamp(2rem, 7vh, 3.2rem);
   font-weight: 700;
   letter-spacing: 3px;
   line-height: 1;
@@ -418,35 +416,16 @@ html.contraste .nav-item[aria-current="page"] {
 }
 
 .cabecera h1 {
-  font-size: clamp(1.6rem, calc(5vh * var(--escala)), 2.6rem);
+  font-size: clamp(1.6rem, 5vh, 2.6rem);
   font-weight: 400;
   line-height: 1.2;
 }
 
-/* Accesibilidad primero y avatar en la esquina superior derecha */
+/* Avatar en la esquina superior derecha */
 .perfiles {
   display: flex;
   align-items: center;
   gap: 20px;
-}
-
-/* Pestaña de accesibilidad: pegada al borde superior, plana arriba y redonda abajo */
-.btn-a11y {
-  align-self: flex-start;
-  margin-top: calc(-1 * var(--pad-top));
-  width: clamp(60px, 9vh, 80px);
-  height: clamp(76px, 12vh, 104px);
-  border-top: 0;
-  border-radius: 0 0 999px 999px;
-  display: grid;
-  place-items: end center;
-  padding-bottom: 10px;
-}
-
-.btn-a11y svg {
-  width: 78%;
-  height: auto;
-  aspect-ratio: 1;
 }
 
 .avatar {
@@ -462,104 +441,6 @@ html.contraste .nav-item[aria-current="page"] {
   height: 60%;
 }
 
-/* ===== Aviso: la notificación más importante, a todo el ancho ===== */
-.aviso {
-  background: var(--rojo);
-  color: var(--sobre-rojo);
-  border: 3px solid var(--rojo-sombra);
-  border-radius: var(--radio);
-  padding: 1.6vh 28px;
-  font-size: clamp(1.6rem, calc(5.5vh * var(--escala)), 2.6rem);
-  font-weight: 700;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  box-shadow: 0 5px 0 var(--rojo-sombra);
-  text-decoration: none;
-}
-
-.aviso:hover {
-  background: var(--rojo-hover);
-}
-
-.aviso-icono {
-  width: 1.3em;
-  height: 1.3em;
-  flex: none;
-  stroke-width: 3.5;
-}
-
-/* Flecha al final: indica que el aviso lleva a otra página */
-.aviso-flecha {
-  width: 1em;
-  height: 1em;
-  margin-left: auto;
-  flex: none;
-  stroke-width: 3.5;
-}
-
-.aviso.al-dia {
-  background: var(--verde);
-  color: var(--sobre-verde);
-  border-color: var(--verde-sombra);
-  box-shadow: 0 5px 0 var(--verde-sombra);
-}
-
-.aviso.al-dia:hover {
-  background: var(--verde-hover);
-}
-
-html.contraste .aviso {
-  border-color: #000000;
-}
-
-/* ===== Tarjetas de la casa (sin recuadro exterior) ===== */
-.tarjetas {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  padding-bottom: 6px; /* hueco para la sombra del relieve */
-}
-
-/* Las cuatro tarjetas tienen las mismas tres filas (título · icono · estado),
-   así quedan todas al mismo nivel */
-.tarjeta {
-  min-height: 0;
-  padding: 1.5vh 12px 1.8vh;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  justify-items: center;
-  align-items: center;
-  gap: 1vh;
-  border-radius: 20px;
-  color: var(--texto);
-}
-
-/* Tarjeta que no es enlace (temperatura): mismo borde, sin relieve */
-.tarjeta.panel {
-  background: var(--blanco);
-  border: 2px solid var(--borde);
-}
-
-.tarjeta-titulo {
-  font-size: clamp(1.4rem, calc(4.2vh * var(--escala)), 2rem);
-  font-weight: 400;
-  line-height: 1.2;
-}
-
-/* Iconos grandes: ocupan todo el hueco libre de la tarjeta */
-.tarjeta > svg {
-  width: 100%;
-  height: 100%;
-  max-height: 150px;
-  min-height: 0;
-  color: var(--icono);
-  stroke-width: 2.2;
-}
-
 .estado {
   width: 100%;
   min-height: 48px;
@@ -568,7 +449,7 @@ html.contraste .aviso {
   justify-content: center;
   gap: 6px;
   padding: 0 8px;
-  font-size: clamp(1rem, calc(3vh * var(--escala)), 1.35rem);
+  font-size: clamp(1rem, 3vh, 1.35rem);
   font-weight: 400;
   white-space: nowrap;
   color: var(--texto);
@@ -621,7 +502,7 @@ html.contraste .estado.alerta {
 
 .temp-valor {
   padding: 0 4px;
-  font-size: clamp(1.1rem, calc(3.4vh * var(--escala)), 1.6rem);
+  font-size: clamp(1.1rem, 3.4vh, 1.6rem);
 }
 
 /* Al menos 44 px de ancho y 48 de alto (WCAG 2.5.5 AAA pide 44) */
@@ -635,8 +516,45 @@ html.contraste .estado.alerta {
   line-height: 1;
 }
 
+/* ===== Inicio del paciente: medicación, llamar a un familiar y estado de la casa ===== */
+.inicio-acciones {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-bottom: 6px; /* hueco para la sombra del relieve */
+}
+
+.boton.accion-grande {
+  min-height: 120px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 20px;
+  padding: 16px 24px;
+  text-align: center;
+  font-size: clamp(1.6rem, 5vh, 2.4rem);
+  line-height: 1.2;
+}
+
+.boton.accion-grande svg {
+  width: 1.5em;
+  height: 1.5em;
+  flex: none;
+  stroke-width: 3;
+}
+
+.accion-grande .estado {
+  width: auto;
+  padding: 4px 16px;
+  white-space: normal;
+  font-size: clamp(1.1rem, 3vh, 1.4rem);
+}
+
 /* ===== Medicación ===== */
 .medicacion {
+  flex: 1;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -689,13 +607,13 @@ html.contraste .estado.alerta {
 }
 
 .hora {
-  font-size: clamp(2.2rem, calc(9vh * var(--escala)), 4.5rem);
+  font-size: clamp(2.2rem, 9vh, 4.5rem);
   font-weight: 400;
   line-height: 1.1;
 }
 
 .pastilla {
-  font-size: clamp(1.6rem, calc(5.5vh * var(--escala)), 2.6rem);
+  font-size: clamp(1.6rem, 5.5vh, 2.6rem);
   line-height: 1.2;
 }
 
@@ -708,7 +626,7 @@ html.contraste .estado.alerta {
 }
 
 .btn-principal {
-  font-size: clamp(1.3rem, calc(4.5vh * var(--escala)), 2.2rem);
+  font-size: clamp(1.3rem, 4.5vh, 2.2rem);
   font-weight: 400;
   line-height: 1.2;
 }
@@ -717,7 +635,7 @@ html.contraste .estado.alerta {
   font-size: 1rem;
 }
 
-/* ===== Ventanas (SOS y accesibilidad) ===== */
+/* ===== Ventanas ===== */
 .dialogo {
   width: min(560px, calc(100% - 32px));
   max-height: calc(100dvh - 24px);
@@ -778,109 +696,6 @@ html.contraste .estado.alerta {
   stroke-width: 3;
 }
 
-/* ===== Menú de accesibilidad (compacto para que quepa sin desplazarse) ===== */
-.dialogo-a11y {
-  width: min(500px, calc(100% - 32px));
-  padding: 20px 28px 24px;
-}
-
-.a11y-titulo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.dialogo .a11y-titulo {
-  font-size: 1.6rem;
-  margin-bottom: 8px;
-  padding: 0 52px; /* deja sitio a la X */
-}
-
-.a11y-titulo svg {
-  width: 1.3em;
-  height: 1.3em;
-  color: var(--icono);
-}
-
-.a11y-grupo {
-  border-top: 2px solid var(--borde);
-  padding: 12px 0 16px;
-}
-
-.a11y-grupo h3 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 1.25rem;
-  font-weight: 400;
-  margin-bottom: 10px;
-}
-
-.a11y-grupo h3 svg {
-  width: 1.5em;
-  height: 1.5em;
-  color: var(--icono);
-}
-
-/* −  (valor)  + */
-.a11y-fila {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-}
-
-.a11y-paso {
-  width: 72px;
-  height: 56px;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.a11y-valor {
-  min-width: 100px;
-  font-size: 1.2rem;
-}
-
-/* Los dos temas en una sola fila */
-.a11y-temas {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.a11y-tema {
-  min-height: 52px;
-  padding: 8px 12px;
-  font-size: 1.1rem;
-}
-
-/* Opción activada: fondo azul, texto blanco y marca ✓ (no depende solo del color) */
-.a11y-tema[aria-pressed="true"] {
-  --base: var(--azul);
-  --base-hover: var(--azul-hover);
-  color: #ffffff;
-}
-
-.a11y-tema[aria-pressed="true"]::before {
-  content: "✓ " / "";
-}
-
-.dialogo-a11y .dialogo-botones {
-  border-top: 2px solid var(--borde);
-  padding-top: 18px;
-  gap: 14px;
-}
-
-.dialogo-a11y .dialogo-botones .boton {
-  padding: 12px 20px;
-  min-width: 150px;
-  font-size: 1.15rem;
-}
-
 /* ===== Ventana SOS: fondo difuminado, círculo rojo grande y Cancelar con cuenta atrás ===== */
 .dialogo-sos {
   width: min(720px, calc(100% - 32px));
@@ -937,11 +752,25 @@ html.contraste .estado.alerta {
   line-height: 1;
 }
 
-.btn-cancelar-sos {
+/* Cancelar · Avisar ahora: una al lado de otra; si no caben, una debajo de otra */
+.sos-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn-cancelar-sos,
+.btn-sos-ahora {
   min-width: 260px;
-  padding: 18px 36px;
+  min-height: 72px;
+  padding: 14px 36px;
   border-radius: 999px;
   font-size: 1.6rem;
+}
+
+.btn-sos-ahora {
+  font-weight: 700;
 }
 
 .sos-estado {
@@ -951,7 +780,7 @@ html.contraste .estado.alerta {
   color: var(--texto);
   border: 3px solid var(--borde);
   border-radius: 20px;
-  font-size: clamp(1.4rem, calc(4vh * var(--escala)), 2rem);
+  font-size: clamp(1.4rem, 4vh, 2rem);
   line-height: 1.3;
   text-align: center;
 }
@@ -1000,12 +829,12 @@ html.contraste .sos-circulo {
 }
 
 .med-item-hora {
-  font-size: clamp(1.8rem, calc(6vh * var(--escala)), 3rem);
+  font-size: clamp(1.8rem, 6vh, 3rem);
   line-height: 1.1;
 }
 
 .med-item-nombre {
-  font-size: clamp(1.3rem, calc(4vh * var(--escala)), 2rem);
+  font-size: clamp(1.3rem, 4vh, 2rem);
   line-height: 1.2;
 }
 
@@ -1042,7 +871,7 @@ html.contraste .sos-circulo {
 
 .med-reloj {
   padding: 0 32px;
-  font-size: clamp(3.5rem, calc(13vh * var(--escala)), 7rem);
+  font-size: clamp(3.5rem, 13vh, 7rem);
   font-weight: 300;
   line-height: 1.25;
 }
@@ -1128,7 +957,7 @@ html.contraste .sos-circulo {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: clamp(1.4rem, calc(4.2vh * var(--escala)), 2rem);
+  font-size: clamp(1.4rem, 4.2vh, 2rem);
   font-weight: 400;
   line-height: 1.2;
 }
@@ -1205,7 +1034,7 @@ html.contraste .disp-icono {
 }
 
 .disp-lugar {
-  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.7rem);
+  font-size: clamp(1.2rem, 3.6vh, 1.7rem);
   line-height: 1.2;
 }
 
@@ -1238,7 +1067,7 @@ html.contraste .disp-icono {
 
 .casa-temp .temp-valor {
   min-height: 64px;
-  font-size: clamp(1.8rem, calc(6vh * var(--escala)), 3rem);
+  font-size: clamp(1.8rem, 6vh, 3rem);
 }
 
 /* Formularios y confirmaciones: fondo difuminado como en el SOS */
@@ -1317,12 +1146,6 @@ html.contraste .disp-icono {
 
 .form-nuevo .dialogo-botones {
   margin-top: 8px;
-}
-
-/* Si no cabe todo, los bloques crecen con su contenido y la página se desplaza */
-html.scroll .casa-layout {
-  flex: none;
-  grid-template-rows: auto auto;
 }
 
 @media (max-width: 1199px), (max-height: 559px) {
@@ -1566,7 +1389,7 @@ html.contraste .avatar[aria-current="page"] {
 }
 
 .contacto-nombre {
-  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.7rem);
+  font-size: clamp(1.2rem, 3.6vh, 1.7rem);
   line-height: 1.2;
 }
 
@@ -1613,7 +1436,7 @@ html.contraste .avatar[aria-current="page"] {
   border: 3px dashed var(--borde);
   border-radius: 12px;
   font-family: Consolas, "Courier New", monospace;
-  font-size: clamp(1.4rem, calc(4.5vh * var(--escala)), 2.2rem);
+  font-size: clamp(1.4rem, 4.5vh, 2.2rem);
   font-weight: 700;
   letter-spacing: 2px;
   white-space: nowrap;
@@ -1691,7 +1514,7 @@ html.contraste {
 }
 
 .login-nombre {
-  font-size: clamp(2rem, calc(6vh * var(--escala)), 3rem);
+  font-size: clamp(2rem, 6vh, 3rem);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -1939,7 +1762,7 @@ html.contraste {
   padding: 1.8vh 22px;
   background: var(--fondo);
   border-bottom: 3px solid var(--borde);
-  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.6rem);
+  font-size: clamp(1.2rem, 3.6vh, 1.6rem);
   font-weight: 400;
   text-align: left;
 }
@@ -2002,12 +1825,12 @@ html.contraste {
 }
 
 .celda-nombre {
-  font-size: clamp(1.4rem, calc(4.5vh * var(--escala)), 2.2rem);
+  font-size: clamp(1.4rem, 4.5vh, 2.2rem);
   line-height: 1.2;
 }
 
 .celda-principal {
-  font-size: clamp(1.2rem, calc(3.8vh * var(--escala)), 1.8rem);
+  font-size: clamp(1.2rem, 3.8vh, 1.8rem);
   line-height: 1.2;
 }
 
@@ -2025,11 +1848,21 @@ html.contraste {
 .celda .estado {
   max-width: 100%;
   white-space: normal;
-  font-size: clamp(1.2rem, calc(3.8vh * var(--escala)), 1.7rem);
+  font-size: clamp(1.2rem, 3.8vh, 1.7rem);
   line-height: 1.2;
 }
 
 @media (max-width: 1199px) {
+  .tabla-pacientes thead th {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .th-contenido {
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+  }
+
   .celda .estado {
     font-size: 1.25rem;
   }
@@ -2179,7 +2012,7 @@ html.contraste {
 }
 
 .toma-nombre {
-  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.6rem);
+  font-size: clamp(1.2rem, 3.6vh, 1.6rem);
   line-height: 1.2;
 }
 
@@ -2202,7 +2035,7 @@ html.contraste {
 }
 
 .cumplimiento-pct {
-  font-size: clamp(2.4rem, calc(8vh * var(--escala)), 4rem);
+  font-size: clamp(2.4rem, 8vh, 4rem);
   font-weight: 700;
   line-height: 1;
 }
@@ -2277,7 +2110,7 @@ html.contraste {
 }
 
 .aviso-toma label {
-  font-size: clamp(1.2rem, calc(3.6vh * var(--escala)), 1.7rem);
+  font-size: clamp(1.2rem, 3.6vh, 1.7rem);
 }
 
 .aviso-toma .selector {
@@ -2317,9 +2150,48 @@ html.contraste {
   align-self: flex-start;
 }
 
-html.scroll .medc-layout {
-  flex: none;
-  grid-template-rows: auto auto;
+/* Contactos del paciente (los gestiona el cuidador): nombre · teléfono · quitar */
+.contacto-fila {
+  grid-template-columns: 1fr 1fr auto;
+}
+
+.contactos-edicion {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 0;
+}
+
+.contactos-edicion legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* Perfil del paciente: aviso de quién puede cambiar los datos y enlace a Accesibilidad */
+.perfil-nota {
+  font-size: 1.2rem;
+}
+
+.perfil-pie {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+}
+
+.enlace-pie {
+  color: var(--texto);
+  font-size: 1.2rem;
+  text-underline-offset: 4px;
+}
+
+.enlace-pie:hover {
+  text-decoration-thickness: 3px;
+}
+
+.login-pie {
+  text-align: center;
 }
 
 @media (max-width: 1199px), (max-height: 559px) {
@@ -2430,12 +2302,6 @@ html.scroll .medc-layout {
   font-size: 1.5rem;
 }
 
-/* Si no cabe todo, los bloques crecen con su contenido y la página se desplaza */
-html.scroll .perfil-layout {
-  flex: none;
-  grid-template-rows: auto auto;
-}
-
 @media (max-width: 1199px), (max-height: 559px) {
   .perfil-layout {
     flex: none;
@@ -2518,7 +2384,7 @@ html.scroll .perfil-layout {
 .fila-contacto-nombre {
   flex: 1 1 8em;
   min-width: 0;
-  font-size: clamp(1.6rem, calc(5vh * var(--escala)), 2.4rem);
+  font-size: clamp(1.6rem, 5vh, 2.4rem);
   line-height: 1.2;
   overflow-wrap: break-word;
 }
@@ -2630,7 +2496,7 @@ html.scroll .perfil-layout {
 }
 
 .dialogo-toma h2 {
-  font-size: clamp(1.9rem, calc(6vh * var(--escala)), 2.6rem);
+  font-size: clamp(1.9rem, 6vh, 2.6rem);
 }
 
 .dialogo-toma p {
@@ -2745,7 +2611,7 @@ html.oscuro .toma-icono {
 }
 
 .alerta-cabecera h2 {
-  font-size: clamp(2.2rem, calc(8vh * var(--escala)), 4rem);
+  font-size: clamp(2.2rem, 8vh, 4rem);
   line-height: 1.1;
   overflow-wrap: anywhere;
 }
@@ -2777,7 +2643,7 @@ html.oscuro .toma-icono {
   min-height: 96px;
   padding: 16px 24px;
   border-width: 3px;
-  font-size: clamp(1.6rem, calc(5vh * var(--escala)), 2.4rem);
+  font-size: clamp(1.6rem, 5vh, 2.4rem);
   font-weight: 700;
 }
 
@@ -2815,7 +2681,7 @@ html.contraste .dialogo-alerta {
   }
 
   .alerta-cabecera h2 {
-    font-size: clamp(1.6rem, calc(9vw * var(--escala)), 2.6rem);
+    font-size: clamp(1.6rem, 9vw, 2.6rem);
     overflow-wrap: normal;
     word-break: normal;
     min-width: 0;
@@ -2837,7 +2703,7 @@ html.contraste .dialogo-alerta {
   .btn-alerta {
     min-height: 72px;
     padding: 12px 16px;
-    font-size: clamp(1.3rem, calc(6.5vw * var(--escala)), 2rem);
+    font-size: clamp(1.3rem, 6.5vw, 2rem);
     flex-wrap: wrap;
     text-align: center;
   }
@@ -2848,7 +2714,8 @@ html.contraste .dialogo-alerta {
   }
 }
 
-/* Modo de alto contraste de Windows: mantiene bordes y foco visibles */
+/* Temas de contraste de Windows: los colores los pone el sistema.
+   Se mantienen los bordes, el foco y lo que solo se distinguía por el fondo. */
 @media (forced-colors: active) {
   .boton,
   .disp-icono,
@@ -2859,31 +2726,31 @@ html.contraste .dialogo-alerta {
   :focus-visible {
     outline-color: Highlight;
   }
-}
 
-/* ===== Pantallas pequeñas, zoom alto o texto aumentado =====
-   Si no cabe todo se vuelve a permitir el scroll para no cortar contenido
-   (WCAG 1.4.4 / 1.4.10). La clase .scroll la pone el menú de accesibilidad. */
-html.scroll body {
-  overflow: auto;
-}
+  /* Los iconos no llevan el color del tema: podría coincidir con el fondo del sistema */
+  svg {
+    color: inherit !important;
+  }
 
-html.scroll .app {
-  height: auto;
-  min-height: 100vh;
-}
+  .nav-item[aria-current="page"],
+  .nav-item[aria-current="page"]:hover,
+  .opcion-perfil input:checked + span,
+  .btn-filtro[aria-pressed="true"] {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
 
-html.scroll .tarjetas {
-  flex: none;
-}
-
-html.scroll .tarjeta > svg {
-  height: 90px;
+  .barra,
+  .barra.bajo {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
 }
 
 /* =====================================================================
    MODELOS RESPONSIVE
-   · Ordenador (1200 px o más): todo cabe en una pantalla, sin scroll.
+   · Ordenador (1200 px o más): barra lateral fija; la página se desplaza si no cabe todo.
    · Tableta (641–1199 px, o pantallas bajas): barra lateral estrecha con el icono
      encima del texto y la página se desplaza.
    · Teléfono (640 px o menos): los apartados y el SOS pasan a una barra fija
@@ -2892,23 +2759,8 @@ html.scroll .tarjeta > svg {
 
 /* ----- Tableta ----- */
 @media (max-width: 1199px), (max-height: 559px) {
-  body {
-    overflow: auto;
-  }
-
   .app {
-    height: auto;
-    min-height: 100vh;
     grid-template-columns: 128px minmax(0, 1fr);
-  }
-
-  /* La barra se queda fija mientras se desplaza el contenido */
-  .sidebar {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100dvh;
-    overflow-y: auto;
   }
 
   /* Icono encima del texto para que la barra sea estrecha */
@@ -2931,26 +2783,11 @@ html.scroll .tarjeta > svg {
   }
 
   .sos-texto {
-    font-size: clamp(1.6rem, calc(5vh * var(--escala)), 2.4rem);
+    font-size: clamp(1.6rem, 5vh, 2.4rem);
   }
 
   .contenido {
     padding: var(--pad-top) 28px 32px;
-  }
-
-  .tarjetas {
-    flex: none;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .tarjeta {
-    padding: 14px;
-    gap: 10px;
-  }
-
-  .tarjeta > svg {
-    height: 90px;
   }
 
   .medicacion {
@@ -3076,7 +2913,7 @@ html.scroll .tarjeta > svg {
   }
 
   .cabecera h1 {
-    font-size: clamp(1.5rem, calc(7vw * var(--escala)), 2.2rem);
+    font-size: clamp(1.5rem, 7vw, 2.2rem);
   }
 
   .cabecera .btn-anadir {
@@ -3094,13 +2931,14 @@ html.scroll .tarjeta > svg {
     gap: 12px;
   }
 
-  .tarjetas {
-    gap: 14px;
-  }
-
   .medicacion {
     grid-template-columns: 1fr;
     text-align: center;
+  }
+
+  .inicio-acciones {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 
   /* Ventanas a pantalla casi completa en el móvil */
@@ -3112,13 +2950,6 @@ html.scroll .tarjeta > svg {
   .dialogo .dialogo-botones .boton {
     min-width: 0;
     flex: 1 1 140px;
-  }
-}
-
-/* Móvil estrecho: una tarjeta por fila para que quepa − 30 °C + */
-@media (max-width: 480px) {
-  .tarjetas {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -3143,7 +2974,7 @@ html.scroll .tarjeta > svg {
 
   .med-reloj {
     padding: 0 16px;
-    font-size: clamp(2.6rem, calc(16vw * var(--escala)), 5rem);
+    font-size: clamp(2.6rem, 16vw, 5rem);
   }
 
   .med-item {
@@ -3158,9 +2989,528 @@ html.scroll .tarjeta > svg {
   }
 }
 
-/* En pantallas muy estrechas los temas del menú de accesibilidad van uno debajo de otro */
-@media (max-width: 400px) {
-  .a11y-temas {
-    grid-template-columns: 1fr;
+/* ===== SOS en pantallas bajas =====
+   El círculo se reduce para que Cancelar y Avisar ahora se vean sin desplazarse */
+@media (max-height: 559px) {
+  .dialogo-sos {
+    padding-top: 16px;
   }
+
+  .dialogo-sos[open] {
+    gap: 16px;
+  }
+
+  .sos-circulo {
+    width: 30vmin;
+    gap: 0;
+  }
+
+  .sos-circulo svg {
+    display: none;
+  }
+
+  .sos-circulo span {
+    font-size: 8vmin;
+    letter-spacing: 1px;
+  }
+}
+
+@media (max-height: 320px) {
+  .sos-circulo,
+  html.texto-grande .sos-circulo {
+    display: none;
+  }
+}
+
+/* En el teléfono la barra fija de abajo no debe tapar lo que recibe el foco (WCAG 2.4.11) */
+@media (max-width: 640px) {
+  html {
+    scroll-padding-bottom: 104px;
+  }
+
+  .sos-acciones,
+  .sos-acciones .boton {
+    width: 100%;
+  }
+}
+
+/* Muy estrecho: los datos van debajo de su etiqueta y el SOS en su propia fila.
+   Con muy poca altura la barra deja de ser fija para no tapar el contenido. */
+@media (max-width: 400px) {
+  .datos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 360px) {
+  html {
+    scroll-padding-bottom: 160px;
+  }
+
+  .sidebar {
+    flex-wrap: wrap;
+  }
+
+  .sidebar nav {
+    flex: 1 1 100%;
+  }
+
+  .btn-sos {
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    min-height: 56px;
+    border-width: 3px 0 0;
+  }
+
+  .contenido {
+    padding-bottom: calc(160px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 640px) and (max-height: 480px) {
+  html {
+    scroll-padding-bottom: 0;
+  }
+
+  .sidebar {
+    position: static;
+    grid-row: 2;
+  }
+
+  .contenido {
+    padding-bottom: 24px;
+  }
+}
+
+/* ===== Texto grande: 150 % o más en el navegador o el sistema (WCAG 1.4.4 y 1.4.10) =====
+   La clase la pone preferencias.js. Todo pasa a una sola columna y nada se recorta:
+   la barra deja de ser fija y va arriba, con el SOS a todo el ancho. */
+html.texto-grande body {
+  overflow-wrap: break-word;
+}
+
+html.texto-grande .app {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
+
+html.texto-grande .sidebar {
+  position: static;
+  height: auto;
+  overflow: visible;
+  flex-direction: column;
+  padding: 0;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 2px solid var(--borde);
+  box-shadow: none;
+}
+
+html.texto-grande .sidebar nav {
+  flex: none;
+}
+
+html.texto-grande .nav {
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: auto;
+  margin: 0;
+}
+
+html.texto-grande .nav li {
+  flex: 1 1 auto;
+}
+
+html.texto-grande .nav-item {
+  flex-direction: row;
+  justify-content: flex-start;
+  height: auto;
+  min-height: 72px;
+  padding: 8px 14px;
+  border: 0;
+  border-bottom: 2px solid var(--borde);
+  text-align: left;
+}
+
+html.texto-grande .nav-texto {
+  font-size: 1.1rem;
+}
+
+html.texto-grande .btn-sos {
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
+  min-height: 88px;
+  max-height: none;
+  aspect-ratio: auto;
+  margin: 0;
+  border-width: 3px;
+  border-radius: 0;
+}
+
+html.texto-grande .btn-sos svg {
+  width: 48px;
+  height: 48px;
+}
+
+html.texto-grande .sos-texto {
+  font-size: 2rem;
+}
+
+html.texto-grande .contenido,
+html.texto-grande body[data-pagina="login"] .contenido {
+  padding: 16px 16px 32px;
+}
+
+html.texto-grande .cabecera,
+html.texto-grande .cabecera-izq {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+html.texto-grande .cabecera-izq {
+  flex: 1 1 100%;
+}
+
+html.texto-grande .cabecera h1 {
+  font-size: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+html.texto-grande .titulo-con-icono,
+html.texto-grande .bloque-titulo {
+  flex-wrap: wrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+html.texto-grande .bloque-titulo {
+  font-size: 1.25rem;
+}
+
+html.texto-grande .casa-bloque,
+html.texto-grande .perfil-bloque {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+html.texto-grande .contacto,
+html.texto-grande .disp {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+html.texto-grande .contactos-lista,
+html.texto-grande .disp-lista {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+html.texto-grande .contacto .btn-llamar,
+html.texto-grande .bloque-cabecera .btn-editar {
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-width: 0;
+}
+
+html.texto-grande .login-layout {
+  justify-items: stretch;
+}
+
+html.texto-grande .login-nombre {
+  font-size: 1.5rem;
+}
+
+html.texto-grande .medicacion,
+html.texto-grande .inicio-acciones,
+html.texto-grande .med-layout,
+html.texto-grande .med-item,
+html.texto-grande .perfil-layout,
+html.texto-grande .login-layout,
+html.texto-grande .campos-2,
+html.texto-grande .opciones-perfil,
+html.texto-grande .datos,
+html.texto-grande .alerta-acciones,
+html.texto-grande .contacto-fila,
+html.texto-grande .pauta-fila,
+html.texto-grande .temp-control {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+html.texto-grande .medicacion {
+  gap: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+html.texto-grande .perfil-layout {
+  grid-template-rows: auto;
+}
+
+html.texto-grande .casa-layout {
+  flex: none;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  grid-template-areas: "temp" "luces" "puertas" "ventanas";
+}
+
+html.texto-grande .medc-layout {
+  flex: none;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  grid-template-areas: "hoy" "semana" "aviso";
+}
+
+html.texto-grande .login,
+html.texto-grande .campo-en-linea .selector,
+html.texto-grande .aviso-toma .selector {
+  width: 100%;
+  min-width: 0;
+}
+
+html.texto-grande .login {
+  padding: 16px;
+}
+
+html.texto-grande .estado,
+html.texto-grande .codigo-valor {
+  white-space: normal;
+  text-align: center;
+}
+
+html.texto-grande .codigo-valor {
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+html.texto-grande .input-codigo {
+  max-width: none;
+  letter-spacing: 1px;
+}
+
+html.texto-grande .btn-temp {
+  height: auto;
+  min-height: 64px;
+}
+
+html.texto-grande .med-reloj {
+  padding: 0;
+  font-size: 3rem;
+}
+
+html.texto-grande .hora {
+  font-size: 3rem;
+}
+
+html.texto-grande .btn-pendiente,
+html.texto-grande .btn-salir {
+  padding: 12px 16px;
+}
+
+html.texto-grande .btn-salir {
+  width: 100%;
+}
+
+html.texto-grande .btn-anadir,
+html.texto-grande .btn-fila {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Gráfico semanal: los 7 días no caben en una línea; bajan de línea, sin desplazamiento lateral */
+html.texto-grande .grafico-barras {
+  flex: none;
+  height: auto;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 4.5em), 1fr));
+}
+
+html.texto-grande .barra-dia {
+  height: 11em;
+}
+
+html.texto-grande .dialogo-botones .boton {
+  width: 100%;
+  min-width: 0;
+}
+
+html.texto-grande .sos-acciones {
+  width: 100%;
+  gap: 12px;
+}
+
+html.texto-grande .sos-acciones .boton {
+  flex: 1 1 300px;
+  width: auto;
+  min-width: 0;
+  min-height: 64px;
+  padding: 6px 14px;
+  font-size: 1.2rem;
+}
+
+html.texto-grande .dialogo,
+html.texto-grande .dialogo-alerta {
+  padding: 20px 14px;
+}
+
+html.texto-grande .dialogo h2 {
+  padding: 0 52px 0 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+html.texto-grande .dialogo-sos {
+  padding: 16px 12px;
+}
+
+html.texto-grande .dialogo-sos[open] {
+  gap: 16px;
+}
+
+html.texto-grande .sos-circulo {
+  width: min(30vmin, 140px);
+  gap: 0;
+}
+
+html.texto-grande .sos-circulo svg {
+  display: none;
+}
+
+html.texto-grande .sos-circulo span {
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+html.texto-grande .btn-alerta {
+  font-size: 1.5rem;
+}
+
+/* Tabla de pacientes del cuidador: cada paciente, una tarjeta (como en el móvil) */
+html.texto-grande .tabla-pacientes thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+html.texto-grande .tabla-pacientes,
+html.texto-grande .tabla-pacientes tbody,
+html.texto-grande .tabla-pacientes tr,
+html.texto-grande .tabla-pacientes tbody th,
+html.texto-grande .tabla-pacientes td {
+  display: block;
+  width: 100%;
+}
+
+html.texto-grande .tabla-pacientes [data-etiqueta]::before {
+  content: attr(data-etiqueta);
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+/* ===== Páginas informativas: Accesibilidad y Prototipos ===== */
+.doc {
+  width: min(100%, 860px);
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.doc-ancha {
+  width: min(100%, 1320px);
+}
+
+.doc h1 {
+  font-size: 2.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.doc h2 {
+  margin-top: 18px;
+  font-size: 1.7rem;
+  line-height: 1.2;
+}
+
+.doc kbd {
+  padding: 0 6px;
+  border: 2px solid var(--borde);
+  border-radius: 6px;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.doc-ajustes dt {
+  margin-top: 14px;
+  font-weight: 700;
+}
+
+.doc-lista {
+  list-style: disc;
+  padding-left: 1.4em;
+}
+
+.doc-lista li + li {
+  margin-top: 8px;
+}
+
+/* Si la tabla no cabe, se desplaza dentro de su marco, sin mover la página */
+.doc-tabla {
+  overflow-x: auto;
+  border: 2px solid var(--borde);
+  border-radius: 12px;
+}
+
+.doc-tabla table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.doc-tabla caption {
+  padding: 12px 14px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.doc-tabla th,
+.doc-tabla td {
+  padding: 12px 14px;
+  border-top: 2px solid var(--borde);
+  font-weight: 400;
+  text-align: left;
+  vertical-align: top;
+}
+
+.doc-tabla thead th {
+  font-weight: 700;
+}
+
+.proto-controles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15em), 1fr));
+  gap: 16px;
+}
+
+.proto-escenario {
+  width: 100%;
+}
+
+.proto-marco {
+  margin: 0 auto;
+  overflow: hidden;
+  border: 3px solid var(--borde);
+  border-radius: 12px;
+  box-sizing: content-box;
+}
+
+.proto-marco iframe {
+  display: block;
+  border: 0;
+  background: #ffffff;
+  transform-origin: top left;
 }
