@@ -80,33 +80,79 @@
 
       <!-- Solo lo esencial: la medicación de hoy, llamar a un familiar y ver la casa.
            La supervisión y la gestión están en la aplicación del cuidador. -->
-      <!-- Próxima medicación: toda la tarjeta lleva a Mi medicación; el botón Pendiente va aparte -->
+      <!-- Próxima medicación: toda la tarjeta lleva a Mi medicación; "Ver medicación" (foto en una
+           ventana) y Pendiente van aparte -->
       <section class="medicacion" id="medicacion" aria-labelledby="titulo-med" tabindex="-1">
         <h2 id="titulo-med" class="sr-only">Próxima medicación</h2>
         <p class="hora"><time datetime="21:00">21:00</time></p>
         <p class="pastilla">
-          <a class="med-enlace" href="medicacion.html">Pastilla tensión<span class="sr-only">: ver mi medicación</span></a>
+          <a class="med-enlace" href="medicacion.html">Pastilla tensión<span class="sr-only">: ir a mi medicación</span></a>
         </p>
-        <button class="boton btn-pendiente" type="button" id="btn-pastilla">
-          <span class="btn-principal">Pendiente</span>
-          <span class="btn-secundario">Pulsa al tomarla</span>
-        </button>
+        <div class="med-botones">
+          <button class="boton btn-foto" type="button" id="abrir-foto" aria-haspopup="dialog">
+            Ver medicación
+            <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+              <rect x="4" y="5" width="24" height="22" rx="2"/>
+              <circle cx="16" cy="17" r="5"/>
+              <path d="M21 5v4h7"/>
+            </svg>
+          </button>
+          <button class="boton btn-pendiente" type="button" id="btn-pastilla">
+            <span class="btn-principal">Pendiente</span>
+            <span class="btn-secundario">Pulsa al tomarla</span>
+          </button>
+        </div>
       </section>
 
       <div class="inicio-acciones">
+        <a class="boton accion-grande" href="casa.html">
+          <span class="accion-fila">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <polyline points="6,24 24,8 42,24"/>
+              <rect x="13" y="22" width="22" height="18"/>
+            </svg>
+            Mi casa
+          </span>
+          <span class="sr-only">:</span>
+          <span class="casa-estados">
+            <span class="estado" id="estado-puerta">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="12" y="4" width="24" height="40" rx="2"/>
+                <circle cx="30" cy="25" r="1.8"/>
+              </svg>
+              <span class="estado-texto"></span>
+            </span>
+            <span class="sr-only">,</span>
+            <span class="estado" id="estado-ventana">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="8" y="6" width="32" height="36"/>
+                <line x1="24" y1="6" x2="24" y2="42"/>
+                <line x1="8" y1="24" x2="40" y2="24"/>
+              </svg>
+              <span class="estado-texto"></span>
+            </span>
+            <span class="sr-only">,</span>
+            <span class="estado" id="estado-luz">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <circle cx="24" cy="20" r="10"/>
+                <path d="M19 30v6h10v-6M24 3v4M8 8l3 3M40 8l-3 3M3 20h4M41 20h4"/>
+              </svg>
+              <span class="estado-texto"></span>
+            </span>
+            <span class="sr-only">,</span>
+            <span class="estado" id="estado-temperatura">
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <path d="M20 8a4 4 0 0 1 8 0v20a8 8 0 1 1-8 0z"/>
+                <line x1="24" y1="16" x2="24" y2="32"/>
+              </svg>
+              <span class="estado-texto"></span>
+            </span>
+          </span>
+        </a>
         <!-- Con familiar vinculado llama directamente; si no, lleva a los contactos -->
         <a class="boton btn-llamar accion-grande" id="llamar-familiar" href="perfil.html#contactos">
           <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M13 6h7l3 9-5 3a24 24 0 0 0 12 12l3-5 9 3v7a4 4 0 0 1-4 4C21 39 9 27 9 10a4 4 0 0 1 4-4z"/></svg>
           <span id="llamar-texto">Mis contactos</span>
-        </a>
-        <a class="boton accion-grande" href="casa.html">
-          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-            <polyline points="6,24 24,8 42,24"/>
-            <rect x="13" y="22" width="22" height="18"/>
-          </svg>
-          Mi casa
-          <span class="sr-only">:</span>
-          <span class="estado" id="estado-casa"></span>
         </a>
       </div>
     </main>
@@ -114,6 +160,21 @@
 
   <!-- Región que lee el lector de pantalla cuando algo cambia (WCAG 4.1.3) -->
   <p class="sr-only" id="anuncio" aria-live="polite"></p>
+
+  <!-- ===== Foto de la medicación ===== -->
+  <dialog class="dialogo dialogo-foto" id="dialogo-foto" aria-labelledby="foto-titulo">
+    <button class="boton btn-cerrar" type="button" id="cerrar-foto" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="foto-titulo">Paracetamol Normon 500 mg</h2>
+    <figure class="foto-pastilla foto-caja">
+      <div class="foto-marco">
+        <img src="img/medicamentos/paracetamol-normon.png" width="800" height="800"
+             alt="Caja de Paracetamol Normon 500 mg: 20 comprimidos, vía oral. Es blanca, con franjas azules y moradas">
+      </div>
+      <figcaption>20 comprimidos. Vía oral.</figcaption>
+    </figure>
+  </dialog>
 
   <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s con Cancelar y Avisar ahora
        (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
@@ -165,17 +226,39 @@
     }
 
     // ---------- Mi casa: resumen de lo que hay en la página Casa ----------
-    // "Todo cerrado" en verde o, si algo está abierto, cuántas puertas y ventanas en rojo.
+    // Puertas y ventanas: cuántas hay abiertas en rojo o, si no hay ninguna, "cerradas" en verde.
+    // Luces: cuántas hay encendidas en verde, o "apagadas" con borde (como en la página Casa).
+    // Temperatura: en rojo fuera del rango recomendado.
     function pintarResumenCasa() {
       const dispositivos = leerDispositivos();
-      const abiertas = tipo => dispositivos.filter(d => d.tipo === tipo && d.activo).length;
-      const partes = [];
-      if (abiertas("puerta")) partes.push(`${abiertas("puerta")} ${abiertas("puerta") === 1 ? "puerta" : "puertas"}`);
-      if (abiertas("ventana")) partes.push(`${abiertas("ventana")} ${abiertas("ventana") === 1 ? "ventana" : "ventanas"}`);
-      const total = abiertas("puerta") + abiertas("ventana");
-      const estado = document.getElementById("estado-casa");
-      estado.textContent = total ? `${partes.join(" y ")} ${total === 1 ? "abierta" : "abiertas"}` : "Todo cerrado";
-      estado.className = "estado " + (total ? "alerta" : "ok");
+      const luces = dispositivos.filter(d => d.tipo === "luz");
+      const encendidas = luces.filter(d => d.activo).length;
+      const estadoLuz = document.getElementById("estado-luz");
+      estadoLuz.querySelector(".estado-texto").textContent =
+        !luces.length ? "No hay luces"
+        : encendidas === 1 ? "1 luz encendida"
+        : encendidas ? `${encendidas} luces encendidas`
+        : "Luces apagadas";
+      estadoLuz.className = "estado " + (encendidas ? "ok" : "espera");
+
+      const temperatura = leerTemperatura();
+      const fueraDeRango = temperaturaFueraDeRango(temperatura);
+      const estadoTemperatura = document.getElementById("estado-temperatura");
+      estadoTemperatura.querySelector(".estado-texto").textContent =
+        `${temperatura} °C${fueraDeRango ? ": fuera de rango" : ""}`;
+      estadoTemperatura.className = "estado " + (fueraDeRango ? "alerta" : "espera");
+
+      [["puerta", "Puertas"], ["ventana", "Ventanas"]].forEach(([tipo, titulo]) => {
+        const lista = dispositivos.filter(d => d.tipo === tipo);
+        const abiertas = lista.filter(d => d.activo).length;
+        const estado = document.getElementById("estado-" + tipo);
+        estado.querySelector(".estado-texto").textContent =
+          !lista.length ? `No hay ${titulo.toLowerCase()}`
+          : abiertas === 1 ? `1 ${tipo} abierta`
+          : abiertas ? `${abiertas} ${tipo}s abiertas`
+          : `${titulo} cerradas`;
+        estado.className = "estado " + (abiertas ? "alerta" : "ok");
+      });
     }
     pintarResumenCasa();
     // Al volver desde Casa con el botón Atrás la página puede venir de la caché: se repinta
@@ -183,6 +266,10 @@
 
     // ---------- Medicación ----------
     configurarPastilla(document.getElementById("btn-pastilla"));
+
+    const dialogoFoto = document.getElementById("dialogo-foto");
+    document.getElementById("abrir-foto").addEventListener("click", () => dialogoFoto.showModal());
+    document.getElementById("cerrar-foto").addEventListener("click", () => dialogoFoto.close());
   </script>
 </body>
 </html>

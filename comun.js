@@ -1,5 +1,5 @@
 // Código común a todas las páginas: avisos al lector de pantalla, SOS,
-// estado de la pastilla y temperatura.
+// menú de accesibilidad, estado de la pastilla y temperatura.
 
 const anuncio = document.getElementById("anuncio");
 // Vacía y vuelve a escribir para que el lector repita mensajes iguales
@@ -157,12 +157,13 @@ function configurarPastilla(boton, alCambiar) {
 }
 
 // ---------- Recordatorio de la toma ----------
-// En las páginas del paciente, cuando llega la hora de la toma y aún no está tomada,
-// salta una ventana "Tómate la medicación" con dos opciones:
+// En las páginas del paciente, cuando llega la hora de la toma con la página abierta y aún
+// no está tomada, salta una ventana "Tómate la medicación" con dos opciones:
 //   · "Ya me la he tomado": la marca como tomada y no vuelve a salir.
 //   · "Retrasar 5 minutos": vuelve a salir 5 minutos después, y así hasta que se tome.
+// La X hace lo mismo que retrasar: cerrar no cuenta como tomada y el aviso no se pierde.
 // El retraso se guarda en el navegador para que valga en todas las páginas.
-// Si se entra más tarde de la hora y sigue sin tomar, salta igualmente.
+// No salta al entrar en una página: si ya es la hora, se ve el botón "Pendiente" de la tarjeta.
 const TOMA_PENDIENTE = { hora: "21:00", nombre: "Pastilla de la tensión" };
 const RETRASO_RECORDATORIO_MS = 5 * 60 * 1000;
 
@@ -174,6 +175,9 @@ if (!document.body.dataset.pagina && !VISTA_PREVIA) {
   dialogoToma.setAttribute("aria-labelledby", "toma-titulo");
   dialogoToma.setAttribute("aria-describedby", "toma-texto");
   dialogoToma.innerHTML = `
+    <button class="boton btn-cerrar" type="button" id="toma-cerrar" aria-label="Cerrar y recordármelo en 5 minutos" title="Cerrar y recordármelo en 5 minutos">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
     <span class="toma-icono">${ICONO_PASTILLA}</span>
     <h2 id="toma-titulo">Tómate la medicación</h2>
     <p id="toma-texto"></p>
@@ -196,8 +200,13 @@ if (!document.body.dataset.pagina && !VISTA_PREVIA) {
     return !tomada && yaEsLaHora && Date.now() >= hasta;
   }
 
+  // Lo que ya tocaba al entrar no abre la ventana; solo lo que llega con la página abierta
+  let tocabaAlEntrar = tocaRecordar();
+
   function revisarToma() {
-    if (dialogoToma.open || !tocaRecordar()) return;
+    const toca = tocaRecordar();
+    if (!toca) tocabaAlEntrar = false;
+    if (!toca || tocabaAlEntrar || dialogoToma.open) return;
     dialogoToma.showModal();
     document.getElementById("toma-hecha").focus();
     avisarConSonido(dialogoToma, false);
@@ -213,13 +222,15 @@ if (!document.body.dataset.pagina && !VISTA_PREVIA) {
     anunciar("Pastilla de la tensión marcada como tomada");
   });
 
-  document.getElementById("toma-retrasar").addEventListener("click", () => {
+  function retrasarToma() {
     try { localStorage.setItem("recordatorio-hasta", String(Date.now() + RETRASO_RECORDATORIO_MS)); } catch (e) {}
     dialogoToma.close();
     anunciar("Te lo recordaremos dentro de 5 minutos");
-  });
+  }
+  document.getElementById("toma-retrasar").addEventListener("click", retrasarToma);
+  document.getElementById("toma-cerrar").addEventListener("click", retrasarToma);
 
-  // Hay que elegir una de las dos opciones: Escape no la cierra
+  // Hay que usar uno de los botones: Escape no la cierra
   dialogoToma.addEventListener("cancel", e => e.preventDefault());
 
   // Si en otra pestaña se toma o se retrasa, esta ventana también se cierra
@@ -229,19 +240,23 @@ if (!document.body.dataset.pagina && !VISTA_PREVIA) {
     }
   });
 
-  revisarToma();
   setInterval(revisarToma, 5000);
 }
 
 // ---------- Temperatura ----------
 // Se guarda en el navegador para que Inicio y Casa muestren la misma.
 // Fuera de 22–25 °C el valor lleva fondo rojo; dentro del rango solo se ve el número
+function leerTemperatura() {
+  try { return Number(localStorage.getItem("temperatura")) || 30; } catch (e) { return 30; }
+}
+
+const temperaturaFueraDeRango = temperatura => temperatura < 22 || temperatura > 25;
+
 function configurarTemperatura(valor, clase) {
-  let temperatura = 30;
-  try { temperatura = Number(localStorage.getItem("temperatura")) || 30; } catch (e) {}
+  let temperatura = leerTemperatura();
 
   function pintar() {
-    const fuera = temperatura < 22 || temperatura > 25;
+    const fuera = temperaturaFueraDeRango(temperatura);
     valor.className = clase + (fuera ? " alerta" : "");
     valor.innerHTML = `${temperatura} °C` +
       (fuera ? '<span class="sr-only"> (fuera del rango recomendado)</span>' : "");
@@ -519,6 +534,180 @@ dialogoLlamada.addEventListener("close", () => {
   clearInterval(relojLlamada);
   anunciar("Llamada finalizada");
 });
+
+// ---------- Menú de accesibilidad ----------
+// Pestaña colgada del borde superior, junto al avatar, en todas las páginas con sesión.
+// Los ajustes se guardan en el navegador (preferencias.js) y valen para todas las páginas.
+(function () {
+  const perfiles = document.querySelector(".perfiles");
+  if (!perfiles) return;
+
+  const ICONO = `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="4.5" r="1.8" fill="currentColor"/>
+      <path d="M4.5 8.5 12 10l7.5-1.5M12 10v5M12 15l-3.5 6M12 15l3.5 6"/>
+    </svg>`;
+
+  const abrir = document.createElement("button");
+  abrir.className = "boton btn-a11y";
+  abrir.type = "button";
+  abrir.setAttribute("aria-haspopup", "dialog");
+  abrir.setAttribute("aria-label", "Menú de accesibilidad");
+  abrir.title = "Menú de accesibilidad";
+  abrir.innerHTML = ICONO;
+  perfiles.prepend(abrir);
+
+  const menu = document.createElement("dialog");
+  menu.className = "dialogo dialogo-a11y";
+  menu.setAttribute("aria-labelledby", "a11y-titulo");
+  menu.innerHTML = `
+    <button class="boton btn-cerrar" type="button" id="cerrar-a11y" aria-label="Cerrar" title="Cerrar">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="a11y-titulo" class="a11y-titulo">Menú de accesibilidad ${ICONO}</h2>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-texto">
+      <h3 id="grupo-texto">
+        Tamaño de letra
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="4" y="4" width="24" height="24" rx="2"/>
+          <path d="M10 24 16 8l6 16M12.3 18h7.4"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="texto-menos" aria-label="Disminuir tamaño de letra">−</button>
+        <output class="a11y-valor" id="texto-valor"></output>
+        <button class="boton a11y-paso" type="button" id="texto-mas" aria-label="Aumentar tamaño de letra">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-vibracion">
+      <h3 id="grupo-vibracion">
+        Vibración
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="5" width="10" height="22" rx="2"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+          <path d="M7 9 5 11l2 2-2 2 2 2-2 2 2 2M25 9l2 2-2 2 2 2-2 2 2 2-2 2"/>
+        </svg>
+      </h3>
+      <div class="a11y-fila">
+        <button class="boton a11y-paso" type="button" id="vibra-menos" aria-label="Disminuir vibración">−</button>
+        <output class="a11y-valor" id="vibra-valor" aria-live="polite"></output>
+        <button class="boton a11y-paso" type="button" id="vibra-mas" aria-label="Aumentar vibración">+</button>
+      </div>
+    </section>
+
+    <section class="a11y-grupo" aria-labelledby="grupo-tema">
+      <h3 id="grupo-tema">
+        Tema
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="5"/>
+          <path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M7 25l3-3M22 10l3-3"/>
+        </svg>
+      </h3>
+      <div class="a11y-temas">
+        <button class="boton a11y-tema" type="button" id="tema-oscuro" aria-pressed="false">Oscuro</button>
+        <button class="boton a11y-tema" type="button" id="tema-contraste" aria-pressed="false">Alto contraste</button>
+      </div>
+    </section>
+
+    <div class="dialogo-botones">
+      <button class="boton" type="button" id="a11y-reset">Restablecer</button>
+    </div>`;
+  document.body.append(menu);
+
+  const { TAMANOS, VIBRACION } = window.preferencias;
+  const boton = id => document.getElementById(id);
+  const raizPagina = document.documentElement;
+
+  // ¿Cabe la letra actual sin desbordar la página ni cortar el texto del menú lateral?
+  function cabe() {
+    return raizPagina.scrollWidth <= raizPagina.clientWidth
+      && [...document.querySelectorAll(".sidebar .nav-item")].every(el => el.scrollWidth <= el.clientWidth + 1);
+  }
+
+  // Prueba cada tamaño, sin que llegue a pintarse, y se queda con el mayor que cabe.
+  // Con el diseño de texto grande (letra del navegador) o en los prototipos no hay tope.
+  function calcularTope() {
+    const sinTope = raizPagina.classList.contains("texto-grande") || new URLSearchParams(location.search).has("texto");
+    let tope = TAMANOS.length - 1;
+    if (!sinTope) {
+      const original = raizPagina.style.fontSize;
+      tope = 0;
+      for (let nivel = 1; nivel < TAMANOS.length; nivel++) {
+        raizPagina.style.fontSize = TAMANOS[nivel] + "%";
+        if (!cabe()) break;
+        tope = nivel;
+      }
+      raizPagina.style.fontSize = original;
+    }
+    window.preferencias.fijarTope(tope);
+  }
+
+  // Pinta el estado del menú. Un botón que se desactiva pierde el foco: pasa a su pareja
+  function pintar() {
+    const { vibracion, tema } = window.preferencias.leer();
+    const texto = window.preferencias.nivelTexto();
+    [["texto-mas", "texto-menos", texto >= window.preferencias.tope()], ["texto-menos", "texto-mas", texto === 0],
+     ["vibra-mas", "vibra-menos", vibracion === VIBRACION.length - 1], ["vibra-menos", "vibra-mas", vibracion === 0]]
+      .forEach(([id, pareja, desactivar]) => {
+        const teniaFoco = document.activeElement === boton(id);
+        boton(id).disabled = desactivar;
+        if (desactivar && teniaFoco) boton(pareja).focus();
+      });
+    boton("texto-valor").textContent = `Nivel ${texto + 1} de ${TAMANOS.length}`;
+    boton("vibra-valor").textContent = VIBRACION[vibracion];
+    boton("tema-oscuro").setAttribute("aria-pressed", String(tema === "oscuro"));
+    boton("tema-contraste").setAttribute("aria-pressed", String(tema === "contraste"));
+  }
+
+  function cambiarTexto(paso) {
+    const texto = window.preferencias.nivelTexto() + paso;
+    window.preferencias.guardar({ texto });
+    pintar();
+    const esElMaximo = texto >= window.preferencias.tope();
+    anunciar(`Tamaño de letra: nivel ${texto + 1} de ${TAMANOS.length}${esElMaximo ? ". Es el máximo que cabe en esta pantalla" : ""}`);
+  }
+
+  function cambiarVibracion(paso) {
+    window.preferencias.guardar({ vibracion: window.preferencias.leer().vibracion + paso });
+    pintar();
+  }
+
+  function cambiarTema(tema) {
+    window.preferencias.guardar({ tema: window.preferencias.leer().tema === tema ? "claro" : tema });
+    pintar();
+  }
+
+  abrir.addEventListener("click", () => menu.showModal());
+  boton("cerrar-a11y").addEventListener("click", () => menu.close());
+  boton("texto-mas").addEventListener("click", () => cambiarTexto(1));
+  boton("texto-menos").addEventListener("click", () => cambiarTexto(-1));
+  boton("vibra-mas").addEventListener("click", () => cambiarVibracion(1));
+  boton("vibra-menos").addEventListener("click", () => cambiarVibracion(-1));
+  boton("tema-oscuro").addEventListener("click", () => cambiarTema("oscuro"));
+  boton("tema-contraste").addEventListener("click", () => cambiarTema("contraste"));
+  boton("a11y-reset").addEventListener("click", () => {
+    window.preferencias.restablecer();
+    pintar();
+    anunciar("Ajustes de accesibilidad restablecidos");
+  });
+
+  // Vibración al pulsar cualquier botón (solo en dispositivos que lo permiten)
+  document.addEventListener("click", e => {
+    const { vibracion } = window.preferencias.leer();
+    if (vibracion && navigator.vibrate && e.target.closest(".boton")) navigator.vibrate(vibracion * 60);
+  });
+
+  // El tope depende de la pantalla y del contenido: se calcula al cargar y al cambiar la ventana
+  function actualizar() {
+    calcularTope();
+    pintar();
+  }
+  actualizar();
+  window.addEventListener("load", actualizar);
+  window.addEventListener("resize", actualizar);
+})();
 
 // Cerrar al pulsar fuera de la ventana (ventanas .dialogo).
 // La ventana SOS no: un toque accidental no debe cancelar una emergencia.

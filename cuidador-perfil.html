@@ -79,6 +79,11 @@
     <main class="contenido" id="contenido" tabindex="-1">
       <header class="cabecera">
         <h1><span id="saludo">Hola</span><span class="sr-only">: tu perfil</span></h1>
+        <!-- En la cabecera para verlo sin hacer scroll; antes de salir se pide confirmación -->
+        <button class="boton btn-salir" type="button" id="abrir-salir" aria-haspopup="dialog">
+          Cerrar sesión
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/></svg>
+        </button>
         <div class="perfiles">
           <!-- aria-current: el avatar se ve pulsado mientras se está en el perfil -->
           <a class="boton avatar" href="cuidador-perfil.html" aria-current="page" aria-label="Mi perfil" title="Mi perfil">
@@ -169,13 +174,6 @@
         </section>
       </div>
 
-      <div class="perfil-pie">
-        <button class="boton btn-salir" type="button" id="abrir-salir" aria-haspopup="dialog">
-          Cerrar sesión
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/></svg>
-        </button>
-        <a class="enlace-pie" href="accesibilidad.html">Accesibilidad</a>
-      </div>
     </main>
   </div>
 
