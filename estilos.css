@@ -907,7 +907,7 @@ html.contraste .estado.alerta {
 }
 
 /* En pantallas muy estrechas los temas van uno debajo de otro */
-@media (max-width: 400px) {
+@media (max-width: 360px) {
   .a11y-temas {
     grid-template-columns: 1fr;
   }
@@ -3552,7 +3552,7 @@ html.contraste .dialogo-alerta {
 
 /* Muy estrecho: los datos van debajo de su etiqueta y el SOS en su propia fila.
    Con muy poca altura la barra deja de ser fija para no tapar el contenido. */
-@media (max-width: 400px) {
+@media (max-width: 360px) {
   .datos {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -4058,4 +4058,661 @@ html.texto-grande .tabla-pacientes [data-etiqueta]::before {
   border: 0;
   background: #ffffff;
   transform-origin: top left;
+}
+
+/* =====================================================================
+   ADAPTACIÓN AL MÓVIL
+   Va al final para ganar a las reglas generales con la misma especificidad.
+   El diseño de texto grande (html.texto-grande) tiene más especificidad y sigue mandando.
+   · Medidas según el ancho: en vertical, las que dependen del alto (vh) salían enormes.
+   · La página es la única que se desplaza: nada de listas con scroll propio.
+   · Menos alto en cada elemento, sin bajar de 44 px en lo que se pulsa.
+   ===================================================================== */
+
+/* Zonas seguras (muesca y bordes curvos). Necesitan viewport-fit=cover en el HTML */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+a,
+button,
+select,
+label,
+input {
+  touch-action: manipulation; /* sin la espera del doble toque */
+}
+
+/* Enlaces sueltos de las páginas informativas: zona táctil de 44 px */
+@media (pointer: coarse) {
+  .enlace-pie {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* En pantallas táctiles el :hover se queda pegado después de tocar: se anula.
+   La respuesta al toque la da :active */
+@media (hover: none) {
+  .boton:hover,
+  .boton:disabled:hover {
+    background: var(--base);
+  }
+
+  .medicacion:hover {
+    background: var(--blanco);
+  }
+
+  .nav-item:not([aria-current="page"]):hover {
+    background: var(--boton);
+  }
+
+  .selector select:hover,
+  .opcion-perfil:hover > span {
+    background: var(--boton);
+  }
+
+  .btn-enlace:hover,
+  .enlace-pie:hover,
+  .enlace-volver:hover {
+    background: none;
+    text-decoration-thickness: auto;
+  }
+
+  .tabla-pacientes .celda.boton:hover:not(:active) {
+    background: transparent;
+  }
+
+  .nav-item:not([aria-current="page"]):active {
+    background: var(--boton-hover);
+  }
+}
+
+/* ----- Móvil en horizontal: el menú y el SOS caben enteros, sin scroll en la barra ----- */
+@media (min-width: 641px) and (max-height: 559px) {
+  .sidebar {
+    padding-bottom: 0;
+  }
+
+  .nav {
+    margin-bottom: 0;
+  }
+
+  .nav-item {
+    min-height: 48px;
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .nav-item svg,
+  .nav-item svg.logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .nav-texto {
+    font-size: 0.875rem;
+    line-height: 1.2;
+  }
+
+  .btn-sos {
+    flex: 1 1 auto;
+    min-height: 72px;
+    aspect-ratio: auto;
+    margin-top: 0;
+    gap: 2px;
+    border-radius: 14px;
+  }
+
+  .btn-sos svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .sos-texto {
+    font-size: 1.4rem;
+  }
+
+  .contenido {
+    --pad-top: 12px;
+    padding: var(--pad-top) 20px 24px;
+    gap: 14px;
+  }
+
+  /* Que "Medicación" no se parta en la cabecera de la tabla con la letra al máximo */
+  .tabla-pacientes thead th {
+    padding: 6px 8px;
+    font-size: 1.05rem;
+  }
+}
+
+/* ----- Móvil en vertical ----- */
+@media (max-width: 640px) {
+  .contenido {
+    --pad-top: 12px;
+    gap: 16px;
+  }
+
+  /* Cabecera: título, accesibilidad y perfil en la primera fila; lo demás, debajo y a todo el ancho.
+     La pestaña va siempre pegada al borde superior, aunque la cabecera tenga más filas */
+  .cabecera {
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    padding-bottom: 10px;
+  }
+
+  .cabecera h1 {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: clamp(1.4rem, 6.4vw, 1.9rem);
+  }
+
+  .cabecera-izq {
+    display: contents;
+  }
+
+  .cabecera-izq > :not(h1) {
+    order: 1;
+    flex: 1 1 100%;
+  }
+
+  .cabecera .btn-anadir {
+    justify-content: center;
+  }
+
+  .campo-en-linea {
+    flex-wrap: nowrap;
+  }
+
+  .campo-en-linea .selector {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+
+  .cabecera .selector select {
+    min-height: 52px;
+  }
+
+  .perfiles {
+    flex: none;
+    align-self: flex-start;
+    gap: 10px;
+  }
+
+  .btn-a11y {
+    width: 54px;
+    height: 66px;
+    padding-bottom: 8px;
+  }
+
+  .avatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .cabecera .btn-salir {
+    min-height: 48px;
+    padding: 6px 22px;
+  }
+
+  /* Barra inferior: letra más grande, limitada por el ancho para que quepa "Medicación"
+     con cualquier tamaño de letra del menú de accesibilidad */
+  .nav-texto {
+    font-size: min(1rem, 4.2vw);
+    white-space: nowrap;
+  }
+
+  .sos-texto {
+    font-size: min(1.5rem, 28px);
+  }
+
+  /* Cuidador: cuatro apartados, así que el SOS cede algo de ancho.
+     Con texto grande no: ahí el SOS va a todo el ancho (estas reglas pesan más que las suyas) */
+  html:not(.texto-grande) .nav:has(li:nth-child(4)) .nav-texto {
+    font-size: min(0.9375rem, 3.35vw);
+  }
+
+  html:not(.texto-grande) .sidebar:has(li:nth-child(4)) .btn-sos {
+    width: 76px;
+  }
+
+  html:not(.texto-grande) .sidebar:has(li:nth-child(4)) .sos-texto {
+    font-size: min(1.5rem, 22px);
+    letter-spacing: 1px;
+  }
+
+  /* Bloques: más ancho útil para lo que hay dentro */
+  .casa-bloque,
+  .perfil-bloque {
+    gap: 10px;
+    padding: 14px 14px 12px;
+    border-radius: 16px;
+  }
+
+  .bloque-titulo {
+    font-size: clamp(1.25rem, 5.6vw, 1.5rem);
+  }
+
+  /* Inicio: hora y pastilla en una fila para que Mi casa y Llamar se vean antes */
+  .medicacion {
+    flex: none; /* su alto es el del contenido: sin huecos si la pantalla es alta */
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px 14px;
+    padding: 14px 16px 18px;
+    text-align: left;
+  }
+
+  .hora {
+    font-size: clamp(2rem, 10vw, 2.75rem);
+  }
+
+  .pastilla {
+    font-size: clamp(1.25rem, 5.6vw, 1.6rem);
+  }
+
+  .med-botones {
+    grid-column: 1 / -1;
+    gap: 12px;
+  }
+
+  .medicacion .btn-foto {
+    min-height: 52px;
+    padding: 8px 16px;
+    font-size: 1.2rem;
+  }
+
+  .btn-pendiente {
+    padding: 8px 16px;
+  }
+
+  .btn-principal {
+    font-size: clamp(1.3rem, 6vw, 1.6rem);
+  }
+
+  .inicio-acciones {
+    flex: none;
+    gap: 14px;
+  }
+
+  .boton.accion-grande {
+    min-height: 88px;
+    gap: 10px;
+    padding: 12px;
+    font-size: clamp(1.4rem, 6vw, 1.7rem);
+  }
+
+  .boton.btn-llamar.accion-grande {
+    font-size: clamp(1.3rem, 5.6vw, 1.6rem);
+  }
+
+  .casa-estados {
+    gap: 8px;
+  }
+
+  /* Icono al lado del texto; si no cabe, el texto baja debajo del icono */
+  .accion-grande .estado {
+    flex-flow: row wrap;
+    gap: 2px 6px;
+    padding: 6px 8px;
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .accion-grande .estado-texto {
+    flex: 1 1 4.5em;
+    min-width: 0;
+  }
+
+  /* Mi medicación: lo que toca ahora va primero; la lista, debajo y en filas compactas */
+  .med-layout {
+    gap: 16px;
+  }
+
+  .med-ahora {
+    order: -1;
+    gap: 10px;
+    padding: 14px 16px 18px;
+  }
+
+  .med-ahora .btn-foto {
+    width: 100%;
+  }
+
+  .med-reloj {
+    padding: 0;
+    font-size: clamp(2.4rem, 13vw, 3.5rem);
+    line-height: 1.1;
+  }
+
+  .med-lista {
+    overflow: visible;
+    padding: 0;
+  }
+
+  .med-lista ul {
+    gap: 14px;
+  }
+
+  .med-item {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    gap: 10px 14px;
+    padding: 12px 14px 16px;
+    border-radius: 16px;
+    text-align: left;
+  }
+
+  .med-item-hora {
+    font-size: clamp(1.6rem, 7.5vw, 2rem);
+  }
+
+  .med-item-nombre {
+    font-size: clamp(1.2rem, 5.4vw, 1.5rem);
+  }
+
+  .med-item .btn-foto {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  /* Casa: cada dispositivo en una fila; si no cabe, el estado baja a la línea siguiente */
+  .casa-layout {
+    gap: 14px;
+  }
+
+  .casa-temp .btn-temp {
+    height: 56px;
+  }
+
+  .casa-temp .temp-valor {
+    min-height: 56px;
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
+  }
+
+  .disp-lista {
+    overflow: visible;
+    gap: 12px;
+    padding: 2px 0 8px;
+  }
+
+  .disp {
+    min-height: 68px;
+    padding: 8px 10px 10px;
+  }
+
+  .disp-icono {
+    width: 44px;
+    height: 44px;
+  }
+
+  .disp-texto {
+    flex: 1 1 6.5em;
+  }
+
+  .disp-lugar {
+    font-size: 1.2rem;
+  }
+
+  .disp-pista {
+    font-size: 0.9375rem;
+    line-height: 1.25;
+  }
+
+  .disp .estado {
+    min-height: 44px;
+    padding: 0 10px;
+    font-size: 1.05rem;
+  }
+
+  /* Perfil */
+  .perfil-layout {
+    gap: 14px;
+  }
+
+  .datos {
+    row-gap: 8px;
+  }
+
+  .contactos-lista {
+    overflow: visible;
+    gap: 12px;
+    padding: 2px 0 8px;
+  }
+
+  .contacto .btn-llamar {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .perfil-cuidador {
+    overflow: visible;
+  }
+
+  /* Inicio del cuidador: cada paciente es una tarjeta. Nombre arriba, Medicación y Casa
+     en dos columnas y la alerta abajo, a todo el ancho */
+  .tabla-marco {
+    overflow: visible;
+    border-bottom: 0;
+  }
+
+  .tabla-pacientes tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .tabla-pacientes tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0;
+    overflow: hidden;
+    background: var(--blanco);
+    border: 2px solid var(--borde);
+    border-radius: 16px;
+  }
+
+  .tabla-pacientes tbody th,
+  .tabla-pacientes td {
+    padding: 0;
+  }
+
+  .tabla-pacientes tbody th,
+  .tabla-pacientes td:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .tabla-pacientes td {
+    border-top: 2px solid var(--borde);
+  }
+
+  .tabla-pacientes [data-etiqueta]::before {
+    margin: 0;
+    padding: 8px 12px 0;
+    font-size: 1rem;
+  }
+
+  .tabla-pacientes .celda {
+    min-height: 52px;
+    padding: 4px 12px 10px;
+  }
+
+  .celda-nombre {
+    font-size: clamp(1.4rem, 6.6vw, 1.8rem);
+  }
+
+  .celda-principal {
+    font-size: 1.25rem;
+  }
+
+  /* Con texto grande las filas son bloques: se separan con margen */
+  html.texto-grande .tabla-pacientes tbody tr + tr {
+    margin-top: 14px;
+  }
+
+  /* Contactos del cuidador: Llamar a todo el ancho; Ver + info y editar, debajo */
+  .contactos-cuidador {
+    overflow: visible;
+    padding: 0;
+  }
+
+  .lista-contactos {
+    gap: 14px;
+  }
+
+  .fila-contacto {
+    gap: 12px;
+    padding: 12px 14px 16px;
+    border-radius: 16px;
+  }
+
+  .fila-contacto-nombre {
+    flex: 1 1 100%;
+    font-size: clamp(1.5rem, 7vw, 1.9rem);
+  }
+
+  .fila-contacto .btn-llamar {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .fila-contacto .btn-editar:not(.solo-icono) {
+    flex: 1 1 0;
+  }
+
+  /* Medicación del cuidador. minmax(0, …): la columna no crece más que la pantalla
+     aunque suba la letra */
+  .medc-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .aviso-toma .selector {
+    width: 100%;
+    max-width: 12em;
+  }
+
+  .toma-nombre {
+    overflow-wrap: anywhere;
+  }
+
+  .tomas-hoy {
+    overflow: visible;
+    padding: 0;
+  }
+
+  .toma {
+    gap: 6px 10px;
+    padding: 8px 10px;
+  }
+
+  .toma-texto {
+    flex: 1 1 6.5em;
+  }
+
+  .toma-nombre {
+    font-size: 1.2rem;
+  }
+
+  .toma .estado {
+    min-height: 44px;
+    padding: 0 10px;
+    font-size: 1.05rem;
+  }
+
+  .grafico-barras {
+    gap: 4px;
+  }
+
+  /* Limitada por el ancho: una cifra como "100" nunca se parte, aunque suba la letra */
+  .barra-valor {
+    font-size: min(0.875rem, 3.9vw);
+  }
+
+  .aviso-toma label {
+    font-size: 1.25rem;
+  }
+
+  /* Ventanas: casi toda la pantalla. Mientras hay una abierta, la página de detrás no se mueve */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  .dialogo,
+  .dialogo-sos,
+  .dialogo-alerta {
+    overscroll-behavior: contain;
+  }
+
+  .dialogo,
+  .dialogo-pautas,
+  .dialogo-llamada,
+  .dialogo-a11y,
+  .dialogo-foto:has(.foto-caja) {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 16px);
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .dialogo h2 {
+    font-size: 1.55rem;
+  }
+
+  html:not(.texto-grande) .dialogo:has(> .btn-cerrar) > h2 {
+    padding-inline: 44px;
+  }
+
+  /* El título del menú de accesibilidad lleva icono: necesita más sitio junto a la X */
+  html:not(.texto-grande) .dialogo:has(> .btn-cerrar) > h2.a11y-titulo {
+    padding-inline: 52px;
+  }
+
+  /* La X sigue a la vista al desplazarse, salvo en los formularios: ahí taparía los botones
+     de las filas y un toque de más perdería lo escrito. Tienen Cancelar al final */
+  .dialogo:not(.dialogo-form) > .btn-cerrar {
+    position: sticky;
+    top: 0;
+    right: auto;
+    z-index: 2;
+    margin: 0 0 -48px auto;
+    align-self: flex-end;
+  }
+
+  .dialogo p {
+    margin-bottom: 20px;
+  }
+
+  .dialogo-sos {
+    padding: 48px 16px 24px;
+  }
+
+  .dialogo-sos[open] {
+    gap: 24px;
+  }
+
+  .doc {
+    padding: 20px 16px 48px;
+  }
+
+  .doc h1 {
+    font-size: 1.9rem;
+  }
+}
+
+/* Muy estrecho: el SOS ya va en su propia fila y los cuatro apartados tienen todo el ancho */
+@media (max-width: 360px) {
+  html:not(.texto-grande) .nav:has(li:nth-child(4)) .nav-texto {
+    font-size: min(0.9375rem, 4.2vw);
+  }
+
+  html:not(.texto-grande) .sidebar:has(li:nth-child(4)) .btn-sos {
+    width: 100%;
+  }
+
+  html:not(.texto-grande) .sidebar:has(li:nth-child(4)) .sos-texto {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
 }
