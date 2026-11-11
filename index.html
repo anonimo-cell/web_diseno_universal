@@ -77,10 +77,15 @@
 
           <button class="btn-enlace" type="button" id="abrir-olvido" aria-haspopup="dialog">¿Has olvidado tu contraseña?</button>
 
-          <div class="login-nuevo">
+          <!-- Separación clara entre entrar y crear cuenta: línea gruesa con una "o"
+               y la parte de crear cuenta con otro fondo -->
+          <div class="login-separador" role="separator" aria-hidden="true"><span>o</span></div>
+
+          <section class="login-nuevo" aria-labelledby="titulo-nuevo">
+            <h2 id="titulo-nuevo">Crear cuenta</h2>
             <p>¿Es tu primera vez en VitalHogar?</p>
             <a class="boton btn-anadir" href="registro.html">Crear cuenta nueva</a>
-          </div>
+          </section>
         </form>
       </div>
     </main>

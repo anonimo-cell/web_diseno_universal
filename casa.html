@@ -20,13 +20,12 @@
         <ul class="nav">
           <li>
             <a href="inicio.html" class="nav-item">
-              <!-- Isotipo de VitalHogar: casa con corazón y señal wifi -->
-              <svg class="logo" viewBox="0 0 54 50" role="img" aria-label="Logo de VitalHogar" focusable="false">
-                <path d="M8 23v24h8.5c3.5 0 6.5-1 9.5-3.5l9-9.5c2.5-3 3.5-6 3-8-1-4-6-5-9-2.5-1.5 1.5-2.5 3-3.5 4.5"/>
-                <path d="M25.5 28c-1-1.5-2-3-3.5-4.5-3-2.5-8-1.5-9 2.5-.5 2 .5 5 3 8 2.5 2.8 5 5.3 7.5 7.3"/>
-                <path d="M28.5 44c2.5 1.8 5.5 3 9 3h6V23"/>
-                <path d="M1.5 28.5 25.5 6.5l24 22"/>
-                <path d="M37.5 11.5a4.5 4.5 0 0 1 4.5 4.5M37.5 6.5a9.5 9.5 0 0 1 9.5 9.5M37.5 1.5A14.5 14.5 0 0 1 52 16"/>
+              <!-- Icono de Inicio: panel con cuatro recuadros (no es una casa, para no confundirlo con Casa) -->
+              <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <rect x="7" y="7" width="14" height="14" rx="2"/>
+                <rect x="27" y="7" width="14" height="14" rx="2"/>
+                <rect x="7" y="27" width="14" height="14" rx="2"/>
+                <rect x="27" y="27" width="14" height="14" rx="2"/>
               </svg>
               <span class="nav-texto">Inicio</span>
             </a>
@@ -199,7 +198,7 @@
     </form>
   </dialog>
 
-  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 5 s con Cancelar y Avisar ahora
+  <!-- ===== Ventana SOS: fondo difuminado, círculo rojo y cuenta atrás de 10 s con Cancelar y Avisar ahora
        (WCAG 3.3.4: se puede deshacer una activación por error) ===== -->
   <dialog class="dialogo-sos" id="dialogo-sos" aria-labelledby="sos-titulo">
     <h2 id="sos-titulo" class="sr-only">Llamada de emergencia</h2>
@@ -221,7 +220,7 @@
     <!-- Cancelar lleva el foco: es la opción segura si se ha pulsado sin querer -->
     <div class="sos-acciones">
       <button class="boton btn-cancelar-sos" type="button" id="sos-cancelar">
-        Cancelar (<span id="sos-cuenta">5</span>)
+        Cancelar (<span id="sos-cuenta">10</span>)
       </button>
       <button class="boton btn-sos-ahora" type="button" id="sos-ahora">Avisar ahora</button>
     </div>
@@ -277,10 +276,12 @@
         </span>
         <span class="disp-texto">
           <span class="sr-only">${t.nombre}: </span>
-          <span class="disp-lugar"></span>
+          <span class="disp-cabeza">
+            <span class="disp-lugar"></span>
+            <span class="estado ${bien ? "ok" : "alerta"}"><span class="sr-only">, </span>${d.activo ? t.si : t.no}</span>
+          </span>
           <span class="disp-pista">Pulsa para ${d.activo ? t.accionNo : t.accionSi}</span>
-        </span>
-        <span class="estado ${bien ? "ok" : "alerta"}"><span class="sr-only">, </span>${d.activo ? t.si : t.no}</span>`;
+        </span>`;
       boton.querySelector(".disp-lugar").textContent = d.lugar;
     }
 

@@ -382,6 +382,8 @@ body[data-pagina="login"] .contenido {
 .nav-texto {
   font-size: 1.1rem;
   font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 /* Apartado activo: fondo azul fuerte, texto e icono blancos y en negrita (10.2:1) */
@@ -482,19 +484,29 @@ html.contraste .nav-item[aria-current="page"] {
 .btn-a11y {
   align-self: flex-start;
   margin-top: calc(-1 * var(--pad-top));
-  width: clamp(60px, 9vh, 80px);
-  height: clamp(76px, 12vh, 104px);
+  min-width: clamp(60px, 9vh, 80px);
+  height: clamp(92px, 14vh, 120px);
   border-top: 0;
-  border-radius: 0 0 999px 999px;
-  display: grid;
-  place-items: end center;
-  padding-bottom: 10px;
+  border-radius: 0 0 40px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 0 12px 12px;
 }
 
 .btn-a11y svg {
-  width: 78%;
+  width: clamp(40px, 6.5vh, 58px);
   height: auto;
   aspect-ratio: 1;
+}
+
+/* La palabra "Accesibilidad" debajo del icono */
+.a11y-texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .avatar {
@@ -583,6 +595,11 @@ html.contraste .estado.alerta {
   font-size: 1.8rem;
   font-weight: 700;
   line-height: 1;
+  /* Mantener pulsado: sin seleccionar texto ni abrir el menú del navegador en el móvil */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
 }
 
 /* ===== Inicio del paciente: medicación, llamar a un familiar y estado de la casa ===== */
@@ -623,8 +640,16 @@ html.contraste .estado.alerta {
   gap: 20px;
 }
 
+/* Llamar: más pequeño que el SOS para que la emergencia destaque más.
+   No se estira a la altura de "Mi casa": queda centrado y con tamaño limitado */
 .boton.btn-llamar.accion-grande {
-  font-size: clamp(1.3rem, 4vh, 1.9rem);
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 300px;
+  min-height: 96px;
+  max-height: 24vh;
+  font-size: clamp(1.15rem, 3.2vh, 1.5rem);
 }
 
 /* Puertas, ventanas, luces y temperatura: dos por fila, cada una con su icono y su color */
@@ -904,6 +929,21 @@ html.contraste .estado.alerta {
   padding: 12px 20px;
   min-width: 150px;
   font-size: 1.15rem;
+}
+
+/* Restablecer con su icono (flecha circular hacia atrás) */
+.btn-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-reset svg {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  stroke-width: 2.5;
 }
 
 /* En pantallas muy estrechas los temas van uno debajo de otro */
@@ -1280,9 +1320,18 @@ html.contraste .disp-icono {
   font-size: 1rem;
 }
 
+/* Lugar y estado (Abierta, Cerrada…) juntos en la misma línea, encima de la pista */
+.disp-cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin-bottom: 4px;
+}
+
 .disp .estado {
   width: auto;
-  margin-left: auto;
+  min-height: 40px;
   padding: 0 14px;
 }
 
@@ -1705,17 +1754,23 @@ html.contraste .avatar[aria-current="page"] {
   flex: none;
 }
 
-/* Cerrar sesión en la cabecera del perfil, a la izquierda de accesibilidad y el avatar */
+/* Cerrar sesión en la cabecera de todas las páginas, a la derecha del avatar */
 .cabecera {
   gap: 16px;
 }
 
-.cabecera .btn-salir {
+.perfiles .btn-salir {
   flex: none;
-  margin-left: auto;
-  min-height: 52px;
-  padding: 8px 22px;
-  font-size: 1.2rem;
+  gap: 8px;
+  min-height: clamp(48px, 8vh, 70px);
+  padding: 8px 18px;
+  font-size: 1.15rem;
+  white-space: nowrap;
+}
+
+.perfiles .btn-salir svg {
+  width: 26px;
+  height: 26px;
 }
 
 /* ===== Inicio de sesión (compartido por pacientes y cuidadores) ===== */
@@ -1801,16 +1856,42 @@ html.contraste {
   text-decoration-thickness: 3px;
 }
 
+/* Separador entre "Iniciar sesión" y "Crear cuenta": línea gruesa con una "o" en medio */
+.login-separador {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  color: var(--texto);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.login-separador::before,
+.login-separador::after {
+  content: "";
+  flex: 1;
+  border-top: 4px solid var(--borde);
+}
+
+/* Crear cuenta: bloque con otro fondo que llega hasta los bordes de la tarjeta */
 .login-nuevo {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  /* La línea va de borde a borde de la tarjeta: se sale de su relleno */
-  margin-inline: calc(-1 * var(--login-pad));
-  padding: 22px var(--login-pad) 0;
-  border-top: 4px solid var(--campo-borde);
+  margin: 0 calc(-1 * var(--login-pad)) calc(-1 * var(--login-pad));
+  padding: 22px var(--login-pad) var(--login-pad);
+  background: var(--fondo);
+  border-top: 4px solid var(--borde);
+  border-radius: 0 0 16px 16px;
   text-align: center;
+}
+
+.login-nuevo h2 {
+  font-size: 1.6rem;
+  line-height: 1.2;
 }
 
 .login-nuevo .btn-anadir {
@@ -3422,20 +3503,27 @@ html.contraste .dialogo-alerta {
     gap: 12px;
   }
 
-  /* Móvil: título y botones en una fila, y Cerrar sesión debajo a todo el ancho */
-  .cabecera:has(.btn-salir) {
-    flex-wrap: wrap;
-  }
-
-  .cabecera:has(.btn-salir) h1 {
+  /* Móvil: el título cede sitio a los botones de la cabecera */
+  .cabecera h1 {
     flex: 1 1 0;
     min-width: 0;
   }
 
-  .cabecera .btn-salir {
-    order: 1;
-    flex: 1 1 100%;
-    margin-left: 0;
+  /* Cerrar sesión compacto: icono encima y texto pequeño debajo */
+  .perfiles .btn-salir {
+    flex-direction: column;
+    gap: 2px;
+    width: 64px;
+    min-height: 52px;
+    padding: 4px;
+    font-size: 0.75rem;
+    line-height: 1.05;
+    text-align: center;
+  }
+
+  .perfiles .btn-salir svg {
+    width: 22px;
+    height: 22px;
   }
 
   .medicacion {
@@ -3678,17 +3766,20 @@ html.texto-grande .sos-texto {
    pasa a ser un botón redondo como el avatar, para no montarse sobre el SOS */
 html.texto-grande .btn-a11y {
   align-self: center;
-  width: clamp(48px, 8vh, 70px);
-  height: clamp(48px, 8vh, 70px);
+  min-width: 0;
+  height: auto;
+  min-height: clamp(48px, 8vh, 70px);
   margin-top: 0;
-  padding: 0;
+  padding: 4px 12px;
   border: 2px solid var(--borde);
-  border-radius: 50%;
-  place-items: center;
+  border-radius: 999px;
+  flex-direction: row;
+  justify-content: center;
+  gap: 6px;
 }
 
 html.texto-grande .btn-a11y svg {
-  width: 70%;
+  width: 36px;
 }
 
 html.texto-grande .med-botones {
@@ -3708,6 +3799,11 @@ html.texto-grande .cabecera-izq {
 
 html.texto-grande .cabecera-izq {
   flex: 1 1 100%;
+}
+
+/* Accesibilidad, avatar y Cerrar sesión: si no caben en una línea, bajan */
+html.texto-grande .perfiles {
+  flex-wrap: wrap;
 }
 
 html.texto-grande .cabecera h1 {
@@ -3845,17 +3941,12 @@ html.texto-grande .hora {
 }
 
 html.texto-grande .btn-pendiente,
-html.texto-grande .btn-salir {
+html.texto-grande .dialogo .btn-salir {
   padding: 12px 16px;
 }
 
-html.texto-grande .btn-salir {
+html.texto-grande .dialogo .btn-salir {
   width: 100%;
-}
-
-html.texto-grande .cabecera .btn-salir {
-  order: 1;
-  margin-left: 0;
 }
 
 html.texto-grande .btn-anadir,
@@ -4242,9 +4333,17 @@ input {
   }
 
   .btn-a11y {
-    width: 54px;
-    height: 66px;
-    padding-bottom: 8px;
+    min-width: 54px;
+    height: 76px;
+    padding: 0 6px 8px;
+  }
+
+  .btn-a11y svg {
+    width: 34px;
+  }
+
+  .a11y-texto {
+    font-size: 0.7rem;
   }
 
   .avatar {
@@ -4252,15 +4351,10 @@ input {
     height: 52px;
   }
 
-  .cabecera .btn-salir {
-    min-height: 48px;
-    padding: 6px 22px;
-  }
-
   /* Barra inferior: letra más grande, limitada por el ancho para que quepa "Medicación"
      con cualquier tamaño de letra del menú de accesibilidad */
   .nav-texto {
-    font-size: min(1rem, 4.2vw);
+    font-size: min(0.9rem, 3.6vw);
     white-space: nowrap;
   }
 
@@ -4271,7 +4365,7 @@ input {
   /* Cuidador: cuatro apartados, así que el SOS cede algo de ancho.
      Con texto grande no: ahí el SOS va a todo el ancho (estas reglas pesan más que las suyas) */
   html:not(.texto-grande) .nav:has(li:nth-child(4)) .nav-texto {
-    font-size: min(0.9375rem, 3.35vw);
+    font-size: min(0.85rem, 2.9vw);
   }
 
   html:not(.texto-grande) .sidebar:has(li:nth-child(4)) .btn-sos {
@@ -4344,7 +4438,9 @@ input {
   }
 
   .boton.btn-llamar.accion-grande {
-    font-size: clamp(1.3rem, 5.6vw, 1.6rem);
+    min-height: 64px;
+    max-width: none;
+    font-size: clamp(1.1rem, 4.8vw, 1.35rem);
   }
 
   .casa-estados {

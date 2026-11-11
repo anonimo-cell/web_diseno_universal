@@ -107,6 +107,38 @@ window.addEventListener("load", () => requestAnimationFrame(irAlBloque));
 window.addEventListener("hashchange", irAlBloque);
 
 // ---------- Cerrar sesión (con confirmación, para evitar toques accidentales) ----------
+// El botón está en la cabecera de todas las páginas con sesión, junto al avatar,
+// para poder salir desde cualquier ventana.
+(function crearBotonSalir() {
+  const perfiles = document.querySelector(".perfiles");
+  if (!perfiles || document.getElementById("abrir-salir")) return;
+  const boton = document.createElement("button");
+  boton.className = "boton btn-salir";
+  boton.type = "button";
+  boton.id = "abrir-salir";
+  boton.setAttribute("aria-haspopup", "dialog");
+  boton.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/></svg>
+    <span class="salir-texto">Cerrar sesión</span>`;
+  perfiles.append(boton);
+
+  if (!document.getElementById("dialogo-salir")) {
+    const d = document.createElement("dialog");
+    d.className = "dialogo dialogo-salir";
+    d.id = "dialogo-salir";
+    d.setAttribute("aria-labelledby", "salir-titulo");
+    d.setAttribute("aria-describedby", "salir-texto");
+    d.innerHTML = `
+      <h2 id="salir-titulo">¿Cerrar sesión?</h2>
+      <p id="salir-texto">Para volver a usar la aplicación tendrás que entrar otra vez con tu usuario y contraseña.</p>
+      <div class="dialogo-botones">
+        <button class="boton" type="button" id="salir-no">No, seguir aquí</button>
+        <button class="boton btn-salir" type="button" id="salir-si">Sí, cerrar sesión</button>
+      </div>`;
+    document.body.append(d);
+  }
+})();
+
 const dialogoSalir = document.getElementById("dialogo-salir");
 if (dialogoSalir) {
   document.getElementById("abrir-salir").addEventListener("click", () => {
@@ -274,6 +306,56 @@ function configurarTemperatura(valor, clase) {
   pintar();
 }
 
+// ---------- Pulsación larga en − / + de la temperatura ----------
+// Mantener pulsado repite el cambio: empieza a los 0,5 s y luego sube o baja cada 0,2 s,
+// hasta soltar. Funciona con ratón, dedo y lápiz. Con el teclado, mantener Intro ya repite.
+document.querySelectorAll(".btn-temp").forEach(boton => {
+  let espera = null, repeticion = null, repetido = false, pulsando = false;
+
+  function parar() {
+    clearTimeout(espera);
+    clearInterval(repeticion);
+    espera = repeticion = null;
+  }
+
+  boton.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return;
+    repetido = false;
+    pulsando = true;
+    parar();
+    espera = setTimeout(() => {
+      repetido = true;
+      boton.click();
+      repeticion = setInterval(() => {
+        if (boton.disabled) return parar();
+        boton.click();
+      }, 200);
+    }, 500);
+  });
+  boton.addEventListener("pointerup", () => {
+    pulsando = false;
+    parar();
+  });
+  // Si el dedo sale del botón antes de soltar no llegará clic: no hay nada que descartar.
+  // (En pantallas táctiles pointerleave también llega justo después de soltar: ahí no se toca)
+  ["pointerleave", "pointercancel", "blur"].forEach(tipo => boton.addEventListener(tipo, () => {
+    if (pulsando) repetido = false;
+    pulsando = false;
+    parar();
+  }));
+
+  // El clic que llega al soltar no suma otro paso si ya se estaba repitiendo
+  boton.addEventListener("click", e => {
+    if (repetido && !repeticion && !espera) {
+      repetido = false;
+      e.stopImmediatePropagation();
+    }
+  }, true);
+
+  // En el móvil, mantener pulsado no abre el menú del navegador
+  boton.addEventListener("contextmenu", e => e.preventDefault());
+});
+
 // ---------- Dispositivos de la casa ----------
 // Se guardan en el navegador para que Inicio y Casa muestren los mismos.
 // activo = encendida (luz) o abierta (puerta, ventana).
@@ -303,7 +385,7 @@ function leerDispositivos() {
 }
 
 // ---------- SOS ----------
-// Al pulsar SOS empieza una cuenta atrás de 5 s. Si no se cancela, se avisa a emergencias.
+// Al pulsar SOS empieza una cuenta atrás de 10 s. Si no se cancela, se avisa a emergencias.
 // "Avisar ahora" confirma al momento, sin esperar a que termine.
 // <dialog> con showModal atrapa el foco y devuelve el foco al botón SOS al cerrarse.
 // La página del cuidador no tiene SOS: de ahí los "?.".
@@ -338,7 +420,7 @@ function cancelarSos() {
 }
 
 document.getElementById("abrir-sos")?.addEventListener("click", () => {
-  let segundos = 5;
+  let segundos = 10;
   sosCuenta.textContent = segundos;
   sosCancelar.hidden = false;
   sosAhora.hidden = false;
@@ -346,7 +428,7 @@ document.getElementById("abrir-sos")?.addEventListener("click", () => {
   sosEstado.textContent = "";
   dialogo.showModal();
   sosCancelar.focus();
-  sosAviso.textContent = "Se avisará a emergencias en 5 segundos. Pulsa Cancelar para detenerlo o Avisar ahora para no esperar.";
+  sosAviso.textContent = "Se avisará a emergencias en 10 segundos. Pulsa Cancelar para detenerlo o Avisar ahora para no esperar.";
 
   cuentaAtras = setInterval(() => {
     segundos--;
@@ -552,9 +634,9 @@ dialogoLlamada.addEventListener("close", () => {
   abrir.className = "boton btn-a11y";
   abrir.type = "button";
   abrir.setAttribute("aria-haspopup", "dialog");
-  abrir.setAttribute("aria-label", "Menú de accesibilidad");
   abrir.title = "Menú de accesibilidad";
-  abrir.innerHTML = ICONO;
+  // Icono acompañado de la palabra, para que se entienda sin conocer el símbolo
+  abrir.innerHTML = `${ICONO}<span class="a11y-texto">Accesibilidad</span>`;
   perfiles.prepend(abrir);
 
   const menu = document.createElement("dialog");
@@ -612,7 +694,10 @@ dialogoLlamada.addEventListener("close", () => {
     </section>
 
     <div class="dialogo-botones">
-      <button class="boton" type="button" id="a11y-reset">Restablecer</button>
+      <button class="boton btn-reset" type="button" id="a11y-reset">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>
+        Restablecer
+      </button>
     </div>`;
   document.body.append(menu);
 
