@@ -106,6 +106,24 @@ function irAlBloque() {
 window.addEventListener("load", () => requestAnimationFrame(irAlBloque));
 window.addEventListener("hashchange", irAlBloque);
 
+// ---------- Palabra "Perfil" debajo del avatar ----------
+// Como "Accesibilidad" bajo su icono: se entiende sin conocer el símbolo.
+// El enlace ya se anuncia como "Mi perfil" (aria-label); la palabra es visual y también lleva al perfil.
+(function etiquetarAvatar() {
+  const avatar = document.querySelector(".perfiles .avatar");
+  if (!avatar || avatar.parentElement.classList.contains("avatar-grupo")) return;
+  const grupo = document.createElement("div");
+  grupo.className = "avatar-grupo";
+  avatar.replaceWith(grupo);
+  const texto = document.createElement("a");
+  texto.className = "avatar-texto";
+  texto.href = avatar.getAttribute("href");
+  texto.textContent = "Perfil";
+  texto.tabIndex = -1;
+  texto.setAttribute("aria-hidden", "true");
+  grupo.append(avatar, texto);
+})();
+
 // ---------- Cerrar sesión (con confirmación, para evitar toques accidentales) ----------
 // El botón está en la cabecera de todas las páginas con sesión, junto al avatar,
 // para poder salir desde cualquier ventana.

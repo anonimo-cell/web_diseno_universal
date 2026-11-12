@@ -522,6 +522,22 @@ html.contraste .nav-item[aria-current="page"] {
   height: 60%;
 }
 
+/* La palabra "Perfil" debajo del avatar */
+.avatar-grupo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.avatar-texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--texto);
+  text-decoration: none;
+}
+
 .estado {
   width: 100%;
   min-height: 48px;
@@ -4342,7 +4358,8 @@ input {
     width: 34px;
   }
 
-  .a11y-texto {
+  .a11y-texto,
+  .avatar-texto {
     font-size: 0.7rem;
   }
 
